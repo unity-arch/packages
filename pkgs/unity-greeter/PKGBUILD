@@ -1,0 +1,63 @@
+# Maintainer: Charlie <dev.charlie@akao.au>
+
+pkgname=unity-greeter
+_commit=025eb0cb150d0fbc5e0466449803baa547d4ebe7
+pkgver=25.04.1
+pkgrel=1
+pkgdesc='lightdm greeter for the unity desktop'
+arch=('x86_64')
+url='https://gitlab.com/ubuntu-unity/unity/unity-greeter'
+license=('GPL-3.0-only')
+depends=('at-spi2-core' 'cairo' 'dconf' 'freetype2' 'gdk-pixbuf2' 'glib2' 'glibc' 'gtk3'
+         'ido' 'libcanberra' 'libindicator-gtk3' 'libx11' 'libxext' 'lightdm' 'pango'
+         'pixman' 'unity-settings-daemon')
+makedepends=('git' 'gnome-common' 'intltool' 'vala')
+optdepends=('ttf-ubuntu-font-family: the font the greeter asks for by default (aur)'
+            'humanity-icon-theme: the icon theme the greeter asks for by default (aur)'
+            'network-manager-applet: network menu in the greeter panel'
+            'onboard: onscreen keyboard'
+            'orca: screen reader'
+            'indicator-session: session menu in the greeter panel'
+            'indicator-power: battery menu in the greeter panel')
+provides=('lightdm-greeter')
+source=("git+${url}.git#commit=${_commit}")
+sha256sums=('SKIP')
+
+prepare() {
+  cd "${pkgname}"
+  # upstream ships no quilt series at this commit, apply one if a later snapshot adds it
+  if [[ -s debian/patches/series ]]; then
+    local p
+    while read -r p; do
+      [[ -z ${p} || ${p} == \#* ]] && continue
+      patch -Np1 -i "debian/patches/${p}"
+    done < debian/patches/series
+  fi
+  NOCONFIGURE=1 ./autogen.sh
+}
+
+build() {
+  cd "${pkgname}"
+  # sbindir is /usr/bin on arch, otherwise make install creates a real /usr/sbin
+  # in the package and that collides with the /usr/sbin symlink
+  ./configure \
+    --prefix=/usr \
+    --sysconfdir=/etc \
+    --localstatedir=/var \
+    --sbindir=/usr/bin \
+    --disable-static
+  make
+}
+
+package() {
+  cd "${pkgname}"
+  make DESTDIR="${pkgdir}" install
+
+  # keeps the lightdm user from poking network manager, arch polkit only reads
+  # rules.d so debian's matching .pkla local authority file is dropped
+  install -Dm644 debian/01-unity-greeter.rules \
+    "${pkgdir}/usr/share/polkit-1/rules.d/01-unity-greeter.rules"
+
+  # debian's 50-unity-greeter.conf forces greeter-session=unity-greeter on every
+  # seat, that's the admin's call so it isn't shipped here
+}
