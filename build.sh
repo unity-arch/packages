@@ -13,8 +13,9 @@ order=(
   indicator-session indicator-power indicator-bluetooth indicator-printers indicator-application
   indicator-messages indicator-datetime indicator-sound indicator-keyboard
   unity-gtk-module libcolumbus hud indicator-appmenu
-  unity unity-greeter
+  unity unity-greeter ubuntu-unity-settings
   unity-scope-home unity-lens-files unity-lens-applications
+  libtimezonemap libgeonames unity-control-center
 )
 
 install=0

@@ -1,0 +1,24 @@
+# Maintainer: Charlie <dev.charlie@akao.au>
+
+pkgname=ubuntu-unity-settings
+pkgver=22.10
+pkgrel=1
+_commit=5ed9323c7cb28e045478aa5afebd85cd5ae730cd
+pkgdesc='default gsettings for the unity desktop, yaru dark theme and greeter logo'
+arch=('any')
+url='https://launchpad.net/ubuntu/+source/ubuntu-unity-settings'
+license=('GPL-3.0-only')
+depends=('glib2')
+# the override names these, they come from the yaru split in the aur
+optdepends=('yaru-gtk-theme: Yaru-dark gtk theme (aur)'
+            'yaru-unity-theme: unity launcher and panel assets (aur)'
+            'yaru-icon-theme: Yaru-purple-dark icons (aur)'
+            'yaru-sound-theme: sounds (aur)')
+source=("git+https://git.launchpad.net/ubuntu/+source/ubuntu-unity-settings#commit=${_commit}")
+sha256sums=('SKIP')
+
+package() {
+  cd "${pkgname}"
+  install -Dm644 20_ubuntu-unity.gschema.override -t "${pkgdir}/usr/share/glib-2.0/schemas"
+  install -Dm644 logos/unity-greeter-logo.png -t "${pkgdir}/usr/share/ubuntu-unity/logos"
+}
