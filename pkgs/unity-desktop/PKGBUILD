@@ -19,7 +19,8 @@ optdepends=('lightdm: display manager the greeter is written for'
             'yaru-gtk-theme: the default gtk theme (aur)'
             'yaru-icon-theme: the default icon theme (aur)'
             'yaru-unity-theme: launcher and panel assets (aur)'
-            'ttf-ubuntu-font-family: the ubuntu font (aur)')
+            'ttf-ubuntu-font-family: the ubuntu font'
+            'unity-ambiance-settings: the classic ambiance look instead of yaru')
 
 package() {
   install -d "${pkgdir}/usr/share/doc/${pkgname}"

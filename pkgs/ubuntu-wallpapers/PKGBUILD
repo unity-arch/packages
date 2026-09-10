@@ -1,0 +1,45 @@
+# Maintainer: Charlie <dev.charlie@akao.au>
+
+pkgname=ubuntu-wallpapers
+pkgver=26.04.2
+pkgrel=1
+pkgdesc='the default ubuntu desktop wallpaper and its gnome-background-properties entry'
+arch=('any')
+url='https://launchpad.net/ubuntu-wallpapers'
+license=('CC-BY-SA-3.0')
+makedepends=('python')
+# not the launchpad tree, that one is an 890mb orig tarball of every community
+# wallpaper ubuntu has ever shipped. this binary is just the default ones
+source=("https://archive.ubuntu.com/ubuntu/pool/main/u/${pkgname}/${pkgname}_${pkgver}_all.deb")
+sha256sums=('d7f7acea3bb3dcd547a4be8aa5515b63c9e2a66e110d7a52ea98323f9c14b68e')
+noextract=("${pkgname}_${pkgver}_all.deb")
+
+package() {
+  bsdtar -xOf "${pkgname}_${pkgver}_all.deb" data.tar.zst | bsdtar -xf - -C "${pkgdir}" \
+    ./usr/share/backgrounds/warty-final-ubuntu.png \
+    ./usr/share/backgrounds/ubuntu-wallpaper-d.png \
+    ./usr/share/gnome-background-properties/ubuntu-wallpapers.xml \
+    ./usr/share/doc/${pkgname}/copyright
+  # the greyscale entry points at a png that only ships in the per release binary,
+  # drop any entry whose file isn't here so the picker has no dead thumbnails
+  python - "${pkgdir}" <<'EOF'
+import os, sys
+import xml.etree.ElementTree as et
+root_dir = sys.argv[1]
+path = os.path.join(root_dir, 'usr/share/gnome-background-properties/ubuntu-wallpapers.xml')
+tree = et.parse(path)
+root = tree.getroot()
+for wp in list(root):
+    files = [f.text for f in wp if f.tag.startswith('filename')]
+    if any(not os.path.exists(root_dir + f) for f in files):
+        root.remove(wp)
+body = et.tostring(root, encoding='unicode')
+with open(path, 'w') as f:
+    # keep the doctype, ElementTree drops it and the gnome wp list format declares one
+    f.write('<?xml version="1.0" encoding="UTF-8"?>\n'
+            '<!DOCTYPE wallpapers SYSTEM "gnome-wp-list.dtd">\n' + body + '\n')
+EOF
+  install -Dm644 "${pkgdir}/usr/share/doc/${pkgname}/copyright" \
+    "${pkgdir}/usr/share/licenses/${pkgname}/copyright"
+  rm -r "${pkgdir}/usr/share/doc"
+}

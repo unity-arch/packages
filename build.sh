@@ -16,6 +16,7 @@ order=(
   unity unity-greeter ubuntu-unity-settings
   unity-scope-home unity-lens-files unity-lens-applications
   libgeonames unity-control-center
+  ubuntu-themes humanity-icon-theme ttf-ubuntu-font-family ubuntu-wallpapers unity-ambiance-settings
   unity-desktop
 )
 

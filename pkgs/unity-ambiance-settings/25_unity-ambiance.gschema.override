@@ -1,0 +1,26 @@
+# Part of unity-ambiance-settings
+# sorts after 20_ubuntu-unity.gschema.override so ambiance beats yaru
+
+[org.gnome.desktop.interface:Unity]
+gtk-theme = "Ambiance"
+icon-theme = "ubuntu-mono-dark"
+font-name = "Ubuntu 11"
+document-font-name = "Sans 11"
+monospace-font-name = "Ubuntu Mono 13"
+# no cursor-theme, ubuntu's DMZ-White isn't in arch (xcursor-vanilla-dmz ships
+# Vanilla-DMZ under a different name), so the yaru cursor from 20_ stays
+
+[org.gnome.desktop.wm.preferences:Unity]
+theme = "Ambiance"
+titlebar-font = "Ubuntu Bold 11"
+
+[org.gnome.desktop.background:Unity]
+picture-uri = "file:///usr/share/backgrounds/warty-final-ubuntu.png"
+
+# not :Unity, the greeter runs before a session so XDG_CURRENT_DESKTOP isn't Unity,
+# and 20_ sets these unconditionally too
+[com.canonical.unity-greeter]
+theme-name = "Ambiance"
+icon-theme-name = "ubuntu-mono-dark"
+font-name = "Ubuntu 11"
+background = "/usr/share/backgrounds/warty-final-ubuntu.png"

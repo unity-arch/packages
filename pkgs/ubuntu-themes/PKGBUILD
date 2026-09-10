@@ -1,0 +1,48 @@
+# Maintainer: Charlie <dev.charlie@akao.au>
+
+pkgbase=ubuntu-themes
+# split the way ubuntu splits it, the tree keeps themes and panel icons apart and
+# ubuntu-mono is useful on its own (the greeter pulls it without the gtk themes)
+pkgname=('light-themes' 'ubuntu-mono')
+pkgver=24.04
+pkgrel=1
+_commit=7034d3c815d6004a864ed9b498cba187f44e070d
+arch=('any')
+url='https://launchpad.net/ubuntu-themes'
+license=('GPL-3.0-or-later' 'CC-BY-SA-3.0')
+makedepends=('git' 'python')
+source=("git+https://git.launchpad.net/ubuntu/+source/${pkgbase}#commit=${_commit}")
+sha256sums=('SKIP')
+
+build() {
+  cd "${pkgbase}"
+  # composites the padlock overlay onto the nm status icons, the -secure variants
+  # aren't in the tree
+  make
+}
+
+package_light-themes() {
+  pkgdesc='Ambiance and Radiance gtk themes from ubuntu'
+  depends=('humanity-icon-theme' 'ubuntu-mono')
+  # ubuntu dropped the gtk2 theme in 24.04-0ubuntu2, we keep it since unity still
+  # runs plenty of gtk2 apps and the gtkrc is murrine based
+  optdepends=('gtk-engine-murrine: gtk2 apps, the gtk-2.0 theme needs it (aur)')
+
+  cd "${pkgbase}"
+  install -d "${pkgdir}/usr/share/themes"
+  # cp -a not install, Radiance/gtk-3.0/assets is a symlink into Ambiance
+  cp -a Ambiance Radiance "${pkgdir}/usr/share/themes"
+  install -Dm644 COPYING "${pkgdir}/usr/share/licenses/${pkgname}/COPYING"
+}
+
+package_ubuntu-mono() {
+  pkgdesc='ubuntu-mono-dark and ubuntu-mono-light panel icon themes'
+  depends=('humanity-icon-theme' 'hicolor-icon-theme')
+  optdepends=('adwaita-icon-theme: fallback for icons the theme inherits')
+
+  cd "${pkgbase}"
+  install -d "${pkgdir}/usr/share/icons"
+  # LoginIcons is what unity-greeter reads for the session badges
+  cp -a ubuntu-mono-dark ubuntu-mono-light LoginIcons "${pkgdir}/usr/share/icons"
+  install -Dm644 COPYING "${pkgdir}/usr/share/licenses/${pkgname}/COPYING"
+}
