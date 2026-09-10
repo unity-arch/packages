@@ -4,7 +4,7 @@ pkgname=unity
 _ver=7.7.1
 _snap=26.04.20260306
 pkgver=${_ver}.${_snap}
-pkgrel=2
+pkgrel=3
 _commit=6f01ccb7395ca0fb3ee5f220263d9704a18ce194
 pkgdesc='the unity 7 desktop shell, a compiz plugin with its dash, launcher, panel and hud'
 arch=('x86_64')
@@ -24,16 +24,22 @@ optdepends=('unity-session: log into unity from a display manager'
 source=("git+${url}.git#commit=${_commit}"
         'unity.pam'
         'lock-on-suspend-key-optional.patch'
-        'filemanager-fallback.patch')
+        'filemanager-fallback.patch'
+        'launcher_bfb.svg'
+        'launcher_bfb.png')
 sha256sums=('SKIP'
             'f8f58c56a2543a005b13271624bbeec43bd6fe4403a7a4b5e9d10e643cd46f37'
             '0b9a72c56c849b0e1cfab7a6fa4c84ba1e7b50aea414740cb473b4bac7d32878'
-            '80a5e4237cd013f17b70bb141636fec0abadd038137b0c95b613eb1feda74ed5')
+            '80a5e4237cd013f17b70bb141636fec0abadd038137b0c95b613eb1feda74ed5'
+            '0cddcf35bfd97df79e690ead8ef5189c6e9cc9f0b899788bcac061d70fd9b13b'
+            '9cacffbbccd9241988f813cb357846dfe1c1c652e1a25346e4f822ace8ce57a8')
 
 prepare() {
   cd "${pkgname}"
   patch -Np1 -i ../lock-on-suspend-key-optional.patch
   patch -Np1 -i ../filemanager-fallback.patch
+  # the big launcher button carries the arch logo instead of ubuntu's, same tile artwork
+  cp ../launcher_bfb.svg ../launcher_bfb.png resources/
   # the data cmake runs glib-compile-schemas against the live prefix at install time,
   # pacman's hook does that on the real system instead
   sed -i '/install (CODE/d' data/CMakeLists.txt
