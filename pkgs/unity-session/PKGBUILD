@@ -2,14 +2,15 @@
 
 pkgname=unity-session
 pkgver=49.4
-pkgrel=2
+pkgrel=3
 _commit=32c2fd569b0d51e40bd3ec875e77f0261a744d03
 pkgdesc='session files and systemd targets for the unity desktop'
 arch=('any')
 url='https://gitlab.com/ubuntu-unity/unity/unity-session'
 license=('GPL-2.0-or-later')
-# upstream runs the session through cinnamon-session since gnome-session dropped x11
-depends=('cinnamon-session' 'cinnamon-settings-daemon' 'unity-settings-daemon' 'systemd' 'dbus')
+# upstream runs the session through cinnamon-session since gnome-session dropped x11,
+# cinnamon itself is only here for the org.cinnamon.sounds schema the logout path reads
+depends=('cinnamon-session' 'cinnamon-settings-daemon' 'cinnamon' 'unity-settings-daemon' 'systemd' 'dbus')
 optdepends=('nemo: desktop icons and the change background action'
             'lightdm: the shipped lightdm config selects unity as default session')
 source=("git+${url}.git#commit=${_commit}"
