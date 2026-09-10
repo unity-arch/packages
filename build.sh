@@ -29,7 +29,7 @@ for p in "${pkgs[@]}"; do
   echo "==> building $p"
   # launchpad's git server drops connections often enough to break ci, fetch first with retries
   for attempt in 1 2 3 4 5; do
-    (cd "$here/pkgs/$p" && makepkg --config "$here/makepkg.conf" -o --noconfirm) && break
+    (cd "$here/pkgs/$p" && makepkg --config "$here/makepkg.conf" -od --noconfirm) && break
     [[ $attempt -eq 5 ]] && exit 1
     sleep $((attempt * 20))
   done
