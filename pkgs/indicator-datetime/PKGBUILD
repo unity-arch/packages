@@ -1,0 +1,70 @@
+# Maintainer: Charlie <dev.charlie@akao.au>
+
+pkgname=indicator-datetime
+_ver=15.10
+_snap=21.04.20210304
+_commit=4fb6fd847c54941ea90a7e593eacb415fcf3ac4a
+# properties-cpp is header only, we take the headers out of this tree instead of
+# packaging a library that would ship three files and nothing else
+_propcommit=05742ff4d6764bc78bc7bf118582fec4e8674051
+pkgver=${_ver}.${_snap}
+pkgrel=1
+pkgdesc='indicator for the clock, calendar appointments and alarms'
+arch=('x86_64')
+url='https://launchpad.net/indicator-datetime'
+license=('GPL-3.0-only')
+depends=('glib2' 'evolution-data-server' 'libical' 'gstreamer' 'libnotify'
+         'libaccounts-glib' 'indicator-messages' 'libindicator-gtk3'
+         'gsettings-ubuntu-schemas' 'util-linux-libs' 'tzdata' 'gcc-libs')
+makedepends=('git' 'cmake' 'cmake-extras' 'intltool')
+source=("git+https://git.launchpad.net/ubuntu/+source/${pkgname}#commit=${_commit}"
+        "properties-cpp::git+https://git.launchpad.net/ubuntu/+source/properties-cpp#commit=${_propcommit}"
+        'cmake4-minimum-required.patch'
+        'vendor-properties-cpp-and-skip-tests.patch')
+sha256sums=('SKIP'
+            'SKIP'
+            '475ea11297fb9b123552e327d47438236786862a6fe6a473f20d61ec901af6e3'
+            '359cb867bdb0e90f9daa3c3c6a93b54c133d0597295a07b8faa9abd7d97518b2')
+
+prepare() {
+  cd "${pkgname}"
+  # no quilt series in this snapshot, apply one if a later import grows it
+  if [[ -s debian/patches/series ]]; then
+    local p
+    while read -r p; do
+      [[ -z ${p} || ${p} == \#* ]] && continue
+      patch -Np1 -i "debian/patches/${p}"
+    done < debian/patches/series
+  fi
+  patch -Np1 -i "${srcdir}/cmake4-minimum-required.patch"
+  patch -Np1 -i "${srcdir}/vendor-properties-cpp-and-skip-tests.patch"
+  # include/ is already on the include path, so core/property.h lands where the
+  # sources expect to find it
+  cp -a "${srcdir}/properties-cpp/include/core" include/
+}
+
+build() {
+  cd "${pkgname}"
+  # the tree only shortens libexecdir when /etc/debian_version exists, so on arch
+  # it would default to /usr/libexec, set it here instead. the systemd unit gets
+  # this path substituted in, so the two can't drift
+  # file-prefix-map because the g_debug calls bake __FILE__ in, otherwise the build
+  # dir path survives into the stripped binary
+  cmake -B build -S . \
+    -DCMAKE_BUILD_TYPE=None \
+    -DCMAKE_C_FLAGS="${CFLAGS} -ffile-prefix-map=${srcdir}=." \
+    -DCMAKE_CXX_FLAGS="${CXXFLAGS} -ffile-prefix-map=${srcdir}=." \
+    -DCMAKE_INSTALL_PREFIX=/usr \
+    -DCMAKE_INSTALL_LIBDIR=lib \
+    -DCMAKE_INSTALL_LIBEXECDIR=lib \
+    -DCMAKE_INSTALL_LOCALSTATEDIR=/var \
+    -DBUILD_TESTING=OFF
+  make -C build
+}
+
+package() {
+  cd "${pkgname}"
+  make -C build DESTDIR="${pkgdir}" install
+  # upstart is gone, the systemd user unit is what unity-panel-service wants
+  rm -rf "${pkgdir}/usr/share/upstart"
+}

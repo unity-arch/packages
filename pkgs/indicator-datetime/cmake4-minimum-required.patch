@@ -1,0 +1,20 @@
+cmake 4 dropped compatibility with anything below 3.5, so both the top level project
+and the bundled gdbus codegen module refuse to configure until the floor is raised.
+
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -1,5 +1,5 @@
+ project (indicator-datetime C CXX)
+-cmake_minimum_required (VERSION 2.8.9)
++cmake_minimum_required (VERSION 3.10)
+
+ list (APPEND CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake)
+
+--- a/cmake/GdbusCodegen.cmake
++++ b/cmake/GdbusCodegen.cmake
+@@ -1,4 +1,4 @@
+-cmake_minimum_required(VERSION 2.6)
++cmake_minimum_required(VERSION 3.10)
+ if(POLICY CMP0011)
+   cmake_policy(SET CMP0011 NEW)
+ endif(POLICY CMP0011)

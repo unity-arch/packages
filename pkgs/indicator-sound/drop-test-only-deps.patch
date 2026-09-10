@@ -1,0 +1,32 @@
+the gtest suite is already commented out at the bottom of the top level CMakeLists,
+but the libdbustest check above it is still REQUIRED and there's no such package here.
+
+gmenuharness is a test helper library that nothing installs, and it's the only thing
+pulling in libunity-api, which is ubuntu touch only (it lives on as lomiri-api).
+
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -46,12 +46,6 @@
+ )
+ include_directories(${SOUNDSERVICE_INCLUDE_DIRS})
+
+-pkg_check_modules(
+-  TEST REQUIRED
+-  dbustest-1>=15.04.0
+-)
+-include_directories(${TEST_INCLUDE_DIRS})
+-
+ find_package(Vala 0.20)
+
+ find_package(GObjectIntrospection 0.9.12)
+--- a/src/CMakeLists.txt
++++ b/src/CMakeLists.txt
+@@ -275,8 +275,6 @@
+   RUNTIME DESTINATION ${CMAKE_INSTALL_LIBEXECDIR}/indicator-sound/
+ )
+
+-add_subdirectory(gmenuharness)
+-
+ # coverage reporting
+ set(COVERAGE_TARGETS
+   ${COVERAGE_TARGETS}

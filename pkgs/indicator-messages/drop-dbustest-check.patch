@@ -1,0 +1,15 @@
+dbustest-1 is only used by the gtest suite, and that suite is hardcoded off further
+down in configure.ac (googletest wants c++14), so the unconditional check just makes
+configure fail on any distro without libdbustest.
+
+--- a/configure.ac
++++ b/configure.ac
+@@ -48,8 +48,6 @@
+
+ PKG_CHECK_MODULES(GIO, gio-unix-2.0 >= $GIO_UNIX_REQUIRED_VERSION)
+
+-PKG_CHECK_MODULES(DBUSTEST, dbustest-1)
+-
+ AC_SUBST(APPLET_CFLAGS)
+ AC_SUBST(APPLET_LIBS)
+

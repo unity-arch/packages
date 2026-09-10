@@ -1,0 +1,193 @@
+the fcitx bindings here are fcitx4 only (fcitx-gclient and the Fcitx-1.0 gir), and
+fcitx4 is gone, so the input method side of it can't build. the fcitx source type
+still parses out of gsettings and still shows its raw name, it just has no proxy to
+ask for a pretty name or a current engine, which is what an inactive fcitx looks
+like anyway.
+
+--- a/configure.ac
++++ b/configure.ac
+@@ -43,7 +43,6 @@
+ PKG_CHECK_MODULES([LIBXKLAVIER], [libxklavier])
+ PKG_CHECK_MODULES([LIBGNOMEKBD], [libgnomekbdui])
+ PKG_CHECK_MODULES([IBUS], [ibus-1.0])
+-PKG_CHECK_MODULES([FCITX_GCLIENT], [fcitx-gclient])
+ PKG_CHECK_MODULES([ACCOUNTSSERVICE], [accountsservice])
+ PKG_CHECK_MODULES([LIGHTDM], [liblightdm-gobject-1])
+ 
+--- a/lib/Makefile.am
++++ b/lib/Makefile.am
+@@ -25,7 +25,6 @@
+                                        --pkg Xkl-1.0              \
+                                        --pkg Gkbd-3.0             \
+                                        --pkg ibus-1.0             \
+-                                       --pkg Fcitx-1.0            \
+                                        --pkg AccountsService-1.0  \
+                                        --pkg liblightdm-gobject-1
+ indicator_keyboard_service_CFLAGS = $(AM_CFLAGS)              \
+@@ -36,7 +35,6 @@
+                                     $(LIBXKLAVIER_CFLAGS)     \
+                                     $(LIBGNOMEKBD_CFLAGS)     \
+                                     $(IBUS_CFLAGS)            \
+-                                    $(FCITX_GCLIENT_CFLAGS)   \
+                                     $(ACCOUNTSSERVICE_CFLAGS) \
+                                     $(LIGHTDM_CFLAGS)         \
+                                     $(COVERAGE_CFLAGS)        
+@@ -48,7 +46,6 @@
+                                      $(LIBXKLAVIER_LIBS)     \
+                                      $(LIBGNOMEKBD_LIBS)     \
+                                      $(IBUS_LIBS)            \
+-                                     $(FCITX_GCLIENT_LIBS)   \
+                                      $(ACCOUNTSSERVICE_LIBS) \
+                                      $(LIGHTDM_LIBS)         \
+                                      $(COVERAGE_LDFLAGS)     
+--- a/lib/source.vala
++++ b/lib/source.vala
+@@ -20,7 +20,6 @@
+ 
+ 	private static Gnome.XkbInfo? xkb_info;
+ 	private static IBus.Bus? ibus_bus;
+-	private static Fcitx.InputMethod? fcitx_proxy;
+ 
+ 	private string? xkb;
+ 	private string? ibus;
+@@ -133,14 +132,6 @@
+ 		return (!) ibus_bus;
+ 	}
+ 
+-	private static Fcitx.InputMethod get_fcitx_proxy () throws Error {
+-		if (fcitx_proxy == null) {
+-			fcitx_proxy = new Fcitx.InputMethod (BusType.SESSION, DBusProxyFlags.NONE, 0);
+-		}
+-
+-		return (!) fcitx_proxy;
+-	}
+-
+ 	private IBus.EngineDesc? get_engine () {
+ 		IBus.EngineDesc? engine = null;
+ 
+@@ -217,22 +208,7 @@
+ 				name = ibus;
+ 			}
+ 		} else if (fcitx != null) {
+-			try {
+-				var input_methods = get_fcitx_proxy ().get_imlist_nofree ();
+-
+-				for (var i = 0; i < input_methods.length; i++) {
+-					if (input_methods.get (i).unique_name == (!) fcitx) {
+-						name = input_methods.get (i).name;
+-						break;
+-					}
+-				}
+-			} catch (Error error) {
+-				warning ("error: %s", error.message);
+-			}
+-
+-			if (name == null || ((!) name).get_char () == '\0') {
+-				name = fcitx;
+-			}
++			name = fcitx;
+ 		}
+ 
+ 		return name;
+@@ -258,22 +234,7 @@
+ 				short_name = ibus;
+ 			}
+ 		} else if (fcitx != null) {
+-			try {
+-				var input_methods = get_fcitx_proxy ().get_imlist_nofree ();
+-
+-				for (var i = 0; i < input_methods.length; i++) {
+-					if (input_methods.get (i).unique_name == (!) fcitx) {
+-						short_name = input_methods.get (i).langcode;
+-						break;
+-					}
+-				}
+-			} catch (Error error) {
+-				warning ("error: %s", error.message);
+-			}
+-
+-			if (short_name == null || ((!) short_name).get_char () == '\0') {
+-				short_name = fcitx;
+-			}
++			short_name = fcitx;
+ 		}
+ 
+ 		return abbreviate (short_name);
+--- a/lib/main.vala
++++ b/lib/main.vala
+@@ -42,9 +42,6 @@
+ 	private ulong ibus_connected_id;
+ 	private uint panel_timeout;
+ 
+-	private Fcitx.InputMethod? fcitx;
+-	private bool fcitx_initialized;
+-
+ 	private Source[]? sources;
+ 
+ 	private SimpleActionGroup? action_group;
+@@ -257,25 +254,6 @@
+ 	}
+ 
+ 	[DBus (visible = false)]
+-	private Fcitx.InputMethod? get_fcitx () {
+-		if (!fcitx_initialized) {
+-			fcitx_initialized = true;
+-
+-			if (is_fcitx_active ()) {
+-				try {
+-					var proxy = new Fcitx.InputMethod (BusType.SESSION, DBusProxyFlags.NONE, 0);
+-					proxy.notify["current-im"].connect ((pspec) => { handle_changed_current ("current"); });
+-					fcitx = proxy;
+-				} catch (Error error) {
+-					warning ("error: %s", error.message);
+-				}
+-			}
+-		}
+-
+-		return fcitx;
+-	}
+-
+-	[DBus (visible = false)]
+ 	public void up () {
+ 		if (loop == null) {
+ 			var main_loop = new MainLoop ();
+@@ -743,39 +721,6 @@
+ 
+ 	[DBus (visible = false)]
+ 	private uint get_current () {
+-		if (is_fcitx_active () && get_fcitx () != null) {
+-			string? engine = ((!) get_fcitx ()).current_im;
+-
+-			if (engine != null) {
+-				var is_xkb = ((!) engine).has_prefix ("fcitx-keyboard-");
+-				var type = is_xkb ? "xkb" : "fcitx";
+-				var name = (!) engine;
+-
+-				if (is_xkb) {
+-					name = name.substring ("fcitx-keyboard-".length);
+-					var index = name.index_of ("-");
+-					if (index >= 0) {
+-						name.data[index] = '+';
+-					}
+-				}
+-
+-				var i = 0;
+-
+-				foreach (var pair in source_settings.get_value ("sources")) {
+-					unowned string source_type;
+-					unowned string source_name;
+-
+-					((!) pair).get ("(&s&s)", out source_type, out source_name);
+-
+-					if (source_name == name && source_type == type) {
+-						return i;
+-					}
+-
+-					i++;
+-				}
+-			}
+-		}
+-
+ 		return source_settings.get_uint ("current");
+ 	}
+ 

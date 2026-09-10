@@ -1,0 +1,27 @@
+properties-cpp is header only and isn't packaged for arch, so the three headers get
+copied into the tree's own include dir in prepare() and the pkg-config check goes away.
+
+the test suite wants gtest, libdbustest and python dbusmock, none of which we build
+against, so the subdir only gets pulled in when BUILD_TESTING is asked for.
+
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -48,7 +48,6 @@
+                    libedataserver-1.2>=3.5
+                    gstreamer-1.0>=1.2
+                    libnotify>=0.7.6
+-                   properties-cpp>=0.0.1
+                    libaccounts-glib>=1.18
+                    messaging-menu>=12.10
+                    uuid>=2.25)
+@@ -82,7 +81,9 @@
+ add_subdirectory(src)
+ add_subdirectory(data)
+ add_subdirectory(po)
+-add_subdirectory(tests)
++if (BUILD_TESTING)
++  add_subdirectory(tests)
++endif ()
+
+ # testing & coverage
+ find_package(CoverageReport)

@@ -1,0 +1,60 @@
+# Maintainer: Charlie <dev.charlie@akao.au>
+
+pkgname=indicator-sound
+_ver=12.10.2
+_snap=18.10.20180612
+_commit=4740a347dafb15f66d7f50743c705135e8a57f26
+pkgver=${_ver}.${_snap}
+pkgrel=1
+pkgdesc='indicator for volume and the mpris media players'
+arch=('x86_64')
+url='https://launchpad.net/indicator-sound'
+license=('GPL-3.0-only')
+depends=('glib2' 'libpulse' 'libgee' 'libnotify' 'accountsservice' 'libxml2'
+         'libindicator-gtk3' 'gsettings-ubuntu-schemas' 'polkit' 'gcc-libs')
+makedepends=('git' 'cmake' 'cmake-extras' 'intltool' 'vala' 'gobject-introspection')
+source=("git+https://git.launchpad.net/ubuntu/+source/${pkgname}#commit=${_commit}"
+        'drop-test-only-deps.patch')
+sha256sums=('SKIP'
+            '1c976bf8cc56dc0585213daa6ef0892db87a146b5cd75528c9a81aadb3754ad8')
+
+prepare() {
+  cd "${pkgname}"
+  # no quilt series in this snapshot, apply one if a later import grows it
+  if [[ -s debian/patches/series ]]; then
+    local p
+    while read -r p; do
+      [[ -z ${p} || ${p} == \#* ]] && continue
+      patch -Np1 -i "debian/patches/${p}"
+    done < debian/patches/series
+  fi
+  patch -Np1 -i "${srcdir}/drop-test-only-deps.patch"
+}
+
+build() {
+  cd "${pkgname}"
+  # the tree only shortens libexecdir when /etc/debian_version exists, so on arch
+  # it would default to /usr/libexec. the systemd unit takes its ExecStart from the
+  # same variable, so setting it here keeps the two in step
+  # file-prefix-map because the vala generated c bakes __FILE__ into every g_warning,
+  # otherwise the build dir path survives into the stripped binary
+  cmake -B build -S . \
+    -DCMAKE_BUILD_TYPE=None \
+    -DCMAKE_C_FLAGS="${CFLAGS} -ffile-prefix-map=${srcdir}=." \
+    -DCMAKE_CXX_FLAGS="${CXXFLAGS} -ffile-prefix-map=${srcdir}=." \
+    -DCMAKE_INSTALL_PREFIX=/usr \
+    -DCMAKE_INSTALL_LIBDIR=lib \
+    -DCMAKE_INSTALL_LIBEXECDIR=lib \
+    -DCMAKE_INSTALL_LOCALSTATEDIR=/var
+  make -C build
+}
+
+package() {
+  cd "${pkgname}"
+  make -C build DESTDIR="${pkgdir}" install
+  # upstart is gone, the systemd user unit is what unity-panel-service wants
+  rm -rf "${pkgdir}/usr/share/upstart"
+  # pkla is the old polkit local authority format, arch's polkit only reads the js
+  # rules, so this file would sit in /var doing nothing
+  rm -rf "${pkgdir}/var"
+}

@@ -1,0 +1,61 @@
+# Maintainer: Charlie <dev.charlie@akao.au>
+
+pkgname=indicator-messages
+_ver=13.10.1
+_snap=18.10.20180918
+_commit=78d9113d9ab7362111876c31b636a852aaf94b09
+pkgver=${_ver}.${_snap}
+pkgrel=1
+pkgdesc='indicator collecting messages that need a response, plus libmessaging-menu'
+arch=('x86_64')
+url='https://launchpad.net/indicator-messages'
+license=('GPL-3.0-only')
+depends=('glib2' 'accountsservice' 'libindicator-gtk3')
+makedepends=('git' 'gnome-common' 'intltool' 'vala' 'gobject-introspection')
+provides=('libmessaging-menu' 'messaging-menu')
+source=("git+https://git.launchpad.net/ubuntu/+source/${pkgname}#commit=${_commit}"
+        'drop-dbustest-check.patch')
+sha256sums=('SKIP'
+            '372f55326c4180542a7401c284c83cf7254ce552a9a3fe5d05489ddebb3ab37e')
+
+prepare() {
+  cd "${pkgname}"
+  # no quilt series in this snapshot, apply one if a later import grows it
+  if [[ -s debian/patches/series ]]; then
+    local p
+    while read -r p; do
+      [[ -z ${p} || ${p} == \#* ]] && continue
+      patch -Np1 -i "debian/patches/${p}"
+    done < debian/patches/series
+  fi
+  patch -Np1 -i "${srcdir}/drop-dbustest-check.patch"
+  NOCONFIGURE=1 ./autogen.sh
+}
+
+build() {
+  cd "${pkgname}"
+  # libexecdir=/usr/lib puts the service at /usr/lib/indicator-messages, both the
+  # systemd unit and the autostart file get that path substituted in at build time
+  # (debian's own path is /usr/lib/x86_64-linux-gnu/indicator-messages)
+  # gtk-doc off, debian only builds it for a -doc binary package we don't ship
+  ./configure \
+    --prefix=/usr \
+    --sysconfdir=/etc \
+    --libexecdir=/usr/lib \
+    --disable-static \
+    --disable-tests \
+    --enable-introspection \
+    --enable-vala
+  make
+}
+
+package() {
+  cd "${pkgname}"
+  make DESTDIR="${pkgdir}" install
+
+  # upstart is gone, and the systemd user unit is what unity-panel-service wants
+  rm -rf "${pkgdir}/usr/share/upstart"
+  # the xdg autostart entry starts the same binary a second time under a session
+  # that already has the user unit, so it's dropped rather than shipped alongside
+  rm -rf "${pkgdir}/etc/xdg"
+}
