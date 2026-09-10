@@ -1,0 +1,81 @@
+libdee-qt5 isn't in arch and the only thing that pulls it in is HudClient.cpp,
+the QAbstractItemModel wrapper unity8 used on touch. nothing in the gtk stack
+touches it (hud-cli and hud-gtk both go through the c api in query.h), so the
+wrapper and its dee-qt dependency come out together. qtdbustest and qtdbusmock
+are the test harness, they move behind ENABLE_TESTS instead of being hard
+requirements of the service build.
+
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -85,23 +85,22 @@
+ find_package(Qt5Sql REQUIRED)
+ include_directories(${Qt5Sql_INCLUDE_DIRS})
+ 
+-pkg_check_modules(DEE_QT REQUIRED libdee-qt5)
+-include_directories(${DEE_QT_INCLUDE_DIRS})
+-
+ pkg_check_modules(GSETTINGS_QT REQUIRED gsettings-qt REQUIRED)
+ include_directories(${GSETTINGS_QT_INCLUDE_DIRS})
+ 
+ pkg_check_modules(DBUSMENU REQUIRED dbusmenu-qt5)
+ include_directories(${DBUSMENU_INCLUDE_DIRS})
+ 
+-find_package(Qt5Test REQUIRED)
+-include_directories(${Qt5Test_INCLUDE_DIRS})
+-
+-pkg_check_modules(QTDBUSTEST REQUIRED libqtdbustest-1 REQUIRED)
+-include_directories(${QTDBUSTEST_INCLUDE_DIRS})
+-
+-pkg_check_modules(QTDBUSMOCK REQUIRED libqtdbusmock-1 REQUIRED)
+-include_directories(${QTDBUSMOCK_INCLUDE_DIRS})
++if(${ENABLE_TESTS})
++  find_package(Qt5Test REQUIRED)
++  include_directories(${Qt5Test_INCLUDE_DIRS})
++
++  pkg_check_modules(QTDBUSTEST REQUIRED libqtdbustest-1 REQUIRED)
++  include_directories(${QTDBUSTEST_INCLUDE_DIRS})
++
++  pkg_check_modules(QTDBUSMOCK REQUIRED libqtdbusmock-1 REQUIRED)
++  include_directories(${QTDBUSMOCK_INCLUDE_DIRS})
++endif()
+ 
+ find_package(Vala 0.12)
+ 
+--- a/libhud-client/CMakeLists.txt
++++ b/libhud-client/CMakeLists.txt
+@@ -80,18 +80,11 @@
+ ${CMAKE_SOURCE_DIR}/common/query-columns.h
+ )
+ 
+-set(HUD_CLIENT_QT_HEADERS
+-HudClient.h
+-HudToolbarModel.h
+-)
+-
+ set(HUD_CLIENT_SOURCES
+ action-muxer.c
+ connection.c
+ param.c
+ query.c
+-HudClient.cpp
+-HudToolbarModel.cpp
+ )
+ 
+ 
+@@ -121,7 +114,6 @@
+ hud-client-generated
+ ${GLIB2_LIBRARIES}
+ ${GOBJECT2_LIBRARIES}
+-${DEE_QT_LIBRARIES}
+ -Wl,--no-undefined
+ )
+ 
+@@ -209,7 +201,7 @@
+ )
+ 
+ install(
+-  FILES ${HUD_CLIENT_HEADERS} ${HUD_CLIENT_QT_HEADERS}
++  FILES ${HUD_CLIENT_HEADERS}
+   DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/libhud-client-${API_VERSION}/libhud-client"
+ )
+ 

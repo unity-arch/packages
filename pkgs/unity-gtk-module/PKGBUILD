@@ -1,0 +1,80 @@
+# Maintainer: Charlie <dev.charlie@akao.au>
+
+pkgname=unity-gtk-module
+_ver=0.0.0
+_snap=18.04.20171202
+_commit=c65c0c33fbcd9fccdfd774e1af17082a592b71da
+pkgver=${_ver}.${_snap}
+pkgrel=1
+pkgdesc='gtk module exporting application menus over dbusmenu for the unity panel'
+arch=('x86_64')
+url='https://launchpad.net/unity-gtk-module'
+license=('LGPL-3.0-only')
+depends=('glib2' 'gtk3' 'gtk2' 'libx11' 'glibc')
+makedepends=('git' 'gnome-common' 'gtk-doc' 'python')
+source=("git+https://git.launchpad.net/ubuntu/+source/${pkgname}#commit=${_commit}"
+        'unity-gtk-module.sh')
+sha256sums=('SKIP'
+            '2b95dc99bed178eeeb5f0bc37bd3ba4e13d5faaa0f599b97679790b6de18527d')
+
+prepare() {
+  cd "${pkgname}"
+  # no quilt series in this snapshot, keep the loop so a later one gets picked up
+  if [[ -s debian/patches/series ]]; then
+    local p
+    while read -r p; do
+      [[ -z ${p} || ${p} == \#* ]] && continue
+      patch -Np1 -i "debian/patches/${p}"
+    done < debian/patches/series
+  fi
+  NOCONFIGURE=1 ./autogen.sh
+}
+
+build() {
+  cd "${pkgname}"
+  # the tree assigns GdkPixbuf and GDBusMenuModel straight into GIcon and
+  # GMenuModel variables, safe gobject upcasts that gcc 16 now rejects outright
+  CFLAGS+=' -Wno-error=incompatible-pointer-types'
+
+  # one configure per toolkit like debian/rules does, --with-gtk picks which
+  # parser and which gtk-N.0/modules dir the .so lands in
+  local v
+  for v in 2 3; do
+    mkdir -p "build/gtk${v}"
+    pushd "build/gtk${v}" >/dev/null
+    ../../configure \
+      --prefix=/usr \
+      --sysconfdir=/etc \
+      --localstatedir=/var \
+      --disable-static \
+      --disable-gtk-doc \
+      --with-gtk=${v}
+    make
+    popd >/dev/null
+  done
+}
+
+package() {
+  cd "${pkgname}"
+  # gtk2 first then gtk3, the shared headers and data land twice and the last
+  # one wins, that's the order debian installs in too
+  make -C build/gtk2 DESTDIR="${pkgdir}" install
+  make -C build/gtk3 DESTDIR="${pkgdir}" install
+
+  # upstart is dead and the autopilot helper wants python3-autopilot which isn't packaged
+  rm -rf "${pkgdir}/usr/share/upstart" "${pkgdir}/usr/lib/python"*
+
+  # debian carries this symlink in unity-gtk-module-common.links, the unit's own
+  # [Install] section only takes effect on an explicit systemctl enable
+  install -dm755 "${pkgdir}/usr/lib/systemd/user/unity-session.target.wants"
+  ln -s ../unity-gtk-module.service \
+    "${pkgdir}/usr/lib/systemd/user/unity-session.target.wants/unity-gtk-module.service"
+
+  # the unit only reaches dbus activated and systemd started apps, so mirror it in
+  # profile.d for anything launched from a shell, the way debian's old
+  # /etc/X11/Xsession.d/80unity-gtk-module used to. environment.d is the wrong
+  # home for it, those files are unconditional and would load the module under
+  # every desktop the user logs into, not just unity
+  install -Dm644 "${srcdir}/unity-gtk-module.sh" \
+    "${pkgdir}/etc/profile.d/unity-gtk-module.sh"
+}

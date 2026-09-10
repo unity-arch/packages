@@ -1,0 +1,53 @@
+# Maintainer: Charlie <dev.charlie@akao.au>
+
+pkgname=indicator-appmenu
+_ver=15.02.0
+_snap=20.10.20260311
+_commit=c288692501d444261d023e74304c8f227044c291
+pkgver=${_ver}.${_snap}
+pkgrel=1
+pkgdesc='global menu indicator, renders the menu of the focused window in the panel'
+arch=('x86_64')
+url='https://launchpad.net/indicator-appmenu'
+license=('GPL-3.0-only')
+depends=('glib2' 'gtk3' 'libindicator-gtk3' 'libdbusmenu-glib' 'libdbusmenu-gtk3'
+         'bamf' 'libx11' 'glibc')
+makedepends=('git' 'gnome-common' 'gtk-doc' 'intltool' 'vala' 'libxslt')
+optdepends=('hud: search the same menus by typing'
+            'unity-gtk-module: exports gtk menus so there is something to render')
+source=("git+https://git.launchpad.net/ubuntu/+source/${pkgname}#commit=${_commit}")
+sha256sums=('SKIP')
+
+prepare() {
+  cd "${pkgname}"
+  # no quilt series in this snapshot, keep the loop so a later one gets picked up
+  if [[ -s debian/patches/series ]]; then
+    local p
+    while read -r p; do
+      [[ -z ${p} || ${p} == \#* ]] && continue
+      patch -Np1 -i "debian/patches/${p}"
+    done < debian/patches/series
+  fi
+  NOCONFIGURE=1 ./autogen.sh
+}
+
+build() {
+  cd "${pkgname}"
+  # the tests want dbusmenu-jsonloader-0.4, a helper arch's libdbusmenu-glib
+  # doesn't ship, and with them off scripts/ tests/ and tools/ drop out of
+  # SUBDIRS, which is the same set debian throws away in indicator-appmenu-tools
+  ./configure \
+    --prefix=/usr \
+    --sysconfdir=/etc \
+    --localstatedir=/var \
+    --libexecdir=/usr/lib/indicator-appmenu \
+    --disable-static \
+    --disable-tests
+  make
+}
+
+package() {
+  cd "${pkgname}"
+  make DESTDIR="${pkgdir}" install
+  # apport hooks and the crashdb conffile are debian only, they never get built here
+}

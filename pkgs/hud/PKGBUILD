@@ -1,0 +1,75 @@
+# Maintainer: Charlie <dev.charlie@akao.au>
+
+pkgname=hud
+_ver=14.10
+_snap=17.10.20170619
+_commit=9247888540f5240988deffbadacea1bee72545af
+pkgver=${_ver}.${_snap}
+pkgrel=1
+pkgdesc='heads up display service for unity, searches application menus by typing'
+arch=('x86_64')
+url='https://launchpad.net/hud'
+license=('GPL-3.0-only' 'LGPL-3.0-only')
+# bamf isn't linked, window-stack-bridge talks to bamfdaemon over dbus and the
+# service leans on it to know which window is focused. qt5-base carries the
+# QSQLITE driver the usage tracker opens
+depends=('glib2' 'gtk3' 'dee' 'libcolumbus' 'libdbusmenu-qt5' 'gsettings-qt5'
+         'qt5-base' 'bamf' 'pango' 'gcc-libs' 'glibc')
+makedepends=('git' 'cmake' 'cmake-extras' 'vala' 'gobject-introspection'
+             'python-setuptools' 'intltool' 'systemd')
+source=("git+https://git.launchpad.net/ubuntu/+source/${pkgname}#commit=${_commit}"
+        'drop-missing-qt-deps.patch'
+        'hudkeywords-python3-and-destdir.patch')
+sha256sums=('SKIP'
+            'b06930215ebbe8271448d377ed14ed9add1a8784cb8ab1853d7da675d69aded0'
+            '625e7b380099198a5b0e3867c44a4fdd0875a06edfd333df1ef5d590c4b21de0')
+
+prepare() {
+  cd "${pkgname}"
+  # no quilt series in this snapshot, keep the loop so a later one gets picked up
+  if [[ -s debian/patches/series ]]; then
+    local p
+    while read -r p; do
+      [[ -z ${p} || ${p} == \#* ]] && continue
+      patch -Np1 -i "debian/patches/${p}"
+    done < debian/patches/series
+  fi
+  patch -Np1 -i "${srcdir}/drop-missing-qt-deps.patch"
+  patch -Np1 -i "${srcdir}/hudkeywords-python3-and-destdir.patch"
+}
+
+build() {
+  cd "${pkgname}"
+  # service/ is built with -pedantic -Wall -Wextra and gcc 16 is a lot noisier
+  # about qt5's headers than gcc 7 was, none of it is fatal so keep it warnings only
+  CXXFLAGS+=' -Wno-error'
+
+  # arch's gsettings-qt5 lives in its own /usr/include/qt5 tree and the .pc points
+  # a level too deep, the service includes <QGSettings/qgsettings.h>
+  CXXFLAGS+=" -I$(dirname "$(pkg-config --variable=includedir gsettings-qt)")"
+
+  # libexecdir=lib so hud-service lands at /usr/lib/hud, that path is baked into
+  # both the dbus service file and hud.service through @pkglibexecdir@
+  # (the tree only rewrites it to libdir when /etc/debian_version exists)
+  cmake -B build -S . \
+    -DCMAKE_POLICY_VERSION_MINIMUM=3.5 \
+    -DCMAKE_INSTALL_PREFIX=/usr \
+    -DCMAKE_INSTALL_LIBDIR=lib \
+    -DCMAKE_INSTALL_LIBEXECDIR=lib \
+    -DCMAKE_BUILD_TYPE=None \
+    -DENABLE_TESTS=OFF \
+    -DENABLE_DOCUMENTATION=OFF \
+    -DENABLE_BAMF=ON
+  cmake --build build
+}
+
+package() {
+  cd "${pkgname}"
+  DESTDIR="${pkgdir}" cmake --install build
+
+  # window-stack-bridge is what feeds bamf's window list to the service, debian
+  # wires it up through hud.links and the unit has no [Install] of its own
+  install -dm755 "${pkgdir}/usr/lib/systemd/user/unity-session.target.wants"
+  ln -s ../window-stack-bridge.service \
+    "${pkgdir}/usr/lib/systemd/user/unity-session.target.wants/window-stack-bridge.service"
+}

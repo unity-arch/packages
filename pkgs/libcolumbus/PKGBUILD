@@ -1,0 +1,42 @@
+# Maintainer: Charlie <dev.charlie@akao.au>
+
+pkgname=libcolumbus
+_ver=1.1.0
+_snap=15.10.20150806
+_commit=72682ef70d08b935665ce81bdbdc6650280b4c0e
+pkgver=${_ver}.${_snap}
+pkgrel=1
+pkgdesc='error tolerant matching engine, the fuzzy search behind the unity hud'
+arch=('x86_64')
+url='https://launchpad.net/libcolumbus'
+license=('LGPL-3.0-only')
+depends=('gcc-libs' 'glibc' 'icu')
+makedepends=('git' 'cmake')
+source=("git+https://git.launchpad.net/ubuntu/+source/${pkgname}#commit=${_commit}"
+        'build-only-the-library.patch')
+sha256sums=('SKIP'
+            'a6d861a3d75606cd83bde92d31ad546416ef2951b70bb1ceb2b8923a6c5808e8')
+
+prepare() {
+  cd "${pkgname}"
+  # the one series entry (0001-fix-build-with-python3.10.patch) is already in the
+  # tree, patch(1) sees it reversed, so there's nothing to apply from debian here
+  patch -Np1 -i "${srcdir}/build-only-the-library.patch"
+}
+
+build() {
+  cd "${pkgname}"
+  # cmake 4 dropped compat with the 2.8.9 minimum this tree declares
+  cmake -B build -S . \
+    -DCMAKE_POLICY_VERSION_MINIMUM=3.5 \
+    -DCMAKE_INSTALL_PREFIX=/usr \
+    -DCMAKE_INSTALL_LIBDIR=lib \
+    -DCMAKE_BUILD_TYPE=None \
+    -Denable_tests=OFF
+  cmake --build build
+}
+
+package() {
+  cd "${pkgname}"
+  DESTDIR="${pkgdir}" cmake --install build
+}

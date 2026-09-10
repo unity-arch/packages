@@ -1,0 +1,66 @@
+hud links libcolumbus's c++ api directly, nothing on the system imports the
+boost.python module and the gtk demo tools in tools/ have no install rule at all,
+so they'd only drag gtk3 into the build for binaries that never ship.
+the python2 branch goes with the bindings (boost dropped libboost_python2 long
+ago and we're not reviving it).
+
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -10,11 +10,7 @@
+ option(full_warnings "All possible compiler warnings." OFF)
+ option(debug_messages "Print debug messages.")
+ option(full_unicode "Enable full Unicode support (takes lots of memory).")
+-option(use_python2 "Build Python bindings against Python 2 (UNSUPPORTED)." OFF)
+-
+-if(use_python2)
+-  message(WARNING "Python 2 bindings are NOT SUPPORTED! If they break, you get to keep both pieces.")
+-endif()
++option(enable_python "Build the Boost.Python bindings." OFF)
+ 
+ include(FindPkgConfig)
+ include(cmake/pch.cmake)
+@@ -116,7 +112,6 @@
+ 
+ add_subdirectory(include)
+ add_subdirectory(src)
+-add_subdirectory(tools)
+ add_subdirectory(share)
+ 
+ if(build_python)
+--- a/cmake/python.cmake
++++ b/cmake/python.cmake
+@@ -1,5 +1,10 @@
+ set(build_python FALSE)
+ 
++if(NOT enable_python)
++  message(STATUS "Python bindings disabled.")
++  return()
++endif()
++
+ # CMake's Boost.Python detector is completely and utterly
+ # broken. We have to do this manually.
+ #
+@@ -7,11 +12,7 @@
+ # http://public.kitware.com/Bug/view.php?id=12955
+ find_file(BP_HEADER boost/python.hpp)
+ 
+-if(use_python2)
+-  pkg_search_module(PYTHONLIBS python)
+-else()
+-  pkg_search_module(PYTHONLIBS python3)
+-endif()
++pkg_search_module(PYTHONLIBS python3)
+ 
+ if(NOT BP_HEADER)
+   message(STATUS "Boost.Python not found, not building Python bindings.")
+@@ -22,9 +23,7 @@
+     string(SUBSTRING ${PYTHONLIBS_VERSION} 0 1 PYTHON_MAJOR)
+     string(SUBSTRING ${PYTHONLIBS_VERSION} 2 2 PYTHON_MINOR)
+     message(STATUS "Found Python version ${PYTHON_MAJOR}.${PYTHON_MINOR}.")
+-    if(NOT use_python2)
+-      execute_process(COMMAND ${CMAKE_SOURCE_DIR}/cmake/pysoabi.py OUTPUT_VARIABLE pysoabi OUTPUT_STRIP_TRAILING_WHITESPACE)
+-    endif()
++    execute_process(COMMAND ${CMAKE_SOURCE_DIR}/cmake/pysoabi.py OUTPUT_VARIABLE pysoabi OUTPUT_STRIP_TRAILING_WHITESPACE)
+     find_library(BOOST_PYTHON_HACK boost_python${PYTHON_MAJOR}${PYTHON_MINOR})
+ 
+     if(NOT BOOST_PYTHON_HACK)
