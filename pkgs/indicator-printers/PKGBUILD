@@ -1,0 +1,56 @@
+# Maintainer: Charlie <dev.charlie@akao.au>
+
+pkgname=indicator-printers
+_ver=0.1.7
+_snap=17.10.20171101
+_commit=c5e42e6ad97f95861d59073ba8d7d63edf857bd2
+pkgver=${_ver}.${_snap}
+pkgrel=1
+pkgdesc='indicator showing print jobs and printer state notifications'
+arch=('x86_64')
+url='https://launchpad.net/indicator-printers'
+license=('GPL-3.0-only')
+depends=('gtk3' 'glib2' 'libcups' 'libindicator-gtk3' 'libdbusmenu-gtk3' 'libdbusmenu-glib')
+optdepends=('system-config-printer: printer settings from the menu')
+makedepends=('git' 'gnome-common' 'intltool' 'libtool')
+source=("git+https://git.launchpad.net/ubuntu/+source/${pkgname}#commit=${_commit}")
+sha256sums=('SKIP')
+
+prepare() {
+  cd "${pkgname}"
+  # no quilt series in this tree, apply one if a later snapshot grows it
+  if [[ -s debian/patches/series ]]; then
+    local p
+    while read -r p; do
+      [[ -z ${p} || ${p} == \#* ]] && continue
+      patch -Np1 -i "debian/patches/${p}"
+    done < debian/patches/series
+  fi
+  NOCONFIGURE=1 ./autogen.sh
+}
+
+build() {
+  cd "${pkgname}"
+  # same warning relaxations debian/rules uses, the gtk and cups calls this reaches for
+  # have been deprecated for a decade
+  CFLAGS+=' -Wno-error=deprecated-declarations'
+  # libexecdir so pkglibexecdir is /usr/lib/indicator-printers, data/Makefile.am seds
+  # that same value into the systemd unit
+  ./configure \
+    --prefix=/usr \
+    --sysconfdir=/etc \
+    --localstatedir=/var \
+    --libexecdir=/usr/lib \
+    --disable-static
+  make
+}
+
+package() {
+  cd "${pkgname}"
+  make DESTDIR="${pkgdir}" install
+  # upstart is gone on arch, the systemd user unit is what unity-panel-service wants
+  rm -rf "${pkgdir}/usr/share/upstart"
+  # the panel icon only exists in debian/local, unity's ubuntu-mono theme has no printer-symbolic
+  install -dm755 "${pkgdir}/usr/share/icons"
+  cp -a debian/local/ubuntu-mono-dark debian/local/ubuntu-mono-light "${pkgdir}/usr/share/icons/"
+}

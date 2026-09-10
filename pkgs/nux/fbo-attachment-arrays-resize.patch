@@ -1,0 +1,17 @@
+diff --git a/NuxGraphics/IOpenGLFrameBufferObject.cpp b/NuxGraphics/IOpenGLFrameBufferObject.cpp
+index 36ecb6b..d346550 100644
+--- a/NuxGraphics/IOpenGLFrameBufferObject.cpp
++++ b/NuxGraphics/IOpenGLFrameBufferObject.cpp
+@@ -72,6 +72,12 @@ namespace nux
+     texture_attachment_array_.clear();
+     surface_attachment_array_.clear();
+ 
++    // the attachment setters index these by slot right after this, an empty vector
++    // there is out of bounds (the constructor sized them, clear() threw that away)
++    auto const& gpu_info = GetGraphicsDisplay()->GetGpuDevice()->GetGpuInfo();
++    texture_attachment_array_.resize(gpu_info.GetMaxFboAttachment());
++    surface_attachment_array_.resize(gpu_info.GetMaxFboAttachment());
++
+     depth_surface_attachment_ = ObjectPtr<IOpenGLSurface> (0);
+     stencil_surface_attachment_ = ObjectPtr<IOpenGLSurface> (0);
+ 

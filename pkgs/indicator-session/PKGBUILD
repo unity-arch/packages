@@ -1,0 +1,61 @@
+# Maintainer: Charlie <dev.charlie@akao.au>
+
+pkgname=indicator-session
+_ver=17.3.20
+_snap=21.10.20210613.1
+_commit=d34d4b2bd8d4e093f1157254090a5b47888db30e
+pkgver=${_ver}.${_snap}
+pkgrel=1
+pkgdesc='indicator showing session management, status and user switching'
+arch=('x86_64')
+url='https://launchpad.net/indicator-session'
+license=('GPL-3.0-only')
+# gsettings-desktop-schemas for org.gnome.desktop.lockdown, unity-settings-daemon for
+# com.canonical.unity.settings-daemon.plugins.media-keys (g_settings_new aborts when a
+# schema is missing and the unity branch is the one this session takes)
+depends=('glib2' 'gsettings-desktop-schemas' 'systemd-libs' 'unity-settings-daemon'
+         'hicolor-icon-theme')
+optdepends=('accountsservice: user list and avatars'
+            'unity-control-center: user accounts panel from the menu')
+makedepends=('git' 'cmake' 'cmake-extras' 'intltool' 'gsettings-ubuntu-schemas')
+source=("git+https://git.launchpad.net/ubuntu/+source/${pkgname}#commit=${_commit}"
+        'drop-whoopsie.patch'
+        'no-icon-cache-update.patch')
+sha256sums=('SKIP'
+            '86dbfca2849df450faaa31dca27285f5a590cb2998cc7df2dfdb7d2b76713582'
+            'fb0f6cb3895cc5fb34bbd478c54012c64d613215855507367925cc7010779e99')
+
+prepare() {
+  cd "${pkgname}"
+  # no quilt series in this tree, apply one if a later snapshot grows it
+  if [[ -s debian/patches/series ]]; then
+    local p
+    while read -r p; do
+      [[ -z ${p} || ${p} == \#* ]] && continue
+      patch -Np1 -i "debian/patches/${p}"
+    done < debian/patches/series
+  fi
+  patch -Np1 -i "${srcdir}/drop-whoopsie.patch"
+  patch -Np1 -i "${srcdir}/no-icon-cache-update.patch"
+}
+
+build() {
+  # tests are already commented out upstream (gtest dropped c++11), so nothing to turn off
+  # libexecdir=lib puts the service at /usr/lib/indicator-session, that's what the
+  # generated systemd unit gets substituted with too
+  # cmake 4 dropped compat below 3.5 and the tree still asks for 2.8.9
+  cmake -B build -S "${pkgname}" \
+    -DCMAKE_POLICY_VERSION_MINIMUM=3.5 \
+    -DCMAKE_BUILD_TYPE=None \
+    -DCMAKE_INSTALL_PREFIX=/usr \
+    -DCMAKE_INSTALL_LIBDIR=lib \
+    -DCMAKE_INSTALL_LIBEXECDIR=lib \
+    -Wno-dev
+  cmake --build build
+}
+
+package() {
+  DESTDIR="${pkgdir}" cmake --install build
+  # upstart is gone on arch, the systemd user unit is what unity-panel-service wants
+  rm -rf "${pkgdir}/usr/share/upstart"
+}

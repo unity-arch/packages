@@ -1,0 +1,52 @@
+# Maintainer: Charlie <dev.charlie@akao.au>
+
+pkgname=indicator-bluetooth
+_ver=0.0.6
+_snap=17.10.20170605
+_commit=3540ba215ffbb117d899e24b6fb5192176518e31
+pkgver=${_ver}.${_snap}
+pkgrel=1
+pkgdesc='indicator for bluetooth power and device controls'
+arch=('x86_64')
+url='https://launchpad.net/indicator-bluetooth'
+license=('GPL-3.0-only')
+# bluez is talked to over dbus at runtime, killswitch.vala pokes /dev/rfkill directly
+depends=('glib2' 'bluez')
+optdepends=('gnome-bluetooth: send files and the device setup panel'
+            'unity-control-center: bluetooth settings panel from the menu')
+makedepends=('git' 'gnome-common' 'intltool' 'vala')
+source=("git+https://git.launchpad.net/ubuntu/+source/${pkgname}#commit=${_commit}")
+sha256sums=('SKIP')
+
+prepare() {
+  cd "${pkgname}"
+  # no quilt series in this tree, apply one if a later snapshot grows it
+  if [[ -s debian/patches/series ]]; then
+    local p
+    while read -r p; do
+      [[ -z ${p} || ${p} == \#* ]] && continue
+      patch -Np1 -i "debian/patches/${p}"
+    done < debian/patches/series
+  fi
+  NOCONFIGURE=1 ./autogen.sh
+}
+
+build() {
+  cd "${pkgname}"
+  # libexecdir so pkglibexecdir is /usr/lib/indicator-bluetooth, data/Makefile.am seds
+  # that same value into the systemd unit
+  ./configure \
+    --prefix=/usr \
+    --sysconfdir=/etc \
+    --localstatedir=/var \
+    --libexecdir=/usr/lib \
+    --disable-static
+  make
+}
+
+package() {
+  cd "${pkgname}"
+  make DESTDIR="${pkgdir}" install
+  # upstart is gone on arch, the systemd user unit is what unity-panel-service wants
+  rm -rf "${pkgdir}/usr/share/upstart"
+}

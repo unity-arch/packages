@@ -1,0 +1,55 @@
+# Maintainer: Charlie <dev.charlie@akao.au>
+
+pkgname=indicator-application
+_ver=12.10.1
+_snap=19.04.20190308.1
+_commit=8ce3f29565abccf76d0e4a7229b0d79a6842b14c
+pkgver=${_ver}.${_snap}
+pkgrel=1
+pkgdesc='indicator hosting application status icons exported over the appindicator protocol'
+arch=('x86_64')
+url='https://launchpad.net/indicator-application'
+license=('GPL-3.0-only')
+depends=('gtk3' 'glib2' 'libindicator-gtk3' 'libappindicator' 'libdbusmenu-gtk3'
+         'libdbusmenu-glib' 'json-glib' 'dbus-glib')
+# dbus-binding-tool comes from dbus-glib, it generates the notification watcher stubs
+makedepends=('git' 'gnome-common' 'intltool' 'libtool')
+source=("git+https://git.launchpad.net/ubuntu/+source/${pkgname}#commit=${_commit}")
+sha256sums=('SKIP')
+
+prepare() {
+  cd "${pkgname}"
+  # no quilt series in this tree, apply one if a later snapshot grows it
+  if [[ -s debian/patches/series ]]; then
+    local p
+    while read -r p; do
+      [[ -z ${p} || ${p} == \#* ]] && continue
+      patch -Np1 -i "debian/patches/${p}"
+    done < debian/patches/series
+  fi
+  NOCONFIGURE=1 ./autogen.sh
+}
+
+build() {
+  cd "${pkgname}"
+  # dbus-glib and the gtk status icon calls this wraps are deprecated top to bottom
+  CFLAGS+=' -Wno-error=deprecated-declarations'
+  # libexecdir so pkglibexecdir is /usr/lib/indicator-application, data/Makefile.am seds
+  # that same value into the systemd unit and the autostart desktop file
+  ./configure \
+    --prefix=/usr \
+    --sysconfdir=/etc \
+    --localstatedir=/var \
+    --libexecdir=/usr/lib \
+    --disable-static
+  make
+}
+
+package() {
+  cd "${pkgname}"
+  make DESTDIR="${pkgdir}" install
+  # upstart is gone on arch, the systemd user unit is what unity-panel-service wants,
+  # and the second copy of the desktop file under pkgdatadir is an upstart xdg override
+  rm -rf "${pkgdir}/usr/share/upstart" \
+    "${pkgdir}/usr/share/${pkgname}/upstart"
+}

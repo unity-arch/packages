@@ -1,0 +1,57 @@
+# Maintainer: Charlie <dev.charlie@akao.au>
+
+pkgname=indicator-power
+_ver=12.10.6
+_snap=17.10.20170829.1
+_commit=c41fadb30b5646cadd285d73bbd33aae35e24406
+pkgver=${_ver}.${_snap}
+pkgrel=1
+pkgdesc='indicator showing battery and power status'
+arch=('x86_64')
+url='https://launchpad.net/indicator-power'
+license=('GPL-3.0-only')
+# upower is dbus activated, the service talks to org.freedesktop.UPower for the devices
+depends=('glib2' 'gdk-pixbuf2' 'libnotify' 'upower')
+optdepends=('unity-control-center: power settings panel from the menu')
+# libgudev is only a configure check here, nothing in src actually includes it
+# gsettings-ubuntu-schemas ships com.ubuntu.touch.AccountsService.Sound.xml, the
+# gdbus-codegen call in src/CMakeLists.txt reads it straight out of /usr/share
+makedepends=('git' 'cmake' 'cmake-extras' 'intltool' 'libgudev' 'gsettings-ubuntu-schemas')
+source=("git+https://git.launchpad.net/ubuntu/+source/${pkgname}#commit=${_commit}")
+sha256sums=('SKIP')
+
+prepare() {
+  cd "${pkgname}"
+  # no quilt series in this tree, apply one if a later snapshot grows it
+  if [[ -s debian/patches/series ]]; then
+    local p
+    while read -r p; do
+      [[ -z ${p} || ${p} == \#* ]] && continue
+      patch -Np1 -i "debian/patches/${p}"
+    done < debian/patches/series
+  fi
+}
+
+build() {
+  # gcc 14 turned incompatible pointer types into an error, the tree assigns the
+  # result of g_object_ref (G_OBJECT (x)) straight back to a typed pointer
+  CFLAGS+=' -Wno-error=incompatible-pointer-types'
+  # cmake 4 dropped compat below 3.5 and the tree still asks for 2.8.9
+  # tests are already commented out upstream (gtest needs c++14, this doesn't build it)
+  # libexecdir=lib puts the service at /usr/lib/indicator-power, the generated systemd
+  # unit gets the same substitution
+  cmake -B build -S "${pkgname}" \
+    -DCMAKE_POLICY_VERSION_MINIMUM=3.5 \
+    -DCMAKE_BUILD_TYPE=None \
+    -DCMAKE_INSTALL_PREFIX=/usr \
+    -DCMAKE_INSTALL_LIBDIR=lib \
+    -DCMAKE_INSTALL_LIBEXECDIR=lib \
+    -Wno-dev
+  cmake --build build
+}
+
+package() {
+  DESTDIR="${pkgdir}" cmake --install build
+  # upstart is gone on arch, the systemd user unit is what unity-panel-service wants
+  rm -rf "${pkgdir}/usr/share/upstart"
+}

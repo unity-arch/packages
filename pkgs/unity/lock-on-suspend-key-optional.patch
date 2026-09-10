@@ -1,0 +1,33 @@
+diff --git a/lockscreen/LockScreenSettings.cpp b/lockscreen/LockScreenSettings.cpp
+index 9b7c9c9..3aca7e0 100644
+--- a/lockscreen/LockScreenSettings.cpp
++++ b/lockscreen/LockScreenSettings.cpp
+@@ -53,6 +53,18 @@ const std::string LOCK_ON_SUSPEND = "ubuntu-lock-on-suspend";
+ const std::string A11Y_SETTINGS = "org.gnome.desktop.a11y.applications";
+ const std::string USE_SCREEN_READER = "screen-reader-enabled";
+ const std::string USE_OSK = "screen-keyboard-enabled";
++
++// ubuntu-lock-on-suspend only exists in ubuntu's patched gsettings-desktop-schemas,
++// reading a key the schema doesn't have aborts the process
++bool SchemaHasKey(GSettings* settings, std::string const& key)
++{
++  GSettingsSchema* schema = nullptr;
++  g_object_get(settings, "settings-schema", &schema, nullptr);
++  bool has_key = schema && g_settings_schema_has_key(schema, key.c_str());
++  if (schema)
++    g_settings_schema_unref(schema);
++  return has_key;
++}
+ }
+ 
+ const RawPixel Settings::GRID_SIZE = 40_em;
+@@ -88,7 +100,8 @@ struct Settings::Impl
+   {
+     auto* s = settings_instance;
+     s->lock_on_blank = g_settings_get_boolean(gs_settings_, LOCK_ENABLED.c_str()) != FALSE;
+-    s->lock_on_suspend = g_settings_get_boolean(gs_settings_, LOCK_ON_SUSPEND.c_str()) != FALSE;
++    s->lock_on_suspend = !SchemaHasKey(gs_settings_, LOCK_ON_SUSPEND) ||
++                         g_settings_get_boolean(gs_settings_, LOCK_ON_SUSPEND.c_str()) != FALSE;
+     s->lock_delay = g_settings_get_uint(gs_settings_, LOCK_DELAY.c_str());
+   }
+ 

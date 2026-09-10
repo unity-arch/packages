@@ -1,0 +1,13 @@
+ICON_DIR is absolute so this runs gtk-update-icon-cache against the live /usr/share
+at make install time, DESTDIR doesn't apply to install(CODE), pacman rebuilds the
+cache from the hook anyway
+
+--- a/data/icons/CMakeLists.txt
++++ b/data/icons/CMakeLists.txt
+@@ -9,6 +9,3 @@
+          scalable
+          DESTINATION "${ICON_DIR}"
+          FILES_MATCHING PATTERN "*.png" PATTERN "*.svg")
+-
+-install(CODE "execute_process (COMMAND gtk-update-icon-cache -t -f ${ICON_DIR})"
+-        CODE "message (STATUS \"Updating icon cache\")")
