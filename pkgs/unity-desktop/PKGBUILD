@@ -1,0 +1,27 @@
+# Maintainer: Charlie <dev.charlie@akao.au>
+
+pkgname=unity-desktop
+pkgver=7.7.1
+pkgrel=1
+pkgdesc='the complete unity 7 desktop, meta package'
+arch=('any')
+url='https://github.com/unity-arch/packages'
+license=('GPL-3.0-only')
+depends=('unity' 'unity-session' 'unity-settings-daemon' 'unity-greeter' 'ubuntu-unity-settings'
+         'unity-gtk-module' 'hud' 'indicator-appmenu'
+         'indicator-application' 'indicator-bluetooth' 'indicator-datetime' 'indicator-keyboard'
+         'indicator-messages' 'indicator-power' 'indicator-printers' 'indicator-session' 'indicator-sound'
+         'unity-scope-home' 'unity-lens-applications' 'unity-lens-files'
+         'unity-control-center' 'notify-osd' 'zeitgeist' 'polkit-gnome' 'gnome-keyring' 'xdg-user-dirs'
+         'xorg-server' 'dbus')
+optdepends=('lightdm: display manager the greeter is written for'
+            'nemo: desktop icons and file manager the launcher integrates with'
+            'yaru-gtk-theme: the default gtk theme (aur)'
+            'yaru-icon-theme: the default icon theme (aur)'
+            'yaru-unity-theme: launcher and panel assets (aur)'
+            'ttf-ubuntu-font-family: the ubuntu font (aur)')
+
+package() {
+  install -d "${pkgdir}/usr/share/doc/${pkgname}"
+  echo 'meta package, see https://github.com/unity-arch/packages' > "${pkgdir}/usr/share/doc/${pkgname}/README"
+}

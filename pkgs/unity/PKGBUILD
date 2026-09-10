@@ -4,14 +4,15 @@ pkgname=unity
 _ver=7.7.1
 _snap=26.04.20260306
 pkgver=${_ver}.${_snap}
-pkgrel=1
+pkgrel=2
 _commit=6f01ccb7395ca0fb3ee5f220263d9704a18ce194
 pkgdesc='the unity 7 desktop shell, a compiz plugin with its dash, launcher, panel and hud'
 arch=('x86_64')
 url='https://gitlab.com/ubuntu-unity/unity/unity'
 license=('GPL-3.0-only' 'LGPL-3.0-only')
+# unity-greeter is here for its gschema, the lockscreen reads com.canonical.unity-greeter
 depends=('compiz-ubuntu' 'nux' 'libunity' 'libunity-misc' 'bamf' 'dee' 'geis' 'xpathselect'
-         'libindicator-gtk3' 'ido' 'unity-settings-daemon' 'unity-asset-pool' 'gsettings-ubuntu-schemas'
+         'libindicator-gtk3' 'ido' 'unity-settings-daemon' 'unity-asset-pool' 'gsettings-ubuntu-schemas' 'unity-greeter'
          'appstream-glib' 'gnome-desktop' 'zeitgeist' 'json-glib' 'libnotify' 'startup-notification'
          'libsigc++' 'libdbusmenu-glib' 'at-spi2-core' 'pam' 'python-gobject' 'python-pyxdg' 'dconf')
 makedepends=('cmake' 'boost' 'gtest' 'intltool' 'gettext' 'python-setuptools' 'libxslt')

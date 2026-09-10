@@ -16,6 +16,7 @@ order=(
   unity unity-greeter ubuntu-unity-settings
   unity-scope-home unity-lens-files unity-lens-applications
   libtimezonemap libgeonames unity-control-center
+  unity-desktop
 )
 
 install=0
