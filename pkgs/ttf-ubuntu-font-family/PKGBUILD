@@ -1,19 +1,21 @@
 # Maintainer: Charlie <dev.charlie@akao.au>
 
 pkgname=ttf-ubuntu-font-family
-pkgver=0.869+git20240321
+_name=fonts-ubuntu
+_ver=0.869+git20240321
+_deb=0ubuntu2
+pkgver=${_ver}
 pkgrel=1
-_commit=0dc0a1892c75be7aa26d0791c039109e8aac42cc
 pkgdesc='the Ubuntu font family, Ubuntu, Ubuntu Mono and Ubuntu Sans as variable fonts'
 arch=('any')
 url='https://design.ubuntu.com/font'
 license=('LicenseRef-UFL-1.0')
-makedepends=('git')
-source=("git+https://git.launchpad.net/ubuntu/+source/fonts-ubuntu#commit=${_commit}")
-sha256sums=('SKIP')
+# ubuntu archive tarball, 3.0 quilt with an empty patch set so debian/ buys us nothing
+source=("https://launchpad.net/ubuntu/+archive/primary/+sourcefiles/${_name}/${_ver}-${_deb}/${_name}_${_ver}.orig.tar.gz")
+sha256sums=('a3583a3d112b3a19957189474507ec13431187a582f484d600a46a34150233e8')
 
 package() {
-  cd fonts-ubuntu
+  cd "${_name}-${_ver}"
   install -Dm644 ./*.ttf -t "${pkgdir}/usr/share/fonts/ubuntu"
   install -Dm644 LICENCE.txt "${pkgdir}/usr/share/licenses/${pkgname}/LICENCE.txt"
   # debian's 71-ubuntulegacy.conf only hides the Ubuntu-R.ttf style compat symlinks

@@ -1,0 +1,16 @@
+postinst adds an install(CODE) rule that runs glib-compile-schemas on an absolute
+/usr/share/glib-2.0/schemas, so it fires against the live system during package() and
+ignores DESTDIR. every other caller already honours COMPIZ_DISABLE_SCHEMAS_INSTALL, so
+honour it here too, pacman's own hook does the compile after install.
+
+--- a/postinst/CMakeLists.txt
++++ b/postinst/CMakeLists.txt
+@@ -6,5 +6,7 @@
+ 	      PROPERTY GSETTINGS_LOCAL_COMPILE_INHIBIT_RULE
+ 	      FALSE)
+ 
+-compiz_add_install_recompile_gsettings_schemas (${CMAKE_INSTALL_PREFIX}/share/glib-2.0/schemas)
++if (NOT COMPIZ_DISABLE_SCHEMAS_INSTALL)
++    compiz_add_install_recompile_gsettings_schemas (${CMAKE_INSTALL_PREFIX}/share/glib-2.0/schemas)
++endif (NOT COMPIZ_DISABLE_SCHEMAS_INSTALL)
+ add_all_gsettings_schemas_to_local_recompilation_rule ()

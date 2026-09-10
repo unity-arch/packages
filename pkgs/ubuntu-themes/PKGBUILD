@@ -4,18 +4,27 @@ pkgbase=ubuntu-themes
 # split the way ubuntu splits it, the tree keeps themes and panel icons apart and
 # ubuntu-mono is useful on its own (the greeter pulls it without the gtk themes)
 pkgname=('light-themes' 'ubuntu-mono')
-pkgver=24.04
+_ver=24.04
+_deb=0ubuntu2
+pkgver=${_ver}
 pkgrel=1
-_commit=7034d3c815d6004a864ed9b498cba187f44e070d
 arch=('any')
 url='https://launchpad.net/ubuntu-themes'
 license=('GPL-3.0-or-later' 'CC-BY-SA-3.0')
-makedepends=('git' 'python')
-source=("git+https://git.launchpad.net/ubuntu/+source/${pkgbase}#commit=${_commit}")
-sha256sums=('SKIP')
+makedepends=('python')
+# ubuntu archive tarballs, 1.0 format so the debian bits arrive as a diff
+source=("https://launchpad.net/ubuntu/+archive/primary/+sourcefiles/${pkgbase}/${_ver}-${_deb}/${pkgbase}_${_ver}.orig.tar.gz"
+        "https://launchpad.net/ubuntu/+archive/primary/+sourcefiles/${pkgbase}/${_ver}-${_deb}/${pkgbase}_${_ver}-${_deb}.diff.gz")
+sha256sums=('fd2330c0369251ef3a49735eed4f5287b4b3ce50b8c8e5d503ebab008c5e0f19'
+            'b1f4188faff75e8b3cb56d09b1c10576859d09e5a44860685db994e90271f667')
+
+prepare() {
+  cd "${pkgbase}-${_ver}"
+  zcat "${srcdir}/${pkgbase}_${_ver}-${_deb}.diff.gz" | patch -Np1
+}
 
 build() {
-  cd "${pkgbase}"
+  cd "${pkgbase}-${_ver}"
   # composites the padlock overlay onto the nm status icons, the -secure variants
   # aren't in the tree
   make
@@ -28,7 +37,7 @@ package_light-themes() {
   # runs plenty of gtk2 apps and the gtkrc is murrine based
   optdepends=('gtk-engine-murrine: gtk2 apps, the gtk-2.0 theme needs it (aur)')
 
-  cd "${pkgbase}"
+  cd "${pkgbase}-${_ver}"
   install -d "${pkgdir}/usr/share/themes"
   # cp -a not install, Radiance/gtk-3.0/assets is a symlink into Ambiance
   cp -a Ambiance Radiance "${pkgdir}/usr/share/themes"
@@ -40,7 +49,7 @@ package_ubuntu-mono() {
   depends=('humanity-icon-theme' 'hicolor-icon-theme')
   optdepends=('adwaita-icon-theme: fallback for icons the theme inherits')
 
-  cd "${pkgbase}"
+  cd "${pkgbase}-${_ver}"
   install -d "${pkgdir}/usr/share/icons"
   # LoginIcons is what unity-greeter reads for the session badges
   cp -a ubuntu-mono-dark ubuntu-mono-light LoginIcons "${pkgdir}/usr/share/icons"

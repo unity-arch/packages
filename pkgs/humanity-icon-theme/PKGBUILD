@@ -1,21 +1,23 @@
 # Maintainer: Charlie <dev.charlie@akao.au>
 
 pkgname=humanity-icon-theme
-pkgver=0.6.16
+_ver=0.6.16
+# ubuntu's no change rebuild, same 0.6.16 tree
+_deb=build1
+pkgver=${_ver}
 pkgrel=1
-_commit=ffc3b146d35d7b2bf068fde27351ea7ada47fe93
 pkgdesc='Humanity and Humanity-Dark icon themes, ubuntu-mono inherits from these'
 arch=('any')
 url='https://launchpad.net/humanity'
 license=('GPL-2.0-only')
 depends=('hicolor-icon-theme')
 optdepends=('adwaita-icon-theme: fallback for icons both themes inherit')
-makedepends=('git')
-source=("git+https://git.launchpad.net/ubuntu/+source/${pkgname}#commit=${_commit}")
-sha256sums=('SKIP')
+# ubuntu archive tarball, native format so it's the one file
+source=("https://launchpad.net/ubuntu/+archive/primary/+sourcefiles/${pkgname}/${_ver}${_deb}/${pkgname}_${_ver}${_deb}.tar.xz")
+sha256sums=('8dbc3ac9f4c7b156d2e3d11665305b09f0979a584943f6b8e181ca10ef2629d1')
 
 package() {
-  cd "${pkgname}"
+  cd "${pkgname}-${_ver}${_deb}"
   install -d "${pkgdir}/usr/share/icons"
   # cp -a, the themes are mostly symlinks pointing at each other
   cp -a Humanity Humanity-Dark "${pkgdir}/usr/share/icons"

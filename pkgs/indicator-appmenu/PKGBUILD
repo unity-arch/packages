@@ -3,7 +3,7 @@
 pkgname=indicator-appmenu
 _ver=15.02.0
 _snap=20.10.20260311
-_commit=c288692501d444261d023e74304c8f227044c291
+_deb=0ubuntu1
 pkgver=${_ver}.${_snap}
 pkgrel=1
 pkgdesc='global menu indicator, renders the menu of the focused window in the panel'
@@ -12,14 +12,17 @@ url='https://launchpad.net/indicator-appmenu'
 license=('GPL-3.0-only')
 depends=('glib2' 'gtk3' 'libindicator-gtk3' 'libdbusmenu-glib' 'libdbusmenu-gtk3'
          'bamf' 'libx11' 'glibc')
-makedepends=('glib2-devel' 'git' 'gnome-common' 'gtk-doc' 'intltool' 'vala' 'libxslt')
+makedepends=('glib2-devel' 'gnome-common' 'gtk-doc' 'intltool' 'vala' 'libxslt')
 optdepends=('hud: search the same menus by typing'
             'unity-gtk-module: exports gtk menus so there is something to render')
-source=("git+https://git.launchpad.net/ubuntu/+source/${pkgname}#commit=${_commit}")
-sha256sums=('SKIP')
+# ubuntu archive tarball, native format so it's the one file
+source=("https://launchpad.net/ubuntu/+archive/primary/+sourcefiles/${pkgname}/${_ver}+${_snap}-${_deb}/${pkgname}_${_ver}+${_snap}-${_deb}.tar.gz")
+sha256sums=('a92e68e17bd36cd676c11a68ce9f964f3f5fb9434b710f5bcf301d70f7ad0afc')
+# ubuntu packed the tarball from a clone, so the top level directory keeps the .git suffix
+_srcdir="${pkgname}.git"
 
 prepare() {
-  cd "${pkgname}"
+  cd "${_srcdir}"
   # no quilt series in this snapshot, keep the loop so a later one gets picked up
   if [[ -s debian/patches/series ]]; then
     local p
@@ -32,7 +35,7 @@ prepare() {
 }
 
 build() {
-  cd "${pkgname}"
+  cd "${_srcdir}"
   # the tests want dbusmenu-jsonloader-0.4, a helper arch's libdbusmenu-glib
   # doesn't ship, and with them off scripts/ tests/ and tools/ drop out of
   # SUBDIRS, which is the same set debian throws away in indicator-appmenu-tools
@@ -47,7 +50,7 @@ build() {
 }
 
 package() {
-  cd "${pkgname}"
+  cd "${_srcdir}"
   make DESTDIR="${pkgdir}" install
   # apport hooks and the crashdb conffile are debian only, they never get built here
 }

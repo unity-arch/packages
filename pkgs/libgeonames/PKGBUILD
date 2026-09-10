@@ -2,7 +2,7 @@
 
 pkgname=libgeonames
 _ver=0.3.2
-_commit=37009f1f374cf002480d09762fd9f6f8830d4103
+_deb=2
 pkgver=${_ver}
 pkgrel=1
 pkgdesc='parse and query a local copy of the geonames.org database'
@@ -10,10 +10,11 @@ arch=('x86_64')
 url='https://gitlab.com/ubports/development/core/geonames'
 license=('LGPL-3.0-only')
 depends=('glib2')
-makedepends=('cmake' 'gettext' 'git' 'glib2-devel')
+makedepends=('cmake' 'gettext' 'glib2-devel')
 provides=('geonames' 'libgeonames.so')
-source=("git+https://git.launchpad.net/ubuntu/+source/geonames#commit=${_commit}")
-sha256sums=('SKIP')
+# ubuntu archive tarball, 3.0 quilt with an empty patch set so debian/ buys us nothing
+source=("https://launchpad.net/ubuntu/+archive/primary/+sourcefiles/geonames/${_ver}-${_deb}/geonames_${_ver}.orig.tar.bz2")
+sha256sums=('dcc91fa022b550c11cf83a83e9cf2d45878bbdd239e3810b068257e7a8349bc5')
 
 build() {
   # cmake compiles with absolute paths so __FILE__ (glib's g_return_if_fail) bakes the
@@ -23,7 +24,7 @@ build() {
   # step, not part of the build), so mkdb runs entirely offline
   # docs off, gtk-doc only produces the html debian ships in -dev
   # tests off, they need a generated en_US.UTF-8 locale which a clean chroot has not got
-  cmake -B build -S geonames \
+  cmake -B build -S "geonames-${_ver}" \
     -DCMAKE_BUILD_TYPE=None \
     -DCMAKE_INSTALL_PREFIX=/usr \
     -DCMAKE_INSTALL_LIBDIR=lib \

@@ -2,19 +2,34 @@
 
 pkgname=cmake-extras
 pkgver=1.10
+_deb=1
 pkgrel=1
-_commit=5cc653f2b5557bd143db6713c1e7dc3468b2d5b0
 pkgdesc='cmake modules shared by the ubuntu indicators (gdbus codegen, gsettings, intltool, vala)'
 arch=('any')
 url='https://launchpad.net/cmake-extras'
 license=('GPL-3.0-only')
 depends=('cmake' 'pkgconf' 'python')
 makedepends=('glib2-devel')
-source=("git+https://git.launchpad.net/ubuntu/+source/cmake-extras#commit=${_commit}")
-sha256sums=('SKIP')
+# ubuntu archive tarballs, they come off a cdn where git.launchpad.net doesn't
+source=("https://launchpad.net/ubuntu/+archive/primary/+sourcefiles/${pkgname}/${pkgver}-${_deb}/${pkgname}_${pkgver}.orig.tar.bz2"
+        "https://launchpad.net/ubuntu/+archive/primary/+sourcefiles/${pkgname}/${pkgver}-${_deb}/${pkgname}_${pkgver}-${_deb}.debian.tar.xz")
+sha256sums=('fa15760e81d5ff93571b55773fa4323c430d783c27a0b60107b3a0c225dd58b6'
+            '0a5cb795877bfd17f1fcf01c4fecb33815cb29c59c97ad08a3548984649b704a')
+
+prepare() {
+  cd "${pkgname}-${pkgver}"
+  # debian/patches holds only a README here, apply a series if a later release grows one
+  if [[ -s ../debian/patches/series ]]; then
+    local p
+    while read -r p; do
+      [[ -z ${p} || ${p} == \#* ]] && continue
+      patch -Np1 -i "../debian/patches/${p}"
+    done < ../debian/patches/series
+  fi
+}
 
 build() {
-  cmake -S "${pkgname}" -B build -Wno-dev -DCMAKE_INSTALL_PREFIX=/usr
+  cmake -S "${pkgname}-${pkgver}" -B build -Wno-dev -DCMAKE_INSTALL_PREFIX=/usr
 }
 
 package() {

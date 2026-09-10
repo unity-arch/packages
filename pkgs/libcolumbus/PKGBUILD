@@ -3,7 +3,7 @@
 pkgname=libcolumbus
 _ver=1.1.0
 _snap=15.10.20150806
-_commit=72682ef70d08b935665ce81bdbdc6650280b4c0e
+_deb=0ubuntu39
 pkgver=${_ver}.${_snap}
 pkgrel=1
 pkgdesc='error tolerant matching engine, the fuzzy search behind the unity hud'
@@ -11,21 +11,25 @@ arch=('x86_64')
 url='https://launchpad.net/libcolumbus'
 license=('LGPL-3.0-only')
 depends=('gcc-libs' 'glibc' 'icu')
-makedepends=('git' 'cmake')
-source=("git+https://git.launchpad.net/ubuntu/+source/${pkgname}#commit=${_commit}"
+makedepends=('cmake')
+# ubuntu archive tarballs, 1.0 format so the debian bits arrive as a diff
+source=("https://launchpad.net/ubuntu/+archive/primary/+sourcefiles/${pkgname}/${_ver}+${_snap}-${_deb}/${pkgname}_${_ver}+${_snap}.orig.tar.gz"
+        "https://launchpad.net/ubuntu/+archive/primary/+sourcefiles/${pkgname}/${_ver}+${_snap}-${_deb}/${pkgname}_${_ver}+${_snap}-${_deb}.diff.gz"
         'build-only-the-library.patch')
-sha256sums=('SKIP'
+sha256sums=('b57fc4a4d0a90b62273f11d5e9ccde0eb6cce9f220ca300631d95d115690eb79'
+            'cb5e4abf1643e606d363ba7f999e33fea6ec3eef70146371bde1f18c3842da23'
             'a6d861a3d75606cd83bde92d31ad546416ef2951b70bb1ceb2b8923a6c5808e8')
 
 prepare() {
-  cd "${pkgname}"
-  # the one series entry (0001-fix-build-with-python3.10.patch) is already in the
-  # tree, patch(1) sees it reversed, so there's nothing to apply from debian here
+  cd "${pkgname}-${_ver}+${_snap}"
+  # the diff already carries the one series entry (0001-fix-build-with-python3.10.patch)
+  # applied, along with the .pc that says so, so there's nothing to apply from debian here
+  zcat "${srcdir}/${pkgname}_${_ver}+${_snap}-${_deb}.diff.gz" | patch -Np1
   patch -Np1 -i "${srcdir}/build-only-the-library.patch"
 }
 
 build() {
-  cd "${pkgname}"
+  cd "${pkgname}-${_ver}+${_snap}"
   # cmake 4 dropped compat with the 2.8.9 minimum this tree declares
   cmake -B build -S . \
     -DCMAKE_POLICY_VERSION_MINIMUM=3.5 \
@@ -37,6 +41,6 @@ build() {
 }
 
 package() {
-  cd "${pkgname}"
+  cd "${pkgname}-${_ver}+${_snap}"
   DESTDIR="${pkgdir}" cmake --install build
 }

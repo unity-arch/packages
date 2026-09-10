@@ -3,7 +3,7 @@
 pkgname=unity-gtk-module
 _ver=0.0.0
 _snap=18.04.20171202
-_commit=c65c0c33fbcd9fccdfd774e1af17082a592b71da
+_deb=0ubuntu7
 pkgver=${_ver}.${_snap}
 pkgrel=1
 pkgdesc='gtk module exporting application menus over dbusmenu for the unity panel'
@@ -11,14 +11,22 @@ arch=('x86_64')
 url='https://launchpad.net/unity-gtk-module'
 license=('LGPL-3.0-only')
 depends=('glib2' 'gtk3' 'gtk2' 'libx11' 'glibc')
-makedepends=('glib2-devel' 'git' 'gnome-common' 'gtk-doc' 'python')
-source=("git+https://git.launchpad.net/ubuntu/+source/${pkgname}#commit=${_commit}"
+makedepends=('glib2-devel' 'gnome-common' 'gtk-doc' 'python')
+# ubuntu archive tarballs, 1.0 format so the debian bits arrive as a diff
+source=("https://launchpad.net/ubuntu/+archive/primary/+sourcefiles/${pkgname}/${_ver}+${_snap}-${_deb}/${pkgname}_${_ver}+${_snap}.orig.tar.gz"
+        "https://launchpad.net/ubuntu/+archive/primary/+sourcefiles/${pkgname}/${_ver}+${_snap}-${_deb}/${pkgname}_${_ver}+${_snap}-${_deb}.diff.gz"
         'unity-gtk-module.sh')
-sha256sums=('SKIP'
+sha256sums=('5a78ae6b021aaf35f573a56c7803773b0accdf34112ebfebd00651be87c0e28e'
+            '94d7c67c30ac52e38c7b7c43c9e9bcbc48e20c1183d97cbc15748f47294a021a'
             '2b95dc99bed178eeeb5f0bc37bd3ba4e13d5faaa0f599b97679790b6de18527d')
+# the orig tarball has no top level directory
+noextract=("${pkgname}_${_ver}+${_snap}.orig.tar.gz")
 
 prepare() {
+  mkdir -p "${pkgname}"
+  tar xzf "${pkgname}_${_ver}+${_snap}.orig.tar.gz" -C "${pkgname}"
   cd "${pkgname}"
+  zcat "${srcdir}/${pkgname}_${_ver}+${_snap}-${_deb}.diff.gz" | patch -Np1
   # no quilt series in this snapshot, keep the loop so a later one gets picked up
   if [[ -s debian/patches/series ]]; then
     local p

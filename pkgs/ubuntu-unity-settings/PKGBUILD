@@ -1,9 +1,10 @@
 # Maintainer: Charlie <dev.charlie@akao.au>
 
 pkgname=ubuntu-unity-settings
-pkgver=22.10
+_ver=22.10
+_deb=0ubuntu5
+pkgver=${_ver}
 pkgrel=1
-_commit=5ed9323c7cb28e045478aa5afebd85cd5ae730cd
 pkgdesc='default gsettings for the unity desktop, yaru dark theme and greeter logo'
 arch=('any')
 url='https://launchpad.net/ubuntu/+source/ubuntu-unity-settings'
@@ -14,11 +15,12 @@ optdepends=('yaru-gtk-theme: Yaru-dark gtk theme (aur)'
             'yaru-unity-theme: unity launcher and panel assets (aur)'
             'yaru-icon-theme: Yaru-purple-dark icons (aur)'
             'yaru-sound-theme: sounds (aur)')
-source=("git+https://git.launchpad.net/ubuntu/+source/ubuntu-unity-settings#commit=${_commit}")
-sha256sums=('SKIP')
+# ubuntu archive tarball, 3.0 quilt with an empty patch set so debian/ buys us nothing
+source=("https://launchpad.net/ubuntu/+archive/primary/+sourcefiles/${pkgname}/${_ver}-${_deb}/${pkgname}_${_ver}.orig.tar.xz")
+sha256sums=('0a9c3e9f6824bf89d14ea5ffa60a2b556863df303ec653e639199577ca20e659')
 
 package() {
-  cd "${pkgname}"
+  cd "${pkgname}-${_ver}"
   install -Dm644 20_ubuntu-unity.gschema.override -t "${pkgdir}/usr/share/glib-2.0/schemas"
   install -Dm644 logos/unity-greeter-logo.png -t "${pkgdir}/usr/share/ubuntu-unity/logos"
 }

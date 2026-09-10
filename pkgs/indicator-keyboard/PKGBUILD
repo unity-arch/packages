@@ -3,7 +3,7 @@
 pkgname=indicator-keyboard
 _ver=0.0.0
 _snap=19.10.20240924
-_commit=dc3fd5db0771f5c9bf96478299e6c89b0987f234
+_deb=0ubuntu4
 pkgver=${_ver}.${_snap}
 pkgrel=1
 pkgdesc='indicator showing the current keyboard layout and input source'
@@ -12,16 +12,20 @@ url='https://code.launchpad.net/indicator-keyboard'
 license=('LGPL-3.0-only')
 depends=('glib2' 'gtk3' 'libgee' 'gnome-desktop' 'libgnomekbd' 'libxklavier' 'ibus'
          'accountsservice' 'lightdm' 'libindicator-gtk3' 'pango' 'libx11')
-makedepends=('glib2-devel' 'git' 'intltool' 'vala' 'libtool' 'gobject-introspection')
-source=("git+https://git.launchpad.net/ubuntu/+source/${pkgname}#commit=${_commit}"
+makedepends=('glib2-devel' 'intltool' 'vala' 'libtool' 'gobject-introspection')
+# ubuntu archive tarballs, 1.0 format so the debian bits arrive as a diff
+source=("https://launchpad.net/ubuntu/+archive/primary/+sourcefiles/${pkgname}/${_ver}+${_snap}-${_deb}/${pkgname}_${_ver}+${_snap}.orig.tar.gz"
+        "https://launchpad.net/ubuntu/+archive/primary/+sourcefiles/${pkgname}/${_ver}+${_snap}-${_deb}/${pkgname}_${_ver}+${_snap}-${_deb}.diff.gz"
         'drop-fcitx.patch'
         'drop-accountsservice-input-sources.patch')
-sha256sums=('SKIP'
+sha256sums=('dbad0ad199665f561975586291b03b773dac7ce6173a8f4983e510577a576d5b'
+            '241a5c25aa8318025eac4bfd1ff41e311a6484b2eaa4d6dbe7f7a08d01e81372'
             'b3fc9784fd3db2bf2ea97014fa4f689658f7bc8695efd2a4106b49a13e38d9f3'
             '8b0ab016ea29ad43fdada3ecb70e484ab1a0b8463bcb7a3323358f193acc956d')
 
 prepare() {
-  cd "${pkgname}"
+  cd "${pkgname}-${_ver}+${_snap}"
+  zcat "${srcdir}/${pkgname}_${_ver}+${_snap}-${_deb}.diff.gz" | patch -Np1
   # no quilt series in this snapshot, apply one if a later import grows it
   if [[ -s debian/patches/series ]]; then
     local p
@@ -36,7 +40,7 @@ prepare() {
 }
 
 build() {
-  cd "${pkgname}"
+  cd "${pkgname}-${_ver}+${_snap}"
   # libexecdir so the service lands at /usr/lib/indicator-keyboard, the systemd unit
   # and the upstart job both get pkglibexecdir substituted in from here
   ./configure \
@@ -48,7 +52,7 @@ build() {
 }
 
 package() {
-  cd "${pkgname}"
+  cd "${pkgname}-${_ver}+${_snap}"
   make DESTDIR="${pkgdir}" install
 
   # upstart is gone, the systemd user unit is what unity-panel-service wants

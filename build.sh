@@ -28,7 +28,7 @@ pkgs=("$@")
 for p in "${pkgs[@]}"; do
   [[ -f "$here/pkgs/$p/PKGBUILD" ]] || { echo "skipping $p, no pkgbuild yet"; continue; }
   echo "==> building $p"
-  # launchpad's git server drops connections often enough to break ci, fetch first with retries
+  # fetch first with retries, cdn hiccups shouldn't fail a 40 minute chain
   for attempt in 1 2 3 4 5; do
     (cd "$here/pkgs/$p" && makepkg --config "$here/makepkg.conf" -od --noconfirm) && break
     [[ $attempt -eq 5 ]] && exit 1

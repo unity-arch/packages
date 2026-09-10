@@ -1,0 +1,92 @@
+# Maintainer: Charlie <dev.charlie@akao.au>
+
+pkgname=compiz-ubuntu
+_name=compiz
+_ver=0.9.14.2
+_snap=25.10.20250930
+_deb=0ubuntu3
+pkgver=${_ver}.${_snap}
+pkgrel=1
+epoch=1
+pkgdesc='compositing window manager, ubuntu build with the unity specific config kept'
+arch=('x86_64')
+url='https://launchpad.net/compiz'
+license=('GPL-2.0-or-later' 'LGPL-2.1-or-later' 'MIT')
+depends=('cairo' 'dbus' 'gcc-libs' 'gdk-pixbuf2' 'glib2' 'glibmm' 'glu'
+         'gsettings-desktop-schemas' 'gtk3' 'libglvnd' 'libice' 'libjpeg-turbo'
+         'libnotify' 'libpng' 'librsvg' 'libsm' 'libwnck3' 'libx11' 'libxcb'
+         'libxcomposite' 'libxcursor' 'libxdamage' 'libxext' 'libxfixes' 'libxi'
+         'libxinerama' 'libxml2' 'libxrandr' 'libxrender' 'libxslt' 'metacity'
+         'pango' 'protobuf' 'python' 'python-cairo' 'python-gobject'
+         'startup-notification' 'zlib')
+makedepends=('boost' 'cmake' 'cython' 'intltool' 'ninja' 'perl-xml-parser'
+             'python-setuptools' 'xorgproto')
+provides=("ccsm=${pkgver}"
+          "compiz=${pkgver}"
+          "compiz-bcop=${pkgver}"
+          "compiz-core=${pkgver}"
+          "compiz-gtk=${pkgver}"
+          "compiz-plugins-extra=${pkgver}"
+          "compiz-plugins-main=${pkgver}"
+          "compizconfig-python=${pkgver}"
+          "libcompizconfig=${pkgver}")
+conflicts=('ccsm' 'compiz' 'compiz-bcop' 'compiz-core' 'compiz-gtk'
+           'compiz-plugins-extra' 'compiz-plugins-main' 'compizconfig-python'
+           'libcompizconfig')
+# ubuntu archive tarballs, they come off a cdn where git.launchpad.net doesn't. the
+# epoch in the url path is a literal colon, so the entry needs the filename:: form
+source=("${_name}_${_ver}+${_snap}-${_deb}.tar.xz::https://launchpad.net/ubuntu/+archive/primary/+sourcefiles/${_name}/${epoch}:${_ver}+${_snap}-${_deb}/${_name}_${_ver}+${_snap}-${_deb}.tar.xz"
+        'base-cmake-modules-dir.patch'
+        'postinst-schema-recompile.patch')
+sha256sums=('e3547c95187fb9e76f7de8f9525dd20e555684d6757e073c62e9492c11ec5bca'
+            '6b73312aa44f7f7572d9add92ec299a98533616bb8935464e3afebe5c63a2a11'
+            '3ce97e9b0409c344a618a254f2ef50c358e9230f3be78d49eaf0cde9e7b67c44')
+
+prepare() {
+  cd "${_name}-${_ver}+${_snap}"
+  patch -Np1 -i "${srcdir}/base-cmake-modules-dir.patch"
+  patch -Np1 -i "${srcdir}/postinst-schema-recompile.patch"
+}
+
+build() {
+  # __FILE__ ends up in g_warning strings, without this the shipped binaries carry the
+  # build machine's srcdir
+  export CFLAGS+=" -ffile-prefix-map=${srcdir}=/usr/src/${pkgname}"
+  export CXXFLAGS+=" -ffile-prefix-map=${srcdir}=/usr/src/${pkgname}"
+
+  # COMPIZ_DEFAULT_PLUGINS stays at the upstream 'core', the real plugin list comes from
+  # the profile ini (unity ships /etc/compizconfig/unity.ini), baking one in here is wrong
+  #
+  # COMPIZ_DISABLE_SCHEMAS_INSTALL=ON kills the install(CODE) blocks that copy the gschema
+  # xml to an absolute /usr/share path and then run glib-compile-schemas against the live
+  # system, none of that honours DESTDIR. we install the xml into pkgdir by hand instead
+  # and let pacman's glib-2.0 hook do the compile
+  cmake -S "${_name}-${_ver}+${_snap}" -B build -G Ninja -Wno-dev \
+    -DCMAKE_BUILD_TYPE=RelWithDebInfo \
+    -DCMAKE_INSTALL_PREFIX=/usr \
+    -DCMAKE_INSTALL_LIBDIR=lib \
+    -DCOMPIZ_BUILD_WITH_RPATH=FALSE \
+    -DCOMPIZ_PACKAGING_ENABLED=TRUE \
+    -DCOMPIZ_DISABLE_GS_SCHEMAS_INSTALL=OFF \
+    -DCOMPIZ_DISABLE_SCHEMAS_INSTALL=ON \
+    -DCOMPIZ_BUILD_TESTING=OFF \
+    -DCOMPIZ_WERROR=FALSE \
+    -DCOMPIZ_DEFAULT_PLUGINS=core \
+    -DBUILD_GTK=ON \
+    -DBUILD_METACITY=ON \
+    -DBUILD_XORG_GTEST=OFF
+  cmake --build build
+}
+
+package() {
+  DESTDIR="${pkgdir}" cmake --install build
+
+  install -Dm644 build/generated/glib-2.0/schemas/*.gschema.xml \
+    -t "${pkgdir}/usr/share/glib-2.0/schemas"
+
+  local _l
+  for _l in COPYING COPYING.GPL COPYING.LGPL COPYING.MIT; do
+    install -Dm644 "${_name}-${_ver}+${_snap}/${_l}" \
+      "${pkgdir}/usr/share/licenses/${pkgname}/${_l}"
+  done
+}

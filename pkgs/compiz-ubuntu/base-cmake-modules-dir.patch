@@ -1,0 +1,25 @@
+upstream drops the find modules in /usr/share/cmake-<major>.<minor>/, which is a debian
+layout and a dead directory on arch (CMAKE_ROOT is /usr/share/cmake here, no version
+suffix). unity's cmake does find_package(Compiz), so point the install at CMAKE_ROOT/Modules
+instead, that keeps the files inside DESTDIR unlike the findcompiz_install target.
+
+--- a/cmake/base.cmake
++++ b/cmake/base.cmake
+@@ -20,7 +20,7 @@
+ 	     ${CMAKE_CURRENT_SOURCE_DIR}/cmake/FindCompiz.cmake
+ 	     ${CMAKE_CURRENT_SOURCE_DIR}/cmake/FindOpenGLES2.cmake
+ 	     DESTINATION
+-	     ${CMAKE_INSTALL_PREFIX}/share/cmake-${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION}/)
++	     ${CMAKE_ROOT}/Modules/)
+     add_custom_target (findcompiz_install
+ 	${CMAKE_COMMAND} -E make_directory ${CMAKE_ROOT}/Modules &&
+ 	${CMAKE_COMMAND} -E copy ${CMAKE_SOURCE_DIR}/cmake/FindCompiz.cmake ${CMAKE_ROOT}/Modules &&
+@@ -30,7 +30,7 @@
+     install (FILES
+ 	     ${CMAKE_CURRENT_SOURCE_DIR}/compizconfig/libcompizconfig/cmake/FindCompizConfig.cmake
+ 	     DESTINATION
+-	     ${CMAKE_INSTALL_PREFIX}/share/cmake-${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION}/)
++	     ${CMAKE_ROOT}/Modules/)
+     add_custom_target (
+ 	findcompizconfig_install
+ 	${CMAKE_COMMAND} -E make_directory ${CMAKE_ROOT}/Modules &&

@@ -3,10 +3,11 @@
 pkgname=indicator-datetime
 _ver=15.10
 _snap=21.04.20210304
-_commit=4fb6fd847c54941ea90a7e593eacb415fcf3ac4a
-# properties-cpp is header only, we take the headers out of this tree instead of
-# packaging a library that would ship three files and nothing else
-_propcommit=05742ff4d6764bc78bc7bf118582fec4e8674051
+_deb=0ubuntu6
+# properties-cpp is header only, we take the headers out of this tarball instead of
+# packaging a library that would ship three files and nothing else. its debian half
+# isn't fetched, the one quilt patch in it only touches doc/Doxyfile.in
+_propver=0.0.4
 pkgver=${_ver}.${_snap}
 pkgrel=1
 pkgdesc='indicator for the clock, calendar appointments and alarms'
@@ -16,18 +17,23 @@ license=('GPL-3.0-only')
 depends=('glib2' 'evolution-data-server' 'libical' 'gstreamer' 'libnotify'
          'libaccounts-glib' 'indicator-messages' 'libindicator-gtk3'
          'gsettings-ubuntu-schemas' 'util-linux-libs' 'tzdata' 'gcc-libs')
-makedepends=('glib2-devel' 'git' 'cmake' 'cmake-extras' 'intltool')
-source=("git+https://git.launchpad.net/ubuntu/+source/${pkgname}#commit=${_commit}"
-        "properties-cpp::git+https://git.launchpad.net/ubuntu/+source/properties-cpp#commit=${_propcommit}"
+makedepends=('glib2-devel' 'cmake' 'cmake-extras' 'intltool')
+# ubuntu archive tarballs, they come off a cdn where git.launchpad.net doesn't
+source=("https://launchpad.net/ubuntu/+archive/primary/+sourcefiles/${pkgname}/${_ver}+${_snap}-${_deb}/${pkgname}_${_ver}+${_snap}.orig.tar.gz"
+        "https://launchpad.net/ubuntu/+archive/primary/+sourcefiles/${pkgname}/${_ver}+${_snap}-${_deb}/${pkgname}_${_ver}+${_snap}-${_deb}.diff.gz"
+        "https://launchpad.net/ubuntu/+archive/primary/+sourcefiles/properties-cpp/${_propver}-1/properties-cpp_${_propver}.orig.tar.bz2"
         'cmake4-minimum-required.patch'
         'vendor-properties-cpp-and-skip-tests.patch')
-sha256sums=('SKIP'
-            'SKIP'
+sha256sums=('29af10576be2f83a790aa0e5fd9ff8aba0792822e145cd1adcbb54c98c21c6a4'
+            '414f3a96919ce9102d7096c7742bb2cf53c9d7875e1e24f42a26c6276b636d3a'
+            '572444a88d4709b12adce122ee9ab67690bc72306b8078b4dfebd221e596aaba'
             '475ea11297fb9b123552e327d47438236786862a6fe6a473f20d61ec901af6e3'
             '359cb867bdb0e90f9daa3c3c6a93b54c133d0597295a07b8faa9abd7d97518b2')
 
 prepare() {
-  cd "${pkgname}"
+  cd "${pkgname}-${_ver}+${_snap}"
+  # source format 1.0, the whole debian delta is the one diff
+  patch -Np1 -i "${srcdir}/${pkgname}_${_ver}+${_snap}-${_deb}.diff"
   # no quilt series in this snapshot, apply one if a later import grows it
   if [[ -s debian/patches/series ]]; then
     local p
@@ -40,11 +46,11 @@ prepare() {
   patch -Np1 -i "${srcdir}/vendor-properties-cpp-and-skip-tests.patch"
   # include/ is already on the include path, so core/property.h lands where the
   # sources expect to find it
-  cp -a "${srcdir}/properties-cpp/include/core" include/
+  cp -a "${srcdir}/properties-cpp-${_propver}/include/core" include/
 }
 
 build() {
-  cd "${pkgname}"
+  cd "${pkgname}-${_ver}+${_snap}"
   # the tree only shortens libexecdir when /etc/debian_version exists, so on arch
   # it would default to /usr/libexec, set it here instead. the systemd unit gets
   # this path substituted in, so the two can't drift
@@ -63,7 +69,7 @@ build() {
 }
 
 package() {
-  cd "${pkgname}"
+  cd "${pkgname}-${_ver}+${_snap}"
   make -C build DESTDIR="${pkgdir}" install
   # upstart is gone, the systemd user unit is what unity-panel-service wants
   rm -rf "${pkgdir}/usr/share/upstart"

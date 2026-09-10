@@ -3,7 +3,7 @@
 pkgname=indicator-session
 _ver=17.3.20
 _snap=21.10.20210613.1
-_commit=d34d4b2bd8d4e093f1157254090a5b47888db30e
+_deb=0ubuntu5
 pkgver=${_ver}.${_snap}
 pkgrel=1
 pkgdesc='indicator showing session management, status and user switching'
@@ -17,16 +17,25 @@ depends=('glib2' 'gsettings-desktop-schemas' 'systemd-libs' 'unity-settings-daem
          'hicolor-icon-theme')
 optdepends=('accountsservice: user list and avatars'
             'unity-control-center: user accounts panel from the menu')
-makedepends=('glib2-devel' 'git' 'cmake' 'cmake-extras' 'intltool' 'gsettings-ubuntu-schemas')
-source=("git+https://git.launchpad.net/ubuntu/+source/${pkgname}#commit=${_commit}"
+makedepends=('glib2-devel' 'cmake' 'cmake-extras' 'intltool' 'gsettings-ubuntu-schemas')
+# ubuntu archive tarballs, they come off a cdn where git.launchpad.net doesn't
+source=("https://launchpad.net/ubuntu/+archive/primary/+sourcefiles/${pkgname}/${_ver}+${_snap}-${_deb}/${pkgname}_${_ver}+${_snap}.orig.tar.gz"
+        "https://launchpad.net/ubuntu/+archive/primary/+sourcefiles/${pkgname}/${_ver}+${_snap}-${_deb}/${pkgname}_${_ver}+${_snap}-${_deb}.diff.gz"
         'drop-whoopsie.patch'
         'no-icon-cache-update.patch')
-sha256sums=('SKIP'
+sha256sums=('f9da6a2f080e67944a71eebb744c3d9f5d7d532428e072c4a3a0fbb0b3bb6ae9'
+            'ee2900e5a6a7549a0163b27ebb4cd3c8c7065d361e4ce76273f6cc84fd4a8a7a'
             '86dbfca2849df450faaa31dca27285f5a590cb2998cc7df2dfdb7d2b76713582'
             'fb0f6cb3895cc5fb34bbd478c54012c64d613215855507367925cc7010779e99')
+# the orig tarball has no top level directory
+noextract=("${pkgname}_${_ver}+${_snap}.orig.tar.gz")
 
 prepare() {
+  mkdir -p "${pkgname}"
+  tar xzf "${pkgname}_${_ver}+${_snap}.orig.tar.gz" -C "${pkgname}"
   cd "${pkgname}"
+  # source format 1.0, the whole debian delta is the one diff
+  patch -Np1 -i "${srcdir}/${pkgname}_${_ver}+${_snap}-${_deb}.diff"
   # no quilt series in this tree, apply one if a later snapshot grows it
   if [[ -s debian/patches/series ]]; then
     local p

@@ -3,7 +3,7 @@
 pkgname=indicator-printers
 _ver=0.1.7
 _snap=17.10.20171101
-_commit=c5e42e6ad97f95861d59073ba8d7d63edf857bd2
+_deb=0ubuntu8
 pkgver=${_ver}.${_snap}
 pkgrel=1
 pkgdesc='indicator showing print jobs and printer state notifications'
@@ -12,12 +12,17 @@ url='https://launchpad.net/indicator-printers'
 license=('GPL-3.0-only')
 depends=('gtk3' 'glib2' 'libcups' 'libindicator-gtk3' 'libdbusmenu-gtk3' 'libdbusmenu-glib')
 optdepends=('system-config-printer: printer settings from the menu')
-makedepends=('glib2-devel' 'git' 'gnome-common' 'intltool' 'libtool')
-source=("git+https://git.launchpad.net/ubuntu/+source/${pkgname}#commit=${_commit}")
-sha256sums=('SKIP')
+makedepends=('glib2-devel' 'gnome-common' 'intltool' 'libtool')
+# ubuntu archive tarballs, they come off a cdn where git.launchpad.net doesn't
+source=("https://launchpad.net/ubuntu/+archive/primary/+sourcefiles/${pkgname}/${_ver}+${_snap}-${_deb}/${pkgname}_${_ver}+${_snap}.orig.tar.gz"
+        "https://launchpad.net/ubuntu/+archive/primary/+sourcefiles/${pkgname}/${_ver}+${_snap}-${_deb}/${pkgname}_${_ver}+${_snap}-${_deb}.diff.gz")
+sha256sums=('9fd274dac99caf1caeb90950565c3d845bcd2577b7fa5c9d199939435d8b4be9'
+            '5a3eb4e14cca400f4e71b65dc5c6034e9ba431d79e702c80c55d1ac3b40efc99')
 
 prepare() {
-  cd "${pkgname}"
+  cd "${pkgname}-${_ver}+${_snap}"
+  # source format 1.0, the whole debian delta is the one diff
+  patch -Np1 -i "${srcdir}/${pkgname}_${_ver}+${_snap}-${_deb}.diff"
   # no quilt series in this tree, apply one if a later snapshot grows it
   if [[ -s debian/patches/series ]]; then
     local p
@@ -30,7 +35,7 @@ prepare() {
 }
 
 build() {
-  cd "${pkgname}"
+  cd "${pkgname}-${_ver}+${_snap}"
   # same warning relaxations debian/rules uses, the gtk and cups calls this reaches for
   # have been deprecated for a decade
   CFLAGS+=' -Wno-error=deprecated-declarations'
@@ -46,7 +51,7 @@ build() {
 }
 
 package() {
-  cd "${pkgname}"
+  cd "${pkgname}-${_ver}+${_snap}"
   make DESTDIR="${pkgdir}" install
   # upstart is gone on arch, the systemd user unit is what unity-panel-service wants
   rm -rf "${pkgdir}/usr/share/upstart"

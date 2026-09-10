@@ -3,7 +3,7 @@
 pkgname=indicator-messages
 _ver=13.10.1
 _snap=18.10.20180918
-_commit=78d9113d9ab7362111876c31b636a852aaf94b09
+_deb=0ubuntu8
 pkgver=${_ver}.${_snap}
 pkgrel=1
 pkgdesc='indicator collecting messages that need a response, plus libmessaging-menu'
@@ -11,15 +11,24 @@ arch=('x86_64')
 url='https://launchpad.net/indicator-messages'
 license=('GPL-3.0-only')
 depends=('glib2' 'accountsservice' 'libindicator-gtk3')
-makedepends=('glib2-devel' 'git' 'gnome-common' 'intltool' 'vala' 'gobject-introspection')
+makedepends=('glib2-devel' 'gnome-common' 'intltool' 'vala' 'gobject-introspection')
 provides=('libmessaging-menu' 'messaging-menu')
-source=("git+https://git.launchpad.net/ubuntu/+source/${pkgname}#commit=${_commit}"
+# ubuntu archive tarballs, they come off a cdn where git.launchpad.net doesn't
+source=("https://launchpad.net/ubuntu/+archive/primary/+sourcefiles/${pkgname}/${_ver}+${_snap}-${_deb}/${pkgname}_${_ver}+${_snap}.orig.tar.gz"
+        "https://launchpad.net/ubuntu/+archive/primary/+sourcefiles/${pkgname}/${_ver}+${_snap}-${_deb}/${pkgname}_${_ver}+${_snap}-${_deb}.diff.gz"
         'drop-dbustest-check.patch')
-sha256sums=('SKIP'
+sha256sums=('d051dd845912e2f5d6be5bfcbd9ce2c53460f011707d29ab728bee5f15938ce7'
+            '97abd1e4b454571f94cde931677c09f4209b50966289663ae9abc1471ea537c3'
             '372f55326c4180542a7401c284c83cf7254ce552a9a3fe5d05489ddebb3ab37e')
+# the orig tarball has no top level directory
+noextract=("${pkgname}_${_ver}+${_snap}.orig.tar.gz")
 
 prepare() {
+  mkdir -p "${pkgname}"
+  tar xzf "${pkgname}_${_ver}+${_snap}.orig.tar.gz" -C "${pkgname}"
   cd "${pkgname}"
+  # source format 1.0, the whole debian delta is the one diff
+  patch -Np1 -i "${srcdir}/${pkgname}_${_ver}+${_snap}-${_deb}.diff"
   # no quilt series in this snapshot, apply one if a later import grows it
   if [[ -s debian/patches/series ]]; then
     local p

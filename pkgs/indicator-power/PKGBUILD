@@ -3,7 +3,7 @@
 pkgname=indicator-power
 _ver=12.10.6
 _snap=17.10.20170829.1
-_commit=c41fadb30b5646cadd285d73bbd33aae35e24406
+_deb=0ubuntu9
 pkgver=${_ver}.${_snap}
 pkgrel=1
 pkgdesc='indicator showing battery and power status'
@@ -16,12 +16,21 @@ optdepends=('unity-control-center: power settings panel from the menu')
 # libgudev is only a configure check here, nothing in src actually includes it
 # gsettings-ubuntu-schemas ships com.ubuntu.touch.AccountsService.Sound.xml, the
 # gdbus-codegen call in src/CMakeLists.txt reads it straight out of /usr/share
-makedepends=('glib2-devel' 'git' 'cmake' 'cmake-extras' 'intltool' 'libgudev' 'gsettings-ubuntu-schemas')
-source=("git+https://git.launchpad.net/ubuntu/+source/${pkgname}#commit=${_commit}")
-sha256sums=('SKIP')
+makedepends=('glib2-devel' 'cmake' 'cmake-extras' 'intltool' 'libgudev' 'gsettings-ubuntu-schemas')
+# ubuntu archive tarballs, they come off a cdn where git.launchpad.net doesn't
+source=("https://launchpad.net/ubuntu/+archive/primary/+sourcefiles/${pkgname}/${_ver}+${_snap}-${_deb}/${pkgname}_${_ver}+${_snap}.orig.tar.gz"
+        "https://launchpad.net/ubuntu/+archive/primary/+sourcefiles/${pkgname}/${_ver}+${_snap}-${_deb}/${pkgname}_${_ver}+${_snap}-${_deb}.diff.gz")
+sha256sums=('033dda58971929de265a1dc262932c31a69fc64522bc9f5f0be850585d27e3df'
+            '2e6f5bb3d45a3c854f912a923d246fdc9d8e838f3e526d3af7b83ef3b307bd33')
+# the orig tarball has no top level directory
+noextract=("${pkgname}_${_ver}+${_snap}.orig.tar.gz")
 
 prepare() {
+  mkdir -p "${pkgname}"
+  tar xzf "${pkgname}_${_ver}+${_snap}.orig.tar.gz" -C "${pkgname}"
   cd "${pkgname}"
+  # source format 1.0, the whole debian delta is the one diff
+  patch -Np1 -i "${srcdir}/${pkgname}_${_ver}+${_snap}-${_deb}.diff"
   # no quilt series in this tree, apply one if a later snapshot grows it
   if [[ -s debian/patches/series ]]; then
     local p

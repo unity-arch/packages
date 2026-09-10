@@ -3,7 +3,7 @@
 pkgname=indicator-sound
 _ver=12.10.2
 _snap=18.10.20180612
-_commit=4740a347dafb15f66d7f50743c705135e8a57f26
+_deb=0ubuntu10
 pkgver=${_ver}.${_snap}
 pkgrel=1
 pkgdesc='indicator for volume and the mpris media players'
@@ -12,14 +12,23 @@ url='https://launchpad.net/indicator-sound'
 license=('GPL-3.0-only')
 depends=('glib2' 'libpulse' 'libgee' 'libnotify' 'accountsservice' 'libxml2'
          'libindicator-gtk3' 'gsettings-ubuntu-schemas' 'polkit' 'gcc-libs')
-makedepends=('glib2-devel' 'git' 'cmake' 'cmake-extras' 'intltool' 'vala' 'gobject-introspection')
-source=("git+https://git.launchpad.net/ubuntu/+source/${pkgname}#commit=${_commit}"
+makedepends=('glib2-devel' 'cmake' 'cmake-extras' 'intltool' 'vala' 'gobject-introspection')
+# ubuntu archive tarballs, they come off a cdn where git.launchpad.net doesn't
+source=("https://launchpad.net/ubuntu/+archive/primary/+sourcefiles/${pkgname}/${_ver}+${_snap}-${_deb}/${pkgname}_${_ver}+${_snap}.orig.tar.gz"
+        "https://launchpad.net/ubuntu/+archive/primary/+sourcefiles/${pkgname}/${_ver}+${_snap}-${_deb}/${pkgname}_${_ver}+${_snap}-${_deb}.diff.gz"
         'drop-test-only-deps.patch')
-sha256sums=('SKIP'
+sha256sums=('d37f5db1a683be45a6f6e515603745183867edb984ca06905e121c7d3432dfc2'
+            'f435f98f2e7da6a98310dcb68c61f2ac9a0bad5d174bc4af961dad7aaf5e2d50'
             '1c976bf8cc56dc0585213daa6ef0892db87a146b5cd75528c9a81aadb3754ad8')
+# the orig tarball has no top level directory
+noextract=("${pkgname}_${_ver}+${_snap}.orig.tar.gz")
 
 prepare() {
+  mkdir -p "${pkgname}"
+  tar xzf "${pkgname}_${_ver}+${_snap}.orig.tar.gz" -C "${pkgname}"
   cd "${pkgname}"
+  # source format 1.0, the whole debian delta is the one diff
+  patch -Np1 -i "${srcdir}/${pkgname}_${_ver}+${_snap}-${_deb}.diff"
   # no quilt series in this snapshot, apply one if a later import grows it
   if [[ -s debian/patches/series ]]; then
     local p

@@ -3,7 +3,7 @@
 pkgname=indicator-bluetooth
 _ver=0.0.6
 _snap=17.10.20170605
-_commit=3540ba215ffbb117d899e24b6fb5192176518e31
+_deb=0ubuntu7
 pkgver=${_ver}.${_snap}
 pkgrel=1
 pkgdesc='indicator for bluetooth power and device controls'
@@ -14,12 +14,21 @@ license=('GPL-3.0-only')
 depends=('glib2' 'bluez')
 optdepends=('gnome-bluetooth: send files and the device setup panel'
             'unity-control-center: bluetooth settings panel from the menu')
-makedepends=('glib2-devel' 'git' 'gnome-common' 'intltool' 'vala')
-source=("git+https://git.launchpad.net/ubuntu/+source/${pkgname}#commit=${_commit}")
-sha256sums=('SKIP')
+makedepends=('glib2-devel' 'gnome-common' 'intltool' 'vala')
+# ubuntu archive tarballs, they come off a cdn where git.launchpad.net doesn't
+source=("https://launchpad.net/ubuntu/+archive/primary/+sourcefiles/${pkgname}/${_ver}+${_snap}-${_deb}/${pkgname}_${_ver}+${_snap}.orig.tar.gz"
+        "https://launchpad.net/ubuntu/+archive/primary/+sourcefiles/${pkgname}/${_ver}+${_snap}-${_deb}/${pkgname}_${_ver}+${_snap}-${_deb}.diff.gz")
+sha256sums=('d67cf0687526c9e9e70c451242fd6f3db0588ce052d2ef498680fcea0083e846'
+            '910401cefe815963148b4fde94d12fd33f405c9a69e6e1816738b7ca6474012f')
+# the orig tarball has no top level directory
+noextract=("${pkgname}_${_ver}+${_snap}.orig.tar.gz")
 
 prepare() {
+  mkdir -p "${pkgname}"
+  tar xzf "${pkgname}_${_ver}+${_snap}.orig.tar.gz" -C "${pkgname}"
   cd "${pkgname}"
+  # source format 1.0, the whole debian delta is the one diff
+  patch -Np1 -i "${srcdir}/${pkgname}_${_ver}+${_snap}-${_deb}.diff"
   # no quilt series in this tree, apply one if a later snapshot grows it
   if [[ -s debian/patches/series ]]; then
     local p
