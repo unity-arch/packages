@@ -1,0 +1,545 @@
+==> Making package: geis 2.2.17.16.04.20160126-1 (Thu 10 Sep 2026 23:52:03)
+==> Checking runtime dependencies...
+==> Checking buildtime dependencies...
+==> Retrieving sources...
+  -> Downloading geis_2.2.17+16.04.20160126.orig.tar.gz...
+  % Total    % Received % Xferd  Average Speed  Time    Time    Time   Current
+                                 Dload  Upload  Total   Spent   Left   Speed
+  0      0   0      0   0      0      0      0                              0  0      0   0      0   0      0      0      0           00:02              0  0      0   0      0   0      0      0      0           00:03              0  0      0   0      0   0      0      0      0           00:04              0  0      0   0      0   0      0      0      0           00:05              0  0      0   0      0   0      0      0      0           00:05              0
+  0      0   0      0   0      0      0      0           00:06              0 16 317.5k  16  52817   0      0   6800      0   00:47   00:07   00:40  41774 51 317.5k  51 164.7k   0      0  18973      0   00:17   00:08   00:09  70681100 317.5k 100 317.5k   0      0  33792      0   00:09   00:09          70681100 317.5k 100 317.5k   0      0  33792      0   00:09   00:09          70681100 317.5k 100 317.5k   0      0  33791      0   00:09   00:09          70681
+==> Validating source files with sha256sums...
+    geis_2.2.17+16.04.20160126.orig.tar.gz ... Passed
+==> Extracting sources...
+  -> Extracting geis_2.2.17+16.04.20160126.orig.tar.gz with bsdtar
+==> Starting prepare()...
+autoreconf: export WARNINGS=
+autoreconf: Entering directory '.'
+autoreconf: configure.ac: no obvious need to run autopoint
+autoreconf: running: aclocal --force -I m4 --install
+aclocal: installing 'm4/libtool.m4' from '/usr/share/aclocal/libtool.m4'
+aclocal: installing 'm4/ltoptions.m4' from '/usr/share/aclocal/ltoptions.m4'
+aclocal: installing 'm4/ltversion.m4' from '/usr/share/aclocal/ltversion.m4'
+aclocal: installing 'm4/lt~obsolete.m4' from '/usr/share/aclocal/lt~obsolete.m4'
+aclocal: installing 'm4/pkg.m4' from '/usr/share/aclocal/pkg.m4'
+autoreconf: configure.ac: tracing
+autoreconf: configure.ac: creating directory config.aux
+autoreconf: running: libtoolize --copy --force
+libtoolize: putting auxiliary files in AC_CONFIG_AUX_DIR, 'config.aux'.
+libtoolize: copying file 'config.aux/ltmain.sh'
+libtoolize: putting macros in AC_CONFIG_MACRO_DIRS, 'm4'.
+libtoolize: copying file 'm4/libtool.m4'
+libtoolize: copying file 'm4/ltoptions.m4'
+libtoolize: copying file 'm4/ltsugar.m4'
+libtoolize: copying file 'm4/ltversion.m4'
+libtoolize: copying file 'm4/lt~obsolete.m4'
+autoreconf: configure.ac: not using Intltool
+autoreconf: configure.ac: not using Gtkdoc
+autoreconf: configure.ac: no need to run autopoint (confirmed)
+autoreconf: running: aclocal --force -I m4 --install
+autoreconf: running: /usr/bin/autoconf --force
+autoreconf: running: /usr/bin/autoheader --force
+autoreconf: running: automake --add-missing --copy --force-missing
+configure.ac:36: installing 'config.aux/ar-lib'
+configure.ac:34: installing 'config.aux/compile'
+configure.ac:40: installing 'config.aux/config.guess'
+configure.ac:40: installing 'config.aux/config.sub'
+configure.ac:30: installing 'config.aux/install-sh'
+configure.ac:30: installing 'config.aux/missing'
+Makefile.am:28: warning: '%'-style pattern rules are a GNU make extension
+examples/Makefile.am: installing 'config.aux/depcomp'
+python/Makefile.am:31: warning: source file '_geis_bindings/_geis_bindings.c' is in a subdirectory,
+python/Makefile.am:31: but option 'subdir-objects' is disabled
+automake: warning: possible forward-incompatibility.
+automake: At least one source file is in a subdirectory, but the 'subdir-objects'
+automake: automake option hasn't been enabled.  For now, the corresponding output
+automake: object file(s) will be placed in the top-level directory.  However, this
+automake: behavior may change in a future Automake major version, with object
+automake: files being placed in the same subdirectory as the corresponding sources.
+automake: You are advised to start using 'subdir-objects' option throughout your
+automake: project, to avoid future incompatibility.
+python/Makefile.am:25: installing 'config.aux/py-compile'
+parallel-tests: installing 'config.aux/test-driver'
+testsuite/geis1/Makefile.am:41: warning: source file '$(XORG_GTEST_SOURCE)/src/xorg-gtest_main.cpp' is in a subdirectory,
+testsuite/geis1/Makefile.am:41: but option 'subdir-objects' is disabled
+testsuite/geis2/Makefile.am:90: warning: source file '$(XORG_GTEST_SOURCE)/src/xorg-gtest_main.cpp' is in a subdirectory,
+testsuite/geis2/Makefile.am:90: but option 'subdir-objects' is disabled
+testsuite/gtest/Makefile.am:10: warning: source file '$(GTEST_SOURCE)/gtest-all.cc' is in a subdirectory,
+testsuite/gtest/Makefile.am:10: but option 'subdir-objects' is disabled
+testsuite/gtest/Makefile.am:26: warning: source file '$(XORG_GTEST_SOURCE)/src/xorg-gtest-all.cpp' is in a subdirectory,
+testsuite/gtest/Makefile.am:26: but option 'subdir-objects' is disabled
+autoreconf: 'config.aux/config.sub' is updated
+autoreconf: 'config.aux/config.guess' is updated
+autoreconf: configure.ac: not running make: --make not given
+autoreconf: Leaving directory '.'
+checking for a BSD-compatible install... /usr/bin/install -c
+checking whether sleep supports fractional seconds... yes
+checking filesystem timestamp resolution... 0.01
+checking whether build environment is sane... yes
+checking for a race-free mkdir -p... /usr/bin/mkdir -p
+checking for gawk... gawk
+checking whether make sets $(MAKE)... yes
+checking whether make supports nested variables... yes
+checking xargs -n works... yes
+checking whether UID '1000' is supported by ustar format... yes
+checking whether GID '1000' is supported by ustar format... yes
+checking how to create a ustar tar archive... gnutar
+checking whether make supports the include directive... yes (GNU style)
+checking for gcc... gcc
+checking whether the C compiler works... yes
+checking for C compiler default output file name... a.out
+checking for suffix of executables... 
+checking whether we are cross compiling... no
+checking for suffix of object files... o
+checking whether the compiler supports GNU C... yes
+checking whether gcc accepts -g... yes
+checking for gcc option to enable C23 features... none needed
+checking whether gcc understands -c and -o together... yes
+checking dependency style of gcc... gcc3
+checking for g++... g++
+checking whether the compiler supports GNU C++... yes
+checking whether g++ accepts -g... yes
+checking dependency style of g++... gcc3
+checking for ar... ar
+checking the archiver (ar) interface... ar
+checking for a Python interpreter with version >= 3.2... python
+checking for python... /usr/bin/python
+checking for python version... 3.14
+checking for python platform... linux
+checking for GNU default python prefix... ${prefix}
+checking for GNU default python exec_prefix... ${exec_prefix}
+checking for python script directory (pythondir)... ${PYTHON_PREFIX}/lib/python3.14/site-packages
+checking for python extension module directory (pyexecdir)... ${PYTHON_EXEC_PREFIX}/lib/python3.14/site-packages
+checking build system type... x86_64-pc-linux-gnu
+checking host system type... x86_64-pc-linux-gnu
+checking how to print strings... printf
+checking for a sed that does not truncate output... /usr/bin/sed
+checking for grep that handles long lines and -e... /usr/bin/grep
+checking for egrep... /usr/bin/grep -E
+checking for fgrep... /usr/bin/grep -F
+checking for ld used by gcc... /usr/bin/ld
+checking if the linker (/usr/bin/ld) is GNU ld... yes
+checking for BSD- or MS-compatible name lister (nm)... /usr/bin/nm -B
+checking the name lister (/usr/bin/nm -B) interface... BSD nm
+checking whether ln -s works... yes
+checking the maximum length of command line arguments... 1572864
+checking how to convert x86_64-pc-linux-gnu file names to x86_64-pc-linux-gnu format... func_convert_file_noop
+checking how to convert x86_64-pc-linux-gnu file names to toolchain format... func_convert_file_noop
+checking for /usr/bin/ld option to reload object files... -r
+checking for file... file
+checking for objdump... objdump
+checking how to recognize dependent libraries... pass_all
+checking for dlltool... no
+checking how to associate runtime and link libraries... printf %s\n
+checking for ranlib... ranlib
+checking for archiver @FILE support... @
+checking for strip... strip
+checking command to parse /usr/bin/nm -B output from gcc object... ok
+checking for sysroot... no
+checking for a working dd... /usr/bin/dd
+checking how to truncate binary pipes... /usr/bin/dd bs=4096 count=1
+checking for mt... no
+checking if : is a manifest tool... no
+checking for stdio.h... yes
+checking for stdlib.h... yes
+checking for string.h... yes
+checking for inttypes.h... yes
+checking for stdint.h... yes
+checking for strings.h... yes
+checking for sys/stat.h... yes
+checking for sys/types.h... yes
+checking for unistd.h... yes
+checking for dlfcn.h... yes
+checking which variant of shared library versioning to provide... (default) aix
+checking for objdir... .libs
+checking if gcc supports -fno-rtti -fno-exceptions... no
+checking for gcc option to produce PIC... -fPIC -DPIC
+checking if gcc PIC flag -fPIC -DPIC works... yes
+checking if gcc static flag -static works... yes
+checking if gcc supports -c -o file.o... yes
+checking if gcc supports -c -o file.o... (cached) yes
+checking whether the gcc linker (/usr/bin/ld -m elf_x86_64) supports shared libraries... yes
+checking whether -lc should be explicitly linked in... no
+checking dynamic linker characteristics... GNU/Linux ld.so
+checking how to hardcode library paths into programs... immediate
+checking whether stripping libraries is possible... yes
+checking if libtool supports shared libraries... yes
+checking whether to build shared libraries... yes
+checking whether to build static libraries... yes
+checking how to run the C++ preprocessor... g++ -E
+checking for ld used by g++... /usr/bin/ld -m elf_x86_64
+checking if the linker (/usr/bin/ld -m elf_x86_64) is GNU ld... yes
+checking whether the g++ linker (/usr/bin/ld -m elf_x86_64) supports shared libraries... yes
+checking for g++ option to produce PIC... -fPIC -DPIC
+checking if g++ PIC flag -fPIC -DPIC works... yes
+checking if g++ static flag -static works... yes
+checking if g++ supports -c -o file.o... yes
+checking if g++ supports -c -o file.o... (cached) yes
+checking whether the g++ linker (/usr/bin/ld -m elf_x86_64) supports shared libraries... yes
+checking dynamic linker characteristics... (cached) GNU/Linux ld.so
+checking how to hardcode library paths into programs... immediate
+checking for pkg-config... /usr/bin/pkg-config
+checking pkg-config is at least version 0.9.0... yes
+checking for dbus-1 >= 1.2.16... yes
+checking for grail >= 3.0.8 frame >= 2.2... yes
+checking for xcb >= 1.6... yes
+checking for x11 xext xi >= 1.3... yes
+checking for python3 >= 3.2... yes
+checking for XI2.1... yes
+checking for xorg-server >= 1.10.1... yes
+checking whether hidden visibility is supported... yes
+checking for check >= 0.9.8... no
+configure: WARNING: package 'check' not found: related unit testing disabled
+checking for g++ options to detect undeclared functions... none needed
+checking for g++ options to ignore future-version functions... none needed
+checking whether __clang__ is declared... no
+checking whether __INTEL_COMPILER is declared... no
+checking whether __SUNPRO_C is declared... no
+checking if g++ supports -Werror=unknown-warning-option... yes
+checking if g++ supports -Werror=unused-command-line-argument... yes
+checking if g++ supports-Wall... yes
+checking if g++ supports-Wpointer-arith... yes
+checking if g++ supports-Wmissing-declarations... yes
+checking if g++ supports-Wformat=2... yes
+checking if g++ supports-Wunused... yes
+checking if g++ supports-Wuninitialized... yes
+checking if g++ supports-Wshadow... yes
+checking if g++ supports-Wcast-qual... yes
+checking if g++ supports-Wmissing-noreturn... yes
+checking if g++ supports-Wmissing-format-attribute... yes
+checking if g++ supports-Wredundant-decls... yes
+checking if g++ supports-Werror=implicit... yes
+checking if g++ supports-Werror=nonnull... yes
+checking if g++ supports-Werror=init-self... yes
+checking if g++ supports-Werror=main... yes
+checking if g++ supports-Werror=missing-braces... yes
+checking if g++ supports-Werror=sequence-point... yes
+checking if g++ supports-Werror=return-type... yes
+checking if g++ supports-Werror=trigraphs... yes
+checking if g++ supports-Werror=array-bounds... yes
+checking if g++ supports-Werror=write-strings... yes
+checking if g++ supports-Werror=address... yes
+checking if g++ supports-Werror=int-to-pointer-cast... yes
+checking if g++ supports-Werror=pointer-to-int-cast... yes
+checking for /usr/src/gtest/src/gtest-all.cc... no
+checking for /usr/src/gtest/src/gtest_main.cc... no
+Package xorg-gtest was not found in the pkg-config search path.
+Perhaps you should add the directory containing `xorg-gtest.pc'
+to the PKG_CONFIG_PATH environment variable
+Package 'xorg-gtest' not found
+checking for x11... yes
+checking for evemu... no
+configure: WARNING: xorg-gtest is not available, tests will not be built
+checking that generated files are newer than configure... done
+configure: creating ./config.status
+config.status: creating Makefile
+config.status: creating libgeis.pc
+config.status: creating doc/Makefile
+config.status: creating include/Makefile
+config.status: creating libs/Makefile
+config.status: creating libs/geis-util/Makefile
+config.status: creating libs/geis-dbus/Makefile
+config.status: creating libgeis/Makefile
+config.status: creating libgeis/backend/Makefile
+config.status: creating libgeis/backend/test_fixture/Makefile
+config.status: creating libgeis/backend/dbus/Makefile
+config.status: creating libgeis/backend/grail/Makefile
+config.status: creating libgeis/server/Makefile
+config.status: creating testsuite/Makefile
+config.status: creating testsuite/gtest/Makefile
+config.status: creating testsuite/geis-util/Makefile
+config.status: creating testsuite/libgeis/Makefile
+config.status: creating testsuite/geis2/Makefile
+config.status: creating testsuite/geis1/Makefile
+config.status: creating testsuite/geistest/Makefile
+config.status: creating testsuite/x11_mocks/Makefile
+config.status: creating examples/Makefile
+config.status: creating python/Makefile
+config.status: creating tools/Makefile
+config.status: creating tools/geisview/Makefile
+config.status: creating tools/geis-server/Makefile
+config.status: creating data/Makefile
+config.status: creating geis_config.h
+config.status: executing depfiles commands
+config.status: executing libtool commands
+configure: 
+configure:  [1mgeis 2.2.17(B[m
+configure:  ===============================
+configure: 
+configure:  prefix            : [1m/usr/local(B[m
+configure:  integration tests : [1mno(B[m
+configure: 
+==> Starting build()...
+checking for a BSD-compatible install... /usr/bin/install -c
+checking whether sleep supports fractional seconds... yes
+checking filesystem timestamp resolution... 0.01
+checking whether build environment is sane... yes
+checking for a race-free mkdir -p... /usr/bin/mkdir -p
+checking for gawk... gawk
+checking whether make sets $(MAKE)... yes
+checking whether make supports nested variables... yes
+checking xargs -n works... yes
+checking whether UID '1000' is supported by ustar format... yes
+checking whether GID '1000' is supported by ustar format... yes
+checking how to create a ustar tar archive... gnutar
+checking whether make supports the include directive... yes (GNU style)
+checking for gcc... gcc
+checking whether the C compiler works... yes
+checking for C compiler default output file name... a.out
+checking for suffix of executables... 
+checking whether we are cross compiling... no
+checking for suffix of object files... o
+checking whether the compiler supports GNU C... yes
+checking whether gcc accepts -g... yes
+checking for gcc option to enable C23 features... none needed
+checking whether gcc understands -c and -o together... yes
+checking dependency style of gcc... gcc3
+checking for g++... g++
+checking whether the compiler supports GNU C++... yes
+checking whether g++ accepts -g... yes
+checking dependency style of g++... gcc3
+checking for ar... ar
+checking the archiver (ar) interface... ar
+checking for a Python interpreter with version >= 3.2... python
+checking for python... /usr/bin/python
+checking for python version... 3.14
+checking for python platform... linux
+checking for GNU default python prefix... ${prefix}
+checking for GNU default python exec_prefix... ${exec_prefix}
+checking for python script directory (pythondir)... ${PYTHON_PREFIX}/lib/python3.14/site-packages
+checking for python extension module directory (pyexecdir)... ${PYTHON_EXEC_PREFIX}/lib/python3.14/site-packages
+checking build system type... x86_64-pc-linux-gnu
+checking host system type... x86_64-pc-linux-gnu
+checking how to print strings... printf
+checking for a sed that does not truncate output... /usr/bin/sed
+checking for grep that handles long lines and -e... /usr/bin/grep
+checking for egrep... /usr/bin/grep -E
+checking for fgrep... /usr/bin/grep -F
+checking for ld used by gcc... /usr/bin/ld
+checking if the linker (/usr/bin/ld) is GNU ld... yes
+checking for BSD- or MS-compatible name lister (nm)... /usr/bin/nm -B
+checking the name lister (/usr/bin/nm -B) interface... BSD nm
+checking whether ln -s works... yes
+checking the maximum length of command line arguments... 1572864
+checking how to convert x86_64-pc-linux-gnu file names to x86_64-pc-linux-gnu format... func_convert_file_noop
+checking how to convert x86_64-pc-linux-gnu file names to toolchain format... func_convert_file_noop
+checking for /usr/bin/ld option to reload object files... -r
+checking for file... file
+checking for objdump... objdump
+checking how to recognize dependent libraries... pass_all
+checking for dlltool... no
+checking how to associate runtime and link libraries... printf %s\n
+checking for ranlib... ranlib
+checking for archiver @FILE support... @
+checking for strip... strip
+checking command to parse /usr/bin/nm -B output from gcc object... ok
+checking for sysroot... no
+checking for a working dd... /usr/bin/dd
+checking how to truncate binary pipes... /usr/bin/dd bs=4096 count=1
+checking for mt... no
+checking if : is a manifest tool... no
+checking for stdio.h... yes
+checking for stdlib.h... yes
+checking for string.h... yes
+checking for inttypes.h... yes
+checking for stdint.h... yes
+checking for strings.h... yes
+checking for sys/stat.h... yes
+checking for sys/types.h... yes
+checking for unistd.h... yes
+checking for dlfcn.h... yes
+checking which variant of shared library versioning to provide... (default) aix
+checking for objdir... .libs
+checking if gcc supports -fno-rtti -fno-exceptions... no
+checking for gcc option to produce PIC... -fPIC -DPIC
+checking if gcc PIC flag -fPIC -DPIC works... yes
+checking if gcc static flag -static works... yes
+checking if gcc supports -c -o file.o... yes
+checking if gcc supports -c -o file.o... (cached) yes
+checking whether the gcc linker (/usr/bin/ld -m elf_x86_64) supports shared libraries... yes
+checking whether -lc should be explicitly linked in... no
+checking dynamic linker characteristics... GNU/Linux ld.so
+checking how to hardcode library paths into programs... immediate
+checking whether stripping libraries is possible... yes
+checking if libtool supports shared libraries... yes
+checking whether to build shared libraries... yes
+checking whether to build static libraries... no
+checking how to run the C++ preprocessor... g++ -E
+checking for ld used by g++... /usr/bin/ld -m elf_x86_64
+checking if the linker (/usr/bin/ld -m elf_x86_64) is GNU ld... yes
+checking whether the g++ linker (/usr/bin/ld -m elf_x86_64) supports shared libraries... yes
+checking for g++ option to produce PIC... -fPIC -DPIC
+checking if g++ PIC flag -fPIC -DPIC works... yes
+checking if g++ static flag -static works... yes
+checking if g++ supports -c -o file.o... yes
+checking if g++ supports -c -o file.o... (cached) yes
+checking whether the g++ linker (/usr/bin/ld -m elf_x86_64) supports shared libraries... yes
+checking dynamic linker characteristics... (cached) GNU/Linux ld.so
+checking how to hardcode library paths into programs... immediate
+checking for pkg-config... /usr/bin/pkg-config
+checking pkg-config is at least version 0.9.0... yes
+checking for dbus-1 >= 1.2.16... yes
+checking for grail >= 3.0.8 frame >= 2.2... yes
+checking for xcb >= 1.6... yes
+checking for x11 xext xi >= 1.3... yes
+checking for python3 >= 3.2... yes
+checking for XI2.1... yes
+checking for xorg-server >= 1.10.1... yes
+checking whether hidden visibility is supported... yes
+checking for check >= 0.9.8... no
+configure: WARNING: package 'check' not found: related unit testing disabled
+checking for g++ options to detect undeclared functions... none needed
+checking for g++ options to ignore future-version functions... none needed
+checking whether __clang__ is declared... no
+checking whether __INTEL_COMPILER is declared... no
+checking whether __SUNPRO_C is declared... no
+checking if g++ supports -Werror=unknown-warning-option... yes
+checking if g++ supports -Werror=unused-command-line-argument... yes
+checking if g++ supports-Wall... yes
+checking if g++ supports-Wpointer-arith... yes
+checking if g++ supports-Wmissing-declarations... yes
+checking if g++ supports-Wformat=2... yes
+checking if g++ supports-Wunused... yes
+checking if g++ supports-Wuninitialized... yes
+checking if g++ supports-Wshadow... yes
+checking if g++ supports-Wcast-qual... yes
+checking if g++ supports-Wmissing-noreturn... yes
+checking if g++ supports-Wmissing-format-attribute... yes
+checking if g++ supports-Wredundant-decls... yes
+checking if g++ supports-Werror=implicit... yes
+checking if g++ supports-Werror=nonnull... yes
+checking if g++ supports-Werror=init-self... yes
+checking if g++ supports-Werror=main... yes
+checking if g++ supports-Werror=missing-braces... yes
+checking if g++ supports-Werror=sequence-point... yes
+checking if g++ supports-Werror=return-type... yes
+checking if g++ supports-Werror=trigraphs... yes
+checking if g++ supports-Werror=array-bounds... yes
+checking if g++ supports-Werror=write-strings... yes
+checking if g++ supports-Werror=address... yes
+checking if g++ supports-Werror=int-to-pointer-cast... yes
+checking if g++ supports-Werror=pointer-to-int-cast... yes
+checking that generated files are newer than configure... done
+configure: creating ./config.status
+config.status: creating Makefile
+config.status: creating libgeis.pc
+config.status: creating doc/Makefile
+config.status: creating include/Makefile
+config.status: creating libs/Makefile
+config.status: creating libs/geis-util/Makefile
+config.status: creating libs/geis-dbus/Makefile
+config.status: creating libgeis/Makefile
+config.status: creating libgeis/backend/Makefile
+config.status: creating libgeis/backend/test_fixture/Makefile
+config.status: creating libgeis/backend/dbus/Makefile
+config.status: creating libgeis/backend/grail/Makefile
+config.status: creating libgeis/server/Makefile
+config.status: creating testsuite/Makefile
+config.status: creating testsuite/gtest/Makefile
+config.status: creating testsuite/geis-util/Makefile
+config.status: creating testsuite/libgeis/Makefile
+config.status: creating testsuite/geis2/Makefile
+config.status: creating testsuite/geis1/Makefile
+config.status: creating testsuite/geistest/Makefile
+config.status: creating testsuite/x11_mocks/Makefile
+config.status: creating examples/Makefile
+config.status: creating python/Makefile
+config.status: creating tools/Makefile
+config.status: creating tools/geisview/Makefile
+config.status: creating tools/geis-server/Makefile
+config.status: creating data/Makefile
+config.status: creating geis_config.h
+config.status: geis_config.h is unchanged
+config.status: executing depfiles commands
+config.status: executing libtool commands
+configure: 
+configure:  [1mgeis 2.2.17(B[m
+configure:  ===============================
+configure: 
+configure:  prefix            : [1m/usr(B[m
+configure:  integration tests : [1mno(B[m
+configure: 
+make --no-print-directory all-recursive
+Making all in include
+make[2]: Nothing to be done for 'all'.
+Making all in libs
+Making all in geis-util
+  CC       libgeis_util_la-geis_bag.lo
+  CC       libgeis_util_la-geis_logging.lo
+  CCLD     libgeis-util.la
+Making all in geis-dbus
+  CC       libgeis_dbus_la-geis_dbus_class.lo
+  CC       libgeis_dbus_la-geis_dbus_attr.lo
+  CC       libgeis_dbus_la-geis_dbus_device.lo
+  CC       libgeis_dbus_la-geis_dbus_dispatcher.lo
+  CC       libgeis_dbus_la-geis_dbus_region.lo
+  CC       libgeis_dbus_la-geis_dbus_gesture_event.lo
+  CC       libgeis_dbus_la-geis_dbus_subscription.lo
+  CCLD     libgeis-dbus.la
+make[3]: Nothing to be done for 'all-am'.
+Making all in libgeis
+Making all in backend
+Making all in test_fixture
+  CC       libgeis_test_fixture_la-geis_backend_test_fixture.lo
+  CCLD     libgeis-test-fixture.la
+Making all in dbus
+  CC       libgeis_dbus_backend_la-geis_dbus_locator.lo
+  CC       libgeis_dbus_backend_la-geis_dbus_backend.lo
+  CC       libgeis_dbus_backend_la-geis_dbus_client.lo
+  CCLD     libgeis-dbus-backend.la
+Making all in grail
+  CC       libgeis_grail_backend_la-geis_grail_token.lo
+  CC       libgeis_grail_backend_la-geis_grail_backend.lo
+  CC       libgeis_grail_backend_la-geis_grail_window_grab.lo
+  CC       libgeis_grail_backend_la-geis_grail_xsync.lo
+  CC       libgeis_grail_backend_la-geis_ugsubscription_store.lo
+  CCLD     libgeis-grail-backend.la
+make[4]: Nothing to be done for 'all-am'.
+Making all in server
+  CC       libgeis_dbus_server_la-geis_dbus_announcer.lo
+  CC       libgeis_dbus_server_la-geis_dbus_client_proxy.lo
+  CC       libgeis_dbus_server_la-geis_dbus_proxy_box.lo
+  CC       libgeis_dbus_server_la-geis_dbus_server.lo
+  CCLD     libgeis-dbus-server.la
+  CC       libgeis_la-geis_attr.lo
+  CC       libgeis_la-geis_backend.lo
+  CC       libgeis_la-geis_backend_multiplexor.lo
+  CC       libgeis_la-geis_backend_token.lo
+  CC       libgeis_la-geis_class.lo
+  CC       libgeis_la-geis_device.lo
+  CC       libgeis_la-geis_error.lo
+  CC       libgeis_la-geis_event.lo
+  CC       libgeis_la-geis_filter.lo
+  CC       libgeis_la-geis_filterable.lo
+  CC       libgeis_la-geis_filter_term.lo
+  CC       libgeis_la-geis_event_queue.lo
+  CC       libgeis_la-geis_frame.lo
+  CC       libgeis_la-geis_region.lo
+  CC       libgeis_la-geis_gesture_flick.lo
+  CC       libgeis_la-geis_subscription.lo
+  CC       libgeis_la-geis_group.lo
+  CC       libgeis_la-geis_timer.lo
+  CC       libgeis_la-geis_touch.lo
+  CC       libgeis_la-geis_v1.lo
+  CC       libgeis_la-geis.lo
+geis_v1.c: In function '_v1_subscribe_device':
+geis_v1.c:613:20: error: comparison between pointer and zero character constant [-Werror=pointer-compare]
+  613 |   if (gesture_list == GEIS_ALL_GESTURES)
+      |                    ^~
+geis_v1.c:613:7: note: did you mean to dereference the pointer?
+  613 |   if (gesture_list == GEIS_ALL_GESTURES)
+      |       ^
+geis_v1.c: In function 'geis_unsubscribe':
+geis_v1.c:760:20: error: comparison between pointer and zero character constant [-Werror=pointer-compare]
+  760 |   if (gesture_list == GEIS_ALL_GESTURES)
+      |                    ^~
+geis_v1.c:760:7: note: did you mean to dereference the pointer?
+  760 |   if (gesture_list == GEIS_ALL_GESTURES)
+      |       ^
+cc1: all warnings being treated as errors
+make[3]: *** [Makefile:791: libgeis_la-geis_v1.lo] Error 1
+make[3]: *** Waiting for unfinished jobs....
+make[2]: *** [Makefile:841: all-recursive] Error 1
+make[1]: *** [Makefile:542: all-recursive] Error 1
+make: *** [Makefile:451: all] Error 2
+==> ERROR: A failure occurred in build().
+    Aborting...

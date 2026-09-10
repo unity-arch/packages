@@ -1,0 +1,36 @@
+# Maintainer: Charlie <dev.charlie@akao.au>
+
+pkgname=unity-asset-pool
+_ver=0.8.24
+_snap=17.10.20170507
+pkgver=${_ver}.${_snap}
+pkgrel=1
+pkgdesc='design assets for unity, launcher and panel themes and the unity icon theme'
+arch=('any')
+url='https://launchpad.net/unity-asset-pool'
+license=('CC-BY-SA-3.0')
+depends=('hicolor-icon-theme')
+makedepends=('icon-naming-utils')
+source=("${pkgname}_${_ver}+${_snap}.orig.tar.gz::https://launchpad.net/ubuntu/+archive/primary/+files/${pkgname}_${_ver}+${_snap}.orig.tar.gz")
+sha256sums=('8f3ff7df84daf28165e6f78d1287b54c86d22a1612f66c8655d8bef729a85b8b')
+noextract=("${pkgname}_${_ver}+${_snap}.orig.tar.gz")
+
+prepare() {
+  mkdir -p "${pkgname}"
+  tar xzf "${pkgname}_${_ver}+${_snap}.orig.tar.gz" -C "${pkgname}"
+}
+
+package() {
+  cd "${pkgname}"
+  install -d "${pkgdir}/usr/share/unity/themes" "${pkgdir}/usr/share/icons"
+  cp -r launcher/* panel/* "${pkgdir}/usr/share/unity/themes/"
+  cp -r unity-icon-theme "${pkgdir}/usr/share/icons/"
+  # same as debian, generate the legacy icon name symlinks
+  local d c
+  for d in "${pkgdir}"/usr/share/icons/unity-icon-theme/*/; do
+    for c in "${d}"*/; do
+      (cd "${d}" && /usr/lib/icon-naming-utils/icon-name-mapping -c "$(basename "${c}")")
+    done
+  done
+  install -Dm644 COPYRIGHT "${pkgdir}/usr/share/licenses/${pkgname}/COPYRIGHT"
+}

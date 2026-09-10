@@ -1,0 +1,37 @@
+# Maintainer: Charlie <dev.charlie@akao.au>
+
+pkgname=gsettings-ubuntu-schemas
+_name=gsettings-ubuntu-touch-schemas
+_ver=0.0.7
+_snap=21.10.20210712
+pkgver=${_ver}.${_snap}
+pkgrel=1
+pkgdesc='gsettings schemas for the ubuntu desktop and unity'
+arch=('any')
+url='https://launchpad.net/gsettings-ubuntu-touch-schemas'
+license=('LGPL-2.1-or-later')
+depends=('glib2')
+makedepends=('gnome-common' 'intltool')
+optdepends=('accountsservice: user background and input source schemas')
+provides=('gsettings-unity-schemas')
+source=("${_name}_${_ver}+${_snap}.orig.tar.gz::https://launchpad.net/ubuntu/+archive/primary/+files/${_name}_${_ver}+${_snap}.orig.tar.gz")
+sha256sums=('a4a1c328f73e82b5ef69293c7e051fb37c25184cc5cb52e7b7a96f5a9de5b3fc')
+noextract=("${_name}_${_ver}+${_snap}.orig.tar.gz")
+
+prepare() {
+  mkdir -p "${_name}"
+  tar xzf "${_name}_${_ver}+${_snap}.orig.tar.gz" -C "${_name}"
+  cd "${_name}"
+  NOCONFIGURE=1 ./autogen.sh
+}
+
+build() {
+  cd "${_name}"
+  ./configure --prefix=/usr
+  make
+}
+
+package() {
+  cd "${_name}"
+  make DESTDIR="${pkgdir}" install
+}

@@ -1,0 +1,32 @@
+# Maintainer: Charlie <dev.charlie@akao.au>
+
+pkgname=xpathselect
+_ver=1.4
+_snap=15.10.20150824.1
+pkgver=${_ver}.${_snap}
+pkgrel=1
+pkgdesc='select objects in an object tree using xpath queries'
+arch=('x86_64')
+url='https://launchpad.net/xpathselect'
+license=('GPL-3.0-only')
+depends=('gcc-libs')
+makedepends=('cmake' 'ninja' 'boost')
+source=("https://launchpad.net/ubuntu/+archive/primary/+files/${pkgname}_${_ver}+${_snap}.orig.tar.gz")
+sha256sums=('d525e1708ba10f601b13ea04c367062915025d76e0d34d93a268a9f5e2506ee0')
+
+prepare() {
+  # the test tree wants gtest sources in /usr/src, arch ships gtest as a normal lib
+  sed -i '/add_subdirectory(test)/d' "${pkgname}-${_ver}+${_snap}/CMakeLists.txt"
+}
+
+build() {
+  cmake -S "${pkgname}-${_ver}+${_snap}" -B build -G Ninja -Wno-dev \
+    -DCMAKE_BUILD_TYPE=None \
+    -DCMAKE_POLICY_VERSION_MINIMUM=3.5 \
+    -DCMAKE_INSTALL_PREFIX=/usr
+  cmake --build build
+}
+
+package() {
+  DESTDIR="${pkgdir}" cmake --install build
+}

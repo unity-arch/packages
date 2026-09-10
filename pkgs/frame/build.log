@@ -1,0 +1,262 @@
+==> Making package: frame 2.5.0-1 (Thu 10 Sep 2026 23:44:47)
+==> Checking runtime dependencies...
+==> Checking buildtime dependencies...
+==> Retrieving sources...
+  -> Downloading frame_2.5.0.orig.tar.xz...
+  % Total    % Received % Xferd  Average Speed  Time    Time    Time   Current
+                                 Dload  Upload  Total   Spent   Left   Speed
+  0      0   0      0   0      0      0      0                              0100 290.5k 100 290.5k   0      0  1.60M      0                              0100 290.5k 100 290.5k   0      0  1.60M      0                              0100 290.5k 100 290.5k   0      0  1.60M      0                              0
+==> Validating source files with sha256sums...
+    frame_2.5.0.orig.tar.xz ... Passed
+==> Extracting sources...
+  -> Extracting frame_2.5.0.orig.tar.xz with bsdtar
+==> Starting build()...
+checking for a BSD-compatible install... /usr/bin/install -c
+checking whether build environment is sane... yes
+checking for a thread-safe mkdir -p... /usr/bin/mkdir -p
+checking for gawk... gawk
+checking whether make sets $(MAKE)... yes
+checking whether make supports nested variables... yes
+checking whether to enable maintainer-specific portions of Makefiles... yes
+checking build system type... x86_64-unknown-linux-gnu
+checking host system type... x86_64-unknown-linux-gnu
+checking how to print strings... printf
+checking for style of include used by make... GNU
+checking for gcc... gcc
+checking whether the C compiler works... yes
+checking for C compiler default output file name... a.out
+checking for suffix of executables... 
+checking whether we are cross compiling... no
+checking for suffix of object files... o
+checking whether we are using the GNU C compiler... yes
+checking whether gcc accepts -g... yes
+checking for gcc option to accept ISO C89... none needed
+checking dependency style of gcc... gcc3
+checking for a sed that does not truncate output... /usr/bin/sed
+checking for grep that handles long lines and -e... /usr/bin/grep
+checking for egrep... /usr/bin/grep -E
+checking for fgrep... /usr/bin/grep -F
+checking for ld used by gcc... /usr/bin/ld
+checking if the linker (/usr/bin/ld) is GNU ld... yes
+checking for BSD- or MS-compatible name lister (nm)... /usr/bin/nm -B
+checking the name lister (/usr/bin/nm -B) interface... BSD nm
+checking whether ln -s works... yes
+checking the maximum length of command line arguments... 1572864
+checking whether the shell understands some XSI constructs... yes
+checking whether the shell understands "+="... yes
+checking how to convert x86_64-unknown-linux-gnu file names to x86_64-unknown-linux-gnu format... func_convert_file_noop
+checking how to convert x86_64-unknown-linux-gnu file names to toolchain format... func_convert_file_noop
+checking for /usr/bin/ld option to reload object files... -r
+checking for objdump... objdump
+checking how to recognize dependent libraries... pass_all
+checking for dlltool... no
+checking how to associate runtime and link libraries... printf %s\n
+checking for ar... ar
+checking for archiver @FILE support... @
+checking for strip... strip
+checking for ranlib... ranlib
+checking command to parse /usr/bin/nm -B output from gcc object... ok
+checking for sysroot... no
+checking for mt... no
+checking if : is a manifest tool... no
+checking how to run the C preprocessor... gcc -E
+checking for ANSI C header files... yes
+checking for sys/types.h... yes
+checking for sys/stat.h... yes
+checking for stdlib.h... yes
+checking for string.h... yes
+checking for memory.h... yes
+checking for strings.h... yes
+checking for inttypes.h... yes
+checking for stdint.h... yes
+checking for unistd.h... yes
+checking for dlfcn.h... yes
+checking for objdir... .libs
+checking if gcc supports -fno-rtti -fno-exceptions... no
+checking for gcc option to produce PIC... -fPIC -DPIC
+checking if gcc PIC flag -fPIC -DPIC works... yes
+checking if gcc static flag -static works... yes
+checking if gcc supports -c -o file.o... yes
+checking if gcc supports -c -o file.o... (cached) yes
+checking whether the gcc linker (/usr/bin/ld -m elf_x86_64) supports shared libraries... yes
+checking whether -lc should be explicitly linked in... no
+checking dynamic linker characteristics... GNU/Linux ld.so
+checking how to hardcode library paths into programs... immediate
+checking whether stripping libraries is possible... yes
+checking if libtool supports shared libraries... yes
+checking whether to build shared libraries... yes
+checking whether to build static libraries... no
+checking for gcc... (cached) gcc
+checking whether we are using the GNU C compiler... (cached) yes
+checking whether gcc accepts -g... (cached) yes
+checking for gcc option to accept ISO C89... (cached) none needed
+checking dependency style of gcc... (cached) gcc3
+checking for g++... g++
+checking whether we are using the GNU C++ compiler... yes
+checking whether g++ accepts -g... yes
+checking dependency style of g++... gcc3
+checking how to run the C++ preprocessor... g++ -E
+checking for ld used by g++... /usr/bin/ld -m elf_x86_64
+checking if the linker (/usr/bin/ld -m elf_x86_64) is GNU ld... yes
+checking whether the g++ linker (/usr/bin/ld -m elf_x86_64) supports shared libraries... yes
+checking for g++ option to produce PIC... -fPIC -DPIC
+checking if g++ PIC flag -fPIC -DPIC works... yes
+checking if g++ static flag -static works... yes
+checking if g++ supports -c -o file.o... yes
+checking if g++ supports -c -o file.o... (cached) yes
+checking whether the g++ linker (/usr/bin/ld -m elf_x86_64) supports shared libraries... yes
+checking dynamic linker characteristics... (cached) GNU/Linux ld.so
+checking how to hardcode library paths into programs... immediate
+checking for pkg-config... /usr/bin/pkg-config
+checking pkg-config is at least version 0.9.0... yes
+checking for XINPUT... yes
+checking for a2x... a2x
+checking whether __clang__ is declared... no
+checking whether __INTEL_COMPILER is declared... no
+checking whether __SUNPRO_C is declared... no
+checking if g++ supports -Werror=unknown-warning-option... yes
+checking if g++ supports -Werror=unused-command-line-argument... yes
+checking if g++ supports-Wall... yes
+checking if g++ supports-Wpointer-arith... yes
+checking if g++ supports-Wmissing-declarations... yes
+checking if g++ supports-Wformat=2... yes
+checking if g++ supports-Wunused... yes
+checking if g++ supports-Wuninitialized... yes
+checking if g++ supports-Wshadow... yes
+checking if g++ supports-Wcast-qual... yes
+checking if g++ supports-Wmissing-noreturn... yes
+checking if g++ supports-Wmissing-format-attribute... yes
+checking if g++ supports-Wredundant-decls... yes
+checking if g++ supports-Werror=implicit... yes
+checking if g++ supports-Werror=nonnull... yes
+checking if g++ supports-Werror=init-self... yes
+checking if g++ supports-Werror=main... yes
+checking if g++ supports-Werror=missing-braces... yes
+checking if g++ supports-Werror=sequence-point... yes
+checking if g++ supports-Werror=return-type... yes
+checking if g++ supports-Werror=trigraphs... yes
+checking if g++ supports-Werror=array-bounds... yes
+checking if g++ supports-Werror=write-strings... yes
+checking if g++ supports-Werror=address... yes
+checking if g++ supports-Werror=int-to-pointer-cast... yes
+checking if g++ supports-Werror=pointer-to-int-cast... yes
+Package xorg-gtest was not found in the pkg-config search path.
+Perhaps you should add the directory containing `xorg-gtest.pc'
+to the PKG_CONFIG_PATH environment variable
+Package 'xorg-gtest' not found
+Package xorg-gtest was not found in the pkg-config search path.
+Perhaps you should add the directory containing `xorg-gtest.pc'
+to the PKG_CONFIG_PATH environment variable
+Package 'xorg-gtest' not found
+checking for X11... yes
+checking for EVEMU... no
+configure: WARNING: xorg-gtest is not available, tests will not be built
+checking whether __clang__ is declared... (cached) no
+configure: creating ./config.status
+config.status: creating Makefile
+config.status: creating doc/Makefile
+config.status: creating include/oif/frame.h
+config.status: creating src/Makefile
+config.status: creating test/Makefile
+config.status: creating test/gtest/Makefile
+config.status: creating test/integration/Makefile
+config.status: creating test/regular/Makefile
+config.status: creating test/x11_mocks/Makefile
+config.status: creating tools/Makefile
+config.status: creating frame.pc
+config.status: creating frame-x11.pc
+config.status: creating config.h
+config.status: executing depfiles commands
+config.status: executing libtool commands
+configure: 
+configure: [1mOpen Input Framework - Frame library - 2.5.0(B[m
+configure: 
+configure:    Prefix                  : [1m/usr(B[m
+configure:    CXXFLAGS                : [1m-march=x86-64 -mtune=generic -O2 -pipe -fno-plt -fexceptions -Wp,-D_FORTIFY_SOURCE=3 -Wformat -Werror=format-security -fstack-clash-protection -fcf-protection -fno-omit-frame-pointer -mno-omit-leaf-frame-pointer -Wp,-D_GLIBCXX_ASSERTIONS(B[m
+configure:    Build X11 backend       : [1myes(B[m
+configure:    Build integration tests : [1mno(B[m
+configure: 
+make --no-print-directory all-recursive
+Making all in doc
+make[2]: Nothing to be done for 'all'.
+Making all in src
+  CXX    axis.lo
+  CXX    device.lo
+  CXX    event.lo
+  CXX    frame.lo
+  CXX    handle.lo
+  CXX    touch.lo
+  CXX    value.lo
+  CXX    window.lo
+  CXX    frame_x11.lo
+  CXX    device_x11.lo
+  CXX    handle_x11.lo
+  CXX    window_x11.lo
+  CXXLD  libframe.la
+Making all in test
+Making all in gtest
+make[3]: Nothing to be done for 'all'.
+Making all in x11_mocks
+make[3]: Nothing to be done for 'all'.
+Making all in regular
+make[3]: Nothing to be done for 'all'.
+make[3]: Nothing to be done for 'all-am'.
+Making all in tools
+  CC     frame-test-x11.o
+  CC     device.o
+  CC     frame.o
+  CC     touch.o
+  CCLD   frame-test-x11
+==> Entering fakeroot environment...
+==> Starting package()...
+Making install in doc
+make[2]: Nothing to be done for 'install-exec-am'.
+mkdir -p api/html
+/usr/bin/install -c -d /home/charlie/source/unity-arch/pkgs/frame/pkg/frame/usr/share/doc/frame 
+cp -a api/html /home/charlie/source/unity-arch/pkgs/frame/pkg/frame/usr/share/doc/frame 
+Making install in src
+ /usr/bin/mkdir -p '/home/charlie/source/unity-arch/pkgs/frame/pkg/frame/usr/include/oif'
+ /usr/bin/mkdir -p '/home/charlie/source/unity-arch/pkgs/frame/pkg/frame/usr/lib'
+ /bin/sh ../libtool   --mode=install /usr/bin/install -c   libframe.la '/home/charlie/source/unity-arch/pkgs/frame/pkg/frame/usr/lib'
+ /usr/bin/install -c -m 644 ../include/oif/frame.h ../include/oif/frame_backend.h ../include/oif/frame_internal.h ../include/oif/frame_x11.h '/home/charlie/source/unity-arch/pkgs/frame/pkg/frame/usr/include/oif'
+libtool: install: /usr/bin/install -c .libs/libframe.so.6.0.0 /home/charlie/source/unity-arch/pkgs/frame/pkg/frame/usr/lib/libframe.so.6.0.0
+libtool: install: (cd /home/charlie/source/unity-arch/pkgs/frame/pkg/frame/usr/lib && { ln -s -f libframe.so.6.0.0 libframe.so.6 || { rm -f libframe.so.6 && ln -s libframe.so.6.0.0 libframe.so.6; }; })
+libtool: install: (cd /home/charlie/source/unity-arch/pkgs/frame/pkg/frame/usr/lib && { ln -s -f libframe.so.6.0.0 libframe.so || { rm -f libframe.so && ln -s libframe.so.6.0.0 libframe.so; }; })
+libtool: install: /usr/bin/install -c .libs/libframe.lai /home/charlie/source/unity-arch/pkgs/frame/pkg/frame/usr/lib/libframe.la
+libtool: install: warning: remember to run `libtool --finish /usr/lib'
+Making install in test
+Making install in gtest
+make[3]: Nothing to be done for 'install-exec-am'.
+make[3]: Nothing to be done for 'install-data-am'.
+Making install in x11_mocks
+make[3]: Nothing to be done for 'install-exec-am'.
+make[3]: Nothing to be done for 'install-data-am'.
+Making install in regular
+make[3]: Nothing to be done for 'install-exec-am'.
+make[3]: Nothing to be done for 'install-data-am'.
+make[3]: Nothing to be done for 'install-exec-am'.
+make[3]: Nothing to be done for 'install-data-am'.
+Making install in tools
+ /usr/bin/mkdir -p '/home/charlie/source/unity-arch/pkgs/frame/pkg/frame/usr/bin'
+ /usr/bin/mkdir -p '/home/charlie/source/unity-arch/pkgs/frame/pkg/frame/usr/share/man/man1'
+  /bin/sh ../libtool   --mode=install /usr/bin/install -c frame-test-x11 '/home/charlie/source/unity-arch/pkgs/frame/pkg/frame/usr/bin'
+ /usr/bin/install -c -m 644 frame-test-x11.1 '/home/charlie/source/unity-arch/pkgs/frame/pkg/frame/usr/share/man/man1'
+libtool: install: warning: `../src/libframe.la' has not been installed in `/usr/lib'
+libtool: install: /usr/bin/install -c .libs/frame-test-x11 /home/charlie/source/unity-arch/pkgs/frame/pkg/frame/usr/bin/frame-test-x11
+make[2]: Nothing to be done for 'install-exec-am'.
+ /usr/bin/mkdir -p '/home/charlie/source/unity-arch/pkgs/frame/pkg/frame/usr/lib/pkgconfig'
+ /usr/bin/install -c -m 644 frame.pc frame-x11.pc '/home/charlie/source/unity-arch/pkgs/frame/pkg/frame/usr/lib/pkgconfig'
+==> Tidying install...
+  -> Removing libtool files...
+  -> Removing static library files...
+  -> Purging unwanted files...
+  -> Stripping unneeded symbols from binaries and libraries...
+  -> Compressing man and info pages...
+==> Checking for packaging issues...
+==> Creating package "frame"...
+  -> Generating .PKGINFO file...
+  -> Generating .BUILDINFO file...
+  -> Generating .MTREE file...
+  -> Compressing package...
+==> Leaving fakeroot environment.
+==> Finished making: frame 2.5.0-1 (Thu 10 Sep 2026 23:44:58)

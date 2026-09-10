@@ -1,0 +1,475 @@
+==> Making package: gsettings-ubuntu-schemas 0.0.7.21.10.20210712-1 (Thu 10 Sep 2026 23:45:48)
+==> Checking runtime dependencies...
+==> Checking buildtime dependencies...
+==> Retrieving sources...
+  -> Downloading gsettings-ubuntu-touch-schemas_0.0.7+21.10.20210712.orig.tar.gz...
+  % Total    % Received % Xferd  Average Speed  Time    Time    Time   Current
+                                 Dload  Upload  Total   Spent   Left   Speed
+  0      0   0      0   0      0      0      0                              0  0      0   0      0   0      0      0      0           00:01              0  0      0   0      0   0      0      0      0           00:01              0  0      0   0      0   0      0      0      0           00:01              0
+  0      0   0      0   0      0      0      0           00:02              0100  16865 100  16865   0      0   4569      0   00:03   00:03          14068100  16865 100  16865   0      0   4568      0   00:03   00:03          14068100  16865 100  16865   0      0   4568      0   00:03   00:03          14068100  16865 100  16865   0      0   4568      0   00:03   00:03          14068
+==> Validating source files with sha256sums...
+    gsettings-ubuntu-touch-schemas_0.0.7+21.10.20210712.orig.tar.gz ... Passed
+==> Extracting sources...
+==> Starting prepare()...
+/usr/bin/gnome-autogen.sh
+***Warning*** PKG_NAME is deprecated, you may remove it from autogen.sh
+configure.ac:25: warning: AC_OUTPUT should be used without arguments.
+configure.ac:25: You should run autoupdate.
+checking for automake >= 1.9...
+  testing automake... found 1.18.1
+checking for autoreconf >= 2.53...
+  testing autoreconf... found 2.73
+configure.ac:25: warning: AC_OUTPUT should be used without arguments.
+configure.ac:25: You should run autoupdate.
+checking for glib-gettext >= 2.2.0...
+  testing glib-gettextize... found 2.88.3
+checking for intltool >= 0.25...
+  testing intltoolize... found 0.51.0
+Checking for required M4 macros...
+Processing ./configure.ac
+configure.ac:25: warning: AC_OUTPUT should be used without arguments.
+configure.ac:25: You should run autoupdate.
+Running glib-gettextize... Ignore non-fatal messages.
+Copying file po/Makefile.in.in
+
+Please add the files
+  codeset.m4 gettext.m4 glibc21.m4 iconv.m4 isc-posix.m4 lcmessage.m4
+  progtest.m4
+from the /usr/share/aclocal directory to your autoconf macro directory
+or directly to your aclocal.m4 file.
+You will also need config.guess and config.sub, which you can get from
+ftp://ftp.gnu.org/pub/gnu/config/.
+
+Running intltoolize...
+Running autoreconf...
+autoreconf: export WARNINGS=no-portability
+autoreconf: Entering directory '.'
+autoreconf: configure.ac: no obvious need to run autopoint
+autoreconf: running: aclocal --force -I m4 ${ACLOCAL_FLAGS}
+autoreconf: configure.ac: tracing
+autoreconf: configure.ac: not using Libtool
+autoreconf: running: intltoolize --copy --force
+You should update your 'aclocal.m4' by running aclocal.
+autoreconf: configure.ac: not using Gtkdoc
+autoreconf: configure.ac: no need to run autopoint (confirmed)
+autoreconf: running: /usr/bin/autoconf --force
+configure.ac:22: warning: The macro 'GLIB_GNU_GETTEXT' is obsolete.
+configure.ac:22: You should run autoupdate.
+aclocal.m4:388: GLIB_GNU_GETTEXT is expanded from...
+aclocal.m4:488: AM_GLIB_GNU_GETTEXT is expanded from...
+configure.ac:22: the top level
+configure.ac:22: warning: The macro 'AC_TRY_LINK' is obsolete.
+configure.ac:22: You should run autoupdate.
+./lib/autoconf/general.m4:2976: AC_TRY_LINK is expanded from...
+lib/m4sugar/m4sh.m4:689: _AS_IF_ELSE is expanded from...
+lib/m4sugar/m4sh.m4:696: AS_IF is expanded from...
+./lib/autoconf/general.m4:2305: AC_CACHE_VAL is expanded from...
+./lib/autoconf/general.m4:2326: AC_CACHE_CHECK is expanded from...
+aclocal.m4:73: GLIB_LC_MESSAGES is expanded from...
+aclocal.m4:388: GLIB_GNU_GETTEXT is expanded from...
+aclocal.m4:488: AM_GLIB_GNU_GETTEXT is expanded from...
+configure.ac:22: the top level
+configure.ac:22: warning: The macro 'AC_TRY_LINK' is obsolete.
+configure.ac:22: You should run autoupdate.
+./lib/autoconf/general.m4:2976: AC_TRY_LINK is expanded from...
+lib/m4sugar/m4sh.m4:689: _AS_IF_ELSE is expanded from...
+lib/m4sugar/m4sh.m4:696: AS_IF is expanded from...
+./lib/autoconf/general.m4:2305: AC_CACHE_VAL is expanded from...
+./lib/autoconf/general.m4:2326: AC_CACHE_CHECK is expanded from...
+lib/m4sugar/m4sh.m4:696: AS_IF is expanded from...
+./lib/autoconf/headers.m4:90: _AC_CHECK_HEADER_COMPILE is expanded from...
+./lib/autoconf/headers.m4:57: AC_CHECK_HEADER is expanded from...
+aclocal.m4:172: GLIB_WITH_NLS is expanded from...
+aclocal.m4:388: GLIB_GNU_GETTEXT is expanded from...
+aclocal.m4:488: AM_GLIB_GNU_GETTEXT is expanded from...
+configure.ac:22: the top level
+configure.ac:22: warning: The macro 'AC_TRY_LINK' is obsolete.
+configure.ac:22: You should run autoupdate.
+./lib/autoconf/general.m4:2976: AC_TRY_LINK is expanded from...
+lib/m4sugar/m4sh.m4:696: AS_IF is expanded from...
+./lib/autoconf/headers.m4:90: _AC_CHECK_HEADER_COMPILE is expanded from...
+./lib/autoconf/headers.m4:57: AC_CHECK_HEADER is expanded from...
+aclocal.m4:172: GLIB_WITH_NLS is expanded from...
+aclocal.m4:388: GLIB_GNU_GETTEXT is expanded from...
+aclocal.m4:488: AM_GLIB_GNU_GETTEXT is expanded from...
+configure.ac:22: the top level
+configure.ac:22: warning: The macro 'AC_OUTPUT_COMMANDS' is obsolete.
+configure.ac:22: You should run autoupdate.
+./lib/autoconf/status.m4:1029: AC_OUTPUT_COMMANDS is expanded from...
+aclocal.m4:172: GLIB_WITH_NLS is expanded from...
+aclocal.m4:388: GLIB_GNU_GETTEXT is expanded from...
+aclocal.m4:488: AM_GLIB_GNU_GETTEXT is expanded from...
+configure.ac:22: the top level
+configure.ac:25: warning: AC_OUTPUT should be used without arguments.
+configure.ac:25: You should run autoupdate.
+autoreconf: configure.ac: not running autoheader: no config headers
+autoreconf: running: automake --add-missing --copy --force-missing
+configure.ac:22: installing './compile'
+configure.ac:5: installing './install-sh'
+configure.ac:5: installing './missing'
+schemas/Makefile.am:1: warning: whitespace following trailing backslash
+autoreconf: configure.ac: not running make: --make not given
+autoreconf: Leaving directory '.'
+Skipping configure process.
+==> Starting build()...
+checking for a BSD-compatible install... /usr/bin/install -c
+checking whether sleep supports fractional seconds... yes
+checking filesystem timestamp resolution... 0.01
+checking whether build environment is sane... yes
+checking for a race-free mkdir -p... /usr/bin/mkdir -p
+checking for gawk... gawk
+checking whether make sets $(MAKE)... yes
+checking whether make supports nested variables... yes
+checking xargs -n works... yes
+checking whether UID '1000' is supported by ustar format... yes
+checking whether GID '1000' is supported by ustar format... yes
+checking how to create a ustar tar archive... gnutar
+checking whether to enable maintainer-specific portions of Makefiles... yes
+checking for a sed that does not truncate output... /usr/bin/sed
+checking whether ln -s works... yes
+checking for pkg-config... /usr/bin/pkg-config
+checking pkg-config is at least version 0.9.0... yes
+checking for pkg-config... (cached) /usr/bin/pkg-config
+checking pkg-config is at least version 0.16... yes
+checking whether make supports the include directive... yes (GNU style)
+checking for gcc... gcc
+checking whether the C compiler works... yes
+checking for C compiler default output file name... a.out
+checking for suffix of executables... 
+checking whether we are cross compiling... no
+checking for suffix of object files... o
+checking whether the compiler supports GNU C... yes
+checking whether gcc accepts -g... yes
+checking for gcc option to enable C23 features... none needed
+checking whether gcc understands -c and -o together... yes
+checking dependency style of gcc... none
+checking for stdio.h... yes
+checking for stdlib.h... yes
+checking for string.h... yes
+checking for inttypes.h... yes
+checking for stdint.h... yes
+checking for strings.h... yes
+checking for sys/stat.h... yes
+checking for sys/types.h... yes
+checking for unistd.h... yes
+checking for locale.h... yes
+checking for LC_MESSAGES... yes
+checking for CFPreferencesCopyAppValue... no
+checking for CFLocaleCopyCurrent... no
+checking for libintl.h... yes
+checking for ngettext in libc... yes
+checking for dgettext in libc... yes
+checking for bind_textdomain_codeset... yes
+checking for msgfmt... /usr/bin/msgfmt
+checking for dcgettext... yes
+checking if msgfmt accepts -c... yes
+checking for gmsgfmt... /usr/bin/msgfmt
+checking for xgettext... /usr/bin/xgettext
+checking whether NLS is requested... yes
+checking for intltool >= 0.40.0... 0.51.0 found
+checking for intltool-update... /usr/bin/intltool-update
+checking for intltool-merge... /usr/bin/intltool-merge
+checking for intltool-extract... /usr/bin/intltool-extract
+checking for xgettext... (cached) /usr/bin/xgettext
+checking for msgmerge... /usr/bin/msgmerge
+checking for msgfmt... (cached) /usr/bin/msgfmt
+checking for gmsgfmt... (cached) /usr/bin/msgfmt
+checking for perl... /usr/bin/perl
+checking for perl >= 5.8.1... 5.42.2
+checking for XML::Parser... ok
+checking that generated files are newer than configure... done
+configure: creating ./config.status
+config.status: creating Makefile
+config.status: creating gsettings-unity-schemas.pc
+config.status: creating accountsservice/Makefile
+config.status: creating schemas/Makefile
+config.status: creating po/Makefile.in
+config.status: executing depfiles commands
+config.status: executing default-1 commands
+config.status: executing po/stamp-it commands
+
+              gsettings-ubuntu-touch-schemas 0.0.1
+              ====================================
+
+        prefix:                             /usr
+        exec_prefix:                        ${prefix}
+        libdir:                             ${exec_prefix}/lib
+        bindir:                             ${exec_prefix}/bin
+        sbindir:                            ${exec_prefix}/sbin
+        sysconfdir:                         ${prefix}/etc
+        localstatedir:                      ${prefix}/var
+        datadir:                            ${datarootdir}
+        source code location:               .
+        Maintainer mode:                    yes
+
+CDPATH="${ZSH_VERSION+.}:" && cd . && /bin/sh '/home/charlie/source/unity-arch/pkgs/gsettings-ubuntu-schemas/src/gsettings-ubuntu-touch-schemas/missing' aclocal-1.18 -I m4 
+CDPATH="${ZSH_VERSION+.}:" && cd . && /bin/sh '/home/charlie/source/unity-arch/pkgs/gsettings-ubuntu-schemas/src/gsettings-ubuntu-touch-schemas/missing' autoconf
+ cd . && /bin/sh /home/charlie/source/unity-arch/pkgs/gsettings-ubuntu-schemas/src/gsettings-ubuntu-touch-schemas/missing automake-1.18 --foreign
+configure.ac:22: warning: The macro 'GLIB_GNU_GETTEXT' is obsolete.
+configure.ac:22: You should run autoupdate.
+aclocal.m4:388: GLIB_GNU_GETTEXT is expanded from...
+aclocal.m4:488: AM_GLIB_GNU_GETTEXT is expanded from...
+configure.ac:22: the top level
+configure.ac:22: warning: The macro 'AC_TRY_LINK' is obsolete.
+configure.ac:22: You should run autoupdate.
+./lib/autoconf/general.m4:2976: AC_TRY_LINK is expanded from...
+lib/m4sugar/m4sh.m4:689: _AS_IF_ELSE is expanded from...
+lib/m4sugar/m4sh.m4:696: AS_IF is expanded from...
+./lib/autoconf/general.m4:2305: AC_CACHE_VAL is expanded from...
+./lib/autoconf/general.m4:2326: AC_CACHE_CHECK is expanded from...
+aclocal.m4:73: GLIB_LC_MESSAGES is expanded from...
+aclocal.m4:388: GLIB_GNU_GETTEXT is expanded from...
+aclocal.m4:488: AM_GLIB_GNU_GETTEXT is expanded from...
+configure.ac:22: the top level
+configure.ac:22: warning: The macro 'AC_TRY_LINK' is obsolete.
+configure.ac:22: You should run autoupdate.
+./lib/autoconf/general.m4:2976: AC_TRY_LINK is expanded from...
+lib/m4sugar/m4sh.m4:689: _AS_IF_ELSE is expanded from...
+lib/m4sugar/m4sh.m4:696: AS_IF is expanded from...
+./lib/autoconf/general.m4:2305: AC_CACHE_VAL is expanded from...
+./lib/autoconf/general.m4:2326: AC_CACHE_CHECK is expanded from...
+lib/m4sugar/m4sh.m4:696: AS_IF is expanded from...
+./lib/autoconf/headers.m4:90: _AC_CHECK_HEADER_COMPILE is expanded from...
+./lib/autoconf/headers.m4:57: AC_CHECK_HEADER is expanded from...
+aclocal.m4:172: GLIB_WITH_NLS is expanded from...
+aclocal.m4:388: GLIB_GNU_GETTEXT is expanded from...
+aclocal.m4:488: AM_GLIB_GNU_GETTEXT is expanded from...
+configure.ac:22: the top level
+configure.ac:22: warning: The macro 'AC_TRY_LINK' is obsolete.
+configure.ac:22: You should run autoupdate.
+./lib/autoconf/general.m4:2976: AC_TRY_LINK is expanded from...
+lib/m4sugar/m4sh.m4:696: AS_IF is expanded from...
+./lib/autoconf/headers.m4:90: _AC_CHECK_HEADER_COMPILE is expanded from...
+./lib/autoconf/headers.m4:57: AC_CHECK_HEADER is expanded from...
+aclocal.m4:172: GLIB_WITH_NLS is expanded from...
+aclocal.m4:388: GLIB_GNU_GETTEXT is expanded from...
+aclocal.m4:488: AM_GLIB_GNU_GETTEXT is expanded from...
+configure.ac:22: the top level
+configure.ac:22: warning: The macro 'AC_OUTPUT_COMMANDS' is obsolete.
+configure.ac:22: You should run autoupdate.
+./lib/autoconf/status.m4:1029: AC_OUTPUT_COMMANDS is expanded from...
+aclocal.m4:172: GLIB_WITH_NLS is expanded from...
+aclocal.m4:388: GLIB_GNU_GETTEXT is expanded from...
+aclocal.m4:488: AM_GLIB_GNU_GETTEXT is expanded from...
+configure.ac:22: the top level
+configure.ac:25: warning: AC_OUTPUT should be used without arguments.
+configure.ac:25: You should run autoupdate.
+/bin/sh ./config.status --recheck
+running CONFIG_SHELL=/bin/sh /bin/sh ./configure --prefix=/usr CFLAGS=-march=x86-64 -mtune=generic -O2 -pipe -fno-plt -fexceptions -Wp,-D_FORTIFY_SOURCE=3 -Wformat -Werror=format-security -fstack-clash-protection -fcf-protection -fno-omit-frame-pointer -mno-omit-leaf-frame-pointer LDFLAGS=-Wl,-O1 -Wl,--sort-common -Wl,--as-needed -Wl,-z,relro -Wl,-z,now -Wl,-z,pack-relative-relocs --no-create --no-recursion
+checking for a BSD-compatible install... /usr/bin/install -c
+checking whether sleep supports fractional seconds... yes
+checking filesystem timestamp resolution... schemas/Makefile.am:1: warning: whitespace following trailing backslash
+0.01
+checking whether build environment is sane... yes
+checking for a race-free mkdir -p... /usr/bin/mkdir -p
+checking for gawk... gawk
+checking whether make sets $(MAKE)... yes
+checking whether make supports nested variables... yes
+checking xargs -n works... yes
+checking whether UID '1000' is supported by ustar format... yes
+checking whether GID '1000' is supported by ustar format... yes
+checking how to create a ustar tar archive... gnutar
+checking whether to enable maintainer-specific portions of Makefiles... yes
+checking for a sed that does not truncate output... /usr/bin/sed
+checking whether ln -s works... yes
+checking for pkg-config... /usr/bin/pkg-config
+checking pkg-config is at least version 0.9.0... yes
+checking for pkg-config... (cached) /usr/bin/pkg-config
+checking pkg-config is at least version 0.16... yes
+checking whether make supports the include directive... yes (GNU style)
+checking for gcc... gcc
+checking whether the C compiler works... yes
+checking for C compiler default output file name... a.out
+checking for suffix of executables... 
+checking whether we are cross compiling... no
+checking for suffix of object files... o
+checking whether the compiler supports GNU C... yes
+checking whether gcc accepts -g... yes
+checking for gcc option to enable C23 features... none needed
+checking whether gcc understands -c and -o together... yes
+checking dependency style of gcc... none
+checking for stdio.h... yes
+checking for stdlib.h... yes
+checking for string.h... yes
+checking for inttypes.h... yes
+checking for stdint.h... yes
+checking for strings.h... yes
+checking for sys/stat.h... yes
+checking for sys/types.h... yes
+checking for unistd.h... yes
+checking for locale.h... yes
+checking for LC_MESSAGES... yes
+checking for CFPreferencesCopyAppValue... no
+checking for CFLocaleCopyCurrent... no
+checking for libintl.h... yes
+checking for ngettext in libc... yes
+checking for dgettext in libc... yes
+checking for bind_textdomain_codeset... yes
+checking for msgfmt... /usr/bin/msgfmt
+checking for dcgettext... yes
+checking if msgfmt accepts -c... yes
+checking for gmsgfmt... /usr/bin/msgfmt
+checking for xgettext... /usr/bin/xgettext
+checking whether NLS is requested... yes
+checking for intltool >= 0.40.0... 0.51.0 found
+checking for intltool-update... /usr/bin/intltool-update
+checking for intltool-merge... /usr/bin/intltool-merge
+checking for intltool-extract... /usr/bin/intltool-extract
+checking for xgettext... (cached) /usr/bin/xgettext
+checking for msgmerge... /usr/bin/msgmerge
+checking for msgfmt... (cached) /usr/bin/msgfmt
+checking for gmsgfmt... (cached) /usr/bin/msgfmt
+checking for perl... /usr/bin/perl
+checking for perl >= 5.8.1... 5.42.2
+checking for XML::Parser... ok
+checking that generated files are newer than configure... done
+configure: creating ./config.status
+
+              gsettings-ubuntu-touch-schemas 0.0.1
+              ====================================
+
+        prefix:                             /usr
+        exec_prefix:                        ${prefix}
+        libdir:                             ${exec_prefix}/lib
+        bindir:                             ${exec_prefix}/bin
+        sbindir:                            ${exec_prefix}/sbin
+        sysconfdir:                         ${prefix}/etc
+        localstatedir:                      ${prefix}/var
+        datadir:                            ${datarootdir}
+        source code location:               .
+        Maintainer mode:                    yes
+
+ /bin/sh ./config.status
+config.status: creating Makefile
+config.status: creating gsettings-unity-schemas.pc
+config.status: creating accountsservice/Makefile
+config.status: creating schemas/Makefile
+config.status: creating po/Makefile.in
+config.status: executing depfiles commands
+config.status: executing default-1 commands
+config.status: executing po/stamp-it commands
+Making all in accountsservice
+make[1]: Entering directory '/home/charlie/source/unity-arch/pkgs/gsettings-ubuntu-schemas/src/gsettings-ubuntu-touch-schemas/accountsservice'
+make[1]: Nothing to be done for 'all'.
+make[1]: Leaving directory '/home/charlie/source/unity-arch/pkgs/gsettings-ubuntu-schemas/src/gsettings-ubuntu-touch-schemas/accountsservice'
+Making all in schemas
+make[1]: Entering directory '/home/charlie/source/unity-arch/pkgs/gsettings-ubuntu-schemas/src/gsettings-ubuntu-touch-schemas/schemas'
+  GEN      com.ubuntu.notifications.hub.gschema.xml.in
+  GEN      com.ubuntu.notifications.settings.gschema.xml.in
+  GEN      com.ubuntu.phone.gschema.xml.in
+  GEN      com.ubuntu.sound.gschema.xml.in
+  GEN      com.ubuntu.touch.network.gschema.xml.in
+  GEN      com.ubuntu.touch.sound.gschema.xml.in
+  GEN      com.ubuntu.touch.system.gschema.xml.in
+  GEN      com.ubuntu.user-interface.gschema.xml.in
+  GEN      com.canonical.unity.desktop.gschema.xml.in
+  ITMRG  com.ubuntu.notifications.hub.gschema.xml
+  ITMRG  com.ubuntu.notifications.settings.gschema.xml
+  ITMRG  com.ubuntu.phone.gschema.xml
+  ITMRG  com.ubuntu.sound.gschema.xml
+  ITMRG  com.ubuntu.touch.network.gschema.xml
+  ITMRG  com.ubuntu.touch.sound.gschema.xml
+  ITMRG  com.ubuntu.touch.system.gschema.xml
+  ITMRG  com.ubuntu.user-interface.gschema.xml
+  ITMRG  com.canonical.unity.desktop.gschema.xml
+  GEN      com.ubuntu.sound.gschema.valid
+  GEN      com.ubuntu.notifications.settings.gschema.valid
+  GEN      com.ubuntu.user-interface.gschema.valid
+  GEN      com.ubuntu.touch.network.gschema.valid
+  GEN      com.ubuntu.notifications.hub.gschema.valid
+  GEN      com.ubuntu.touch.sound.gschema.valid
+  GEN      com.ubuntu.phone.gschema.valid
+  GEN      com.ubuntu.touch.system.gschema.valid
+  GEN      com.canonical.unity.desktop.gschema.valid
+rm com.ubuntu.notifications.hub.gschema.xml.in com.ubuntu.sound.gschema.xml.in com.canonical.unity.desktop.gschema.xml.in com.ubuntu.notifications.settings.gschema.xml.in com.ubuntu.phone.gschema.xml.in com.ubuntu.touch.system.gschema.xml.in com.ubuntu.touch.sound.gschema.xml.in com.ubuntu.touch.network.gschema.xml.in com.ubuntu.user-interface.gschema.xml.in
+make[1]: Leaving directory '/home/charlie/source/unity-arch/pkgs/gsettings-ubuntu-schemas/src/gsettings-ubuntu-touch-schemas/schemas'
+Making all in po
+make[1]: Entering directory '/home/charlie/source/unity-arch/pkgs/gsettings-ubuntu-schemas/src/gsettings-ubuntu-touch-schemas/po'
+make[1]: Nothing to be done for 'all'.
+make[1]: Leaving directory '/home/charlie/source/unity-arch/pkgs/gsettings-ubuntu-schemas/src/gsettings-ubuntu-touch-schemas/po'
+make[1]: Entering directory '/home/charlie/source/unity-arch/pkgs/gsettings-ubuntu-schemas/src/gsettings-ubuntu-touch-schemas'
+make[1]: Nothing to be done for 'all-am'.
+make[1]: Leaving directory '/home/charlie/source/unity-arch/pkgs/gsettings-ubuntu-schemas/src/gsettings-ubuntu-touch-schemas'
+==> Entering fakeroot environment...
+==> Starting package()...
+Making install in accountsservice
+make[1]: Entering directory '/home/charlie/source/unity-arch/pkgs/gsettings-ubuntu-schemas/src/gsettings-ubuntu-touch-schemas/accountsservice'
+make[2]: Entering directory '/home/charlie/source/unity-arch/pkgs/gsettings-ubuntu-schemas/src/gsettings-ubuntu-touch-schemas/accountsservice'
+make[2]: Nothing to be done for 'install-exec-am'.
+ /usr/bin/mkdir -p '/home/charlie/source/unity-arch/pkgs/gsettings-ubuntu-schemas/pkg/gsettings-ubuntu-schemas/usr/var/lib/polkit-1/localauthority/10-vendor.d'
+ /usr/bin/mkdir -p '/home/charlie/source/unity-arch/pkgs/gsettings-ubuntu-schemas/pkg/gsettings-ubuntu-schemas/usr/share/polkit-1/actions'
+ /usr/bin/install -c -m 644 50-com.ubuntu.AccountsService.pkla '/home/charlie/source/unity-arch/pkgs/gsettings-ubuntu-schemas/pkg/gsettings-ubuntu-schemas/usr/var/lib/polkit-1/localauthority/10-vendor.d'
+ /usr/bin/install -c -m 644 com.ubuntu.AccountsService.policy '/home/charlie/source/unity-arch/pkgs/gsettings-ubuntu-schemas/pkg/gsettings-ubuntu-schemas/usr/share/polkit-1/actions'
+make  install-data-hook
+make[3]: Entering directory '/home/charlie/source/unity-arch/pkgs/gsettings-ubuntu-schemas/src/gsettings-ubuntu-touch-schemas/accountsservice'
+/usr/bin/mkdir -p /home/charlie/source/unity-arch/pkgs/gsettings-ubuntu-schemas/pkg/gsettings-ubuntu-schemas/usr/share/dbus-1/interfaces			\
+	       /home/charlie/source/unity-arch/pkgs/gsettings-ubuntu-schemas/pkg/gsettings-ubuntu-schemas/usr/share/accountsservice/interfaces
+for file in com.ubuntu.AccountsService.Input.xml com.ubuntu.AccountsService.SecurityPrivacy.xml com.ubuntu.AccountsService.Sound.xml com.ubuntu.touch.AccountsService.SecurityPrivacy.xml com.ubuntu.touch.AccountsService.Sound.xml com.ubuntu.touch.AccountsService.Phone.xml; do 							\
+	/usr/bin/install -c -m 644 $file /home/charlie/source/unity-arch/pkgs/gsettings-ubuntu-schemas/pkg/gsettings-ubuntu-schemas/usr/share/dbus-1/interfaces;	\
+	ln -s ../../dbus-1/interfaces/$file							\
+	/home/charlie/source/unity-arch/pkgs/gsettings-ubuntu-schemas/pkg/gsettings-ubuntu-schemas/usr/share/accountsservice/interfaces;		\
+done
+make[3]: Leaving directory '/home/charlie/source/unity-arch/pkgs/gsettings-ubuntu-schemas/src/gsettings-ubuntu-touch-schemas/accountsservice'
+make[2]: Leaving directory '/home/charlie/source/unity-arch/pkgs/gsettings-ubuntu-schemas/src/gsettings-ubuntu-touch-schemas/accountsservice'
+make[1]: Leaving directory '/home/charlie/source/unity-arch/pkgs/gsettings-ubuntu-schemas/src/gsettings-ubuntu-touch-schemas/accountsservice'
+Making install in schemas
+make[1]: Entering directory '/home/charlie/source/unity-arch/pkgs/gsettings-ubuntu-schemas/src/gsettings-ubuntu-touch-schemas/schemas'
+make[2]: Entering directory '/home/charlie/source/unity-arch/pkgs/gsettings-ubuntu-schemas/src/gsettings-ubuntu-touch-schemas/schemas'
+make[2]: Nothing to be done for 'install-exec-am'.
+if test -n "com.ubuntu.notifications.hub.gschema.xml com.ubuntu.notifications.settings.gschema.xml com.ubuntu.phone.gschema.xml com.ubuntu.sound.gschema.xml com.ubuntu.touch.network.gschema.xml com.ubuntu.touch.sound.gschema.xml com.ubuntu.touch.system.gschema.xml com.ubuntu.user-interface.gschema.xml com.canonical.unity.desktop.gschema.xml"; then \
+	test -z "/usr/share/glib-2.0/schemas" || /usr/bin/mkdir -p "/home/charlie/source/unity-arch/pkgs/gsettings-ubuntu-schemas/pkg/gsettings-ubuntu-schemas/usr/share/glib-2.0/schemas"; \
+	/usr/bin/install -c -m 644 com.ubuntu.notifications.hub.gschema.xml com.ubuntu.notifications.settings.gschema.xml com.ubuntu.phone.gschema.xml com.ubuntu.sound.gschema.xml com.ubuntu.touch.network.gschema.xml com.ubuntu.touch.sound.gschema.xml com.ubuntu.touch.system.gschema.xml com.ubuntu.user-interface.gschema.xml com.canonical.unity.desktop.gschema.xml "/home/charlie/source/unity-arch/pkgs/gsettings-ubuntu-schemas/pkg/gsettings-ubuntu-schemas/usr/share/glib-2.0/schemas"; \
+	test -n "/home/charlie/source/unity-arch/pkgs/gsettings-ubuntu-schemas/pkg/gsettings-ubuntu-schemas" || /usr/bin/glib-compile-schemas /usr/share/glib-2.0/schemas; \
+fi
+make[2]: Leaving directory '/home/charlie/source/unity-arch/pkgs/gsettings-ubuntu-schemas/src/gsettings-ubuntu-touch-schemas/schemas'
+make[1]: Leaving directory '/home/charlie/source/unity-arch/pkgs/gsettings-ubuntu-schemas/src/gsettings-ubuntu-touch-schemas/schemas'
+Making install in po
+make[1]: Entering directory '/home/charlie/source/unity-arch/pkgs/gsettings-ubuntu-schemas/src/gsettings-ubuntu-touch-schemas/po'
+linguas=""; \
+for lang in $linguas; do \
+  dir=/home/charlie/source/unity-arch/pkgs/gsettings-ubuntu-schemas/pkg/gsettings-ubuntu-schemas/usr/share/locale/$lang/LC_MESSAGES; \
+  /bin/sh /home/charlie/source/unity-arch/pkgs/gsettings-ubuntu-schemas/src/gsettings-ubuntu-touch-schemas/install-sh -d $dir; \
+  if test -r $lang.gmo; then \
+    /usr/bin/install -c -m 644 $lang.gmo $dir/gsettings-ubuntu-touch-schemas.mo; \
+    echo "installing $lang.gmo as $dir/gsettings-ubuntu-touch-schemas.mo"; \
+  else \
+    /usr/bin/install -c -m 644 ./$lang.gmo $dir/gsettings-ubuntu-touch-schemas.mo; \
+    echo "installing ./$lang.gmo as" \
+	 "$dir/gsettings-ubuntu-touch-schemas.mo"; \
+  fi; \
+  if test -r $lang.gmo.m; then \
+    /usr/bin/install -c -m 644 $lang.gmo.m $dir/gsettings-ubuntu-touch-schemas.mo.m; \
+    echo "installing $lang.gmo.m as $dir/gsettings-ubuntu-touch-schemas.mo.m"; \
+  else \
+    if test -r ./$lang.gmo.m ; then \
+      /usr/bin/install -c -m 644 ./$lang.gmo.m \
+	$dir/gsettings-ubuntu-touch-schemas.mo.m; \
+      echo "installing ./$lang.gmo.m as" \
+	   "$dir/gsettings-ubuntu-touch-schemas.mo.m"; \
+    else \
+      true; \
+    fi; \
+  fi; \
+done
+make[1]: Leaving directory '/home/charlie/source/unity-arch/pkgs/gsettings-ubuntu-schemas/src/gsettings-ubuntu-touch-schemas/po'
+make[1]: Entering directory '/home/charlie/source/unity-arch/pkgs/gsettings-ubuntu-schemas/src/gsettings-ubuntu-touch-schemas'
+make[2]: Entering directory '/home/charlie/source/unity-arch/pkgs/gsettings-ubuntu-schemas/src/gsettings-ubuntu-touch-schemas'
+make[2]: Nothing to be done for 'install-exec-am'.
+ /usr/bin/mkdir -p '/home/charlie/source/unity-arch/pkgs/gsettings-ubuntu-schemas/pkg/gsettings-ubuntu-schemas/usr/share/pkgconfig'
+ /usr/bin/install -c -m 644 gsettings-unity-schemas.pc '/home/charlie/source/unity-arch/pkgs/gsettings-ubuntu-schemas/pkg/gsettings-ubuntu-schemas/usr/share/pkgconfig'
+make[2]: Leaving directory '/home/charlie/source/unity-arch/pkgs/gsettings-ubuntu-schemas/src/gsettings-ubuntu-touch-schemas'
+make[1]: Leaving directory '/home/charlie/source/unity-arch/pkgs/gsettings-ubuntu-schemas/src/gsettings-ubuntu-touch-schemas'
+==> Tidying install...
+  -> Removing libtool files...
+  -> Removing static library files...
+  -> Purging unwanted files...
+  -> Stripping unneeded symbols from binaries and libraries...
+  -> Compressing man and info pages...
+==> Checking for packaging issues...
+==> Creating package "gsettings-ubuntu-schemas"...
+  -> Generating .PKGINFO file...
+  -> Generating .BUILDINFO file...
+  -> Generating .MTREE file...
+  -> Compressing package...
+==> Leaving fakeroot environment.
+==> Finished making: gsettings-ubuntu-schemas 0.0.7.21.10.20210712-1 (Thu 10 Sep 2026 23:46:03)

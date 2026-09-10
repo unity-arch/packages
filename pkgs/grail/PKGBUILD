@@ -1,0 +1,24 @@
+# Maintainer: Charlie <dev.charlie@akao.au>
+
+pkgname=grail
+pkgver=3.1.1
+pkgrel=1
+pkgdesc='gesture recognition and instantiation library'
+arch=('x86_64')
+url='https://launchpad.net/grail'
+license=('GPL-3.0-or-later')
+depends=('frame' 'libxi')
+makedepends=('xorgproto')
+source=("https://launchpad.net/ubuntu/+archive/primary/+files/grail_${pkgver}.orig.tar.bz2")
+sha256sums=('5eed1f650f042481daa3a2de5e7d43261fe343b2a1b1e240f3b7fc26572c9df3')
+
+build() {
+  cd "${pkgname}-${pkgver}"
+  ./configure --prefix=/usr --disable-static
+  make
+}
+
+package() {
+  cd "${pkgname}-${pkgver}"
+  make DESTDIR="${pkgdir}" install
+}

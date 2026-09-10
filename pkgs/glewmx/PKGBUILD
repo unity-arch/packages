@@ -1,0 +1,36 @@
+# Maintainer: Charlie <dev.charlie@akao.au>
+
+pkgname=glewmx
+pkgver=1.13.0
+pkgrel=1
+pkgdesc='opengl extension wrangler, multi-context (mx) build for nux'
+arch=('x86_64')
+url='https://glew.sourceforge.net/'
+license=('BSD-3-Clause' 'MIT')
+depends=('libglvnd' 'glu' 'libxmu' 'libxi')
+# headers go under /usr/include/glewmx so they don't fight with glew 2.x,
+# glewmx.pc points there so consumers just use pkg-config
+source=("https://launchpad.net/ubuntu/+archive/primary/+files/glewmx_${pkgver}.orig.tar.gz"
+        'mesa_18.2.5.patch')
+sha256sums=('aa25dc48ed84b0b64b8d41cdd42c8f40f149c37fa2ffa39cd97f42c78d128bc7'
+            '443a25edd348cf10e0814ac3e0fe7f0e6e3620a28a5706db1334e5a708ed4860')
+
+prepare() {
+  cd "glew-${pkgver}"
+  patch -Np1 -i ../mesa_18.2.5.patch
+}
+
+build() {
+  cd "glew-${pkgver}"
+  make glew.lib.mx GLEW_DEST=/usr LIBDIR=/usr/lib INCDIR=/usr/include/glewmx/GL \
+    POPT="${CFLAGS}" LDFLAGS.EXTRA="${LDFLAGS}" STRIP= LD='$(CC)'
+}
+
+package() {
+  cd "glew-${pkgver}"
+  make install.mx DESTDIR="${pkgdir}" GLEW_DEST=/usr LIBDIR=/usr/lib INCDIR=/usr/include/glewmx/GL STRIP=
+  rm "${pkgdir}"/usr/lib/libGLEWmx.a
+  # glew.pc.in ignores INCDIR, it always writes ${prefix}/include
+  sed -i 's|^includedir=.*|includedir=/usr/include/glewmx|' "${pkgdir}/usr/lib/pkgconfig/glewmx.pc"
+  install -Dm644 LICENSE.txt "${pkgdir}/usr/share/licenses/${pkgname}/LICENSE"
+}

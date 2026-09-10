@@ -1,0 +1,9 @@
+repo/
+upstream/
+ref/
+pkgs/*/src/
+pkgs/*/pkg/
+pkgs/*/*.tar.*
+pkgs/*/*.deb
+pkgs/*/*.diff
+pkgs/*/*.diff.gz
