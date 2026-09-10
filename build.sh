@@ -28,13 +28,14 @@ pkgs=("$@")
 for p in "${pkgs[@]}"; do
   [[ -f "$here/pkgs/$p/PKGBUILD" ]] || { echo "skipping $p, no pkgbuild yet"; continue; }
   echo "==> building $p"
-  # fetch first with retries, cdn hiccups shouldn't fail a 40 minute chain
+  # fetch first with retries (download only, prepare needs the makedepends), cdn hiccups
+  # shouldn't fail a 40 minute chain
   for attempt in 1 2 3 4 5; do
-    (cd "$here/pkgs/$p" && makepkg --config "$here/makepkg.conf" -od --noconfirm) && break
+    (cd "$here/pkgs/$p" && makepkg --config "$here/makepkg.conf" --verifysource -df --noconfirm) && break
     [[ $attempt -eq 5 ]] && exit 1
     sleep $((attempt * 20))
   done
-  (cd "$here/pkgs/$p" && makepkg --config "$here/makepkg.conf" -sfe --noconfirm)
+  (cd "$here/pkgs/$p" && makepkg --config "$here/makepkg.conf" -sf --noconfirm)
   if (( install )); then
     # newest file for this package name, epoch and pkgrel included
     pkgfile=$(ls -t "$here"/repo/"$p"-[0-9]*.pkg.tar.zst | head -1)
