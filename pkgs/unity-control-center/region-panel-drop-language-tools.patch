@@ -1,0 +1,91 @@
+take the language list off glibc instead of ubuntu's language-selector
+
+/usr/share/language-tools only exists on ubuntu (language-selector-common), so on arch
+the region panel's language list came up empty with a warning, and applying settings
+system wide bailed out. gdm_get_all_language_names walks the glibc locale archive and
+is already used by the formats tab, so the two tabs now agree on where locales come
+from. the list keys are full locale names either way, which is what accountsservice
+and localed want.
+
+diff --git a/panels/common/cc-common-language.c b/panels/common/cc-common-language.c
+index 885afe1..495874b 100644
+--- a/panels/common/cc-common-language.c
++++ b/panels/common/cc-common-language.c
+@@ -639,22 +639,17 @@ cc_common_language_get_initial_languages (void)
+         /* Add the languages used by other users on the system */
+ //        add_other_users_language (ht);
+ 
+-        /* Add installed languages */
+-        gchar  *avail_languages;
+-        GError *error = NULL;
+-        if (g_spawn_command_line_sync ("/usr/share/language-tools/language-options",
+-                                        &avail_languages, NULL, NULL, &error)) {
+-                name = strtok (avail_languages, "\n");
+-                while (name != NULL) {
+-                        language = gdm_get_language_from_name (name, NULL);
+-                        g_hash_table_insert (ht, g_strdup (name), language);
+-                        name = strtok (NULL, "\n");
+-                }
+-                g_free (avail_languages);
+-        } else {
+-                g_warning ("Couldn't get available languages: %s", error->message);
+-                g_error_free (error);
++        /* Add installed languages, taken from the locales glibc has, ubuntu reads
++         * this out of language-selector's language-options instead */
++        gchar **avail_languages;
++        gint    i;
++
++        avail_languages = gdm_get_all_language_names ();
++        for (i = 0; avail_languages[i] != NULL; i++) {
++                language = gdm_get_language_from_name (avail_languages[i], NULL);
++                g_hash_table_insert (ht, g_strdup (avail_languages[i]), language);
+         }
++        g_strfreev (avail_languages);
+ 
+         /* Add current language */
+         name = cc_common_language_get_property ("Language");
+diff --git a/panels/region/gnome-region-panel-system.c b/panels/region/gnome-region-panel-system.c
+index 488782a..14e68f2 100644
+--- a/panels/region/gnome-region-panel-system.c
++++ b/panels/region/gnome-region-panel-system.c
+@@ -420,9 +420,6 @@ copy_settings (GtkButton *button, GtkBuilder *dialog)
+         GtkWidget *label;
+         GVariantBuilder *b;
+         gchar *s;
+-        gchar *command;
+-        gchar *lang;
+-        GError *error = NULL;
+         gint i;
+ 
+         label = WID ("user_display_language");
+@@ -430,25 +427,16 @@ copy_settings (GtkButton *button, GtkBuilder *dialog)
+         label = WID ("user_format");
+         region = g_object_get_data (G_OBJECT (label), "region");
+ 
+-        /* Get locale that corresponds to the language */
+-        command = g_strconcat ("/usr/share/language-tools/language2locale ", language, NULL);
+-        if (!g_spawn_command_line_sync (command, &lang, NULL, NULL, &error)) {
+-                g_warning ("Couldn't get LANG locale: %s", error->message);
+-                g_error_free (error);
+-                g_free (command);
+-                return;
+-        }
+-        g_free (command);
+-        g_strchomp (lang);
+-        if (strlen (lang) == 0) {
+-                g_warning ("Couldn't get LANG locale -- Copying interrupted");
++        if (language == NULL || language[0] == '\0') {
++                g_warning ("No display language selected, not copying anything");
+                 return;
+         }
+ 
++        /* the language list is already locale names off glibc, ubuntu goes through
++         * language-selector's language2locale to turn a language code into one */
+         b = g_variant_builder_new (G_VARIANT_TYPE ("as"));
+-        s = g_strconcat ("LANG=", lang, NULL);
++        s = g_strconcat ("LANG=", language, NULL);
+         g_variant_builder_add (b, "s", s);
+-        g_free (lang);
+         g_free (s);
+         s = g_strconcat ("LANGUAGE=", language, NULL);
+         g_variant_builder_add (b, "s", s);

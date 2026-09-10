@@ -1,0 +1,38 @@
+# Maintainer: Charlie <dev.charlie@akao.au>
+
+pkgname=libgeonames
+_ver=0.3.2
+_commit=37009f1f374cf002480d09762fd9f6f8830d4103
+pkgver=${_ver}
+pkgrel=1
+pkgdesc='parse and query a local copy of the geonames.org database'
+arch=('x86_64')
+url='https://gitlab.com/ubports/development/core/geonames'
+license=('LGPL-3.0-only')
+depends=('glib2')
+makedepends=('cmake' 'gettext' 'git' 'glib2-devel')
+provides=('geonames' 'libgeonames.so')
+source=("git+https://git.launchpad.net/ubuntu/+source/geonames#commit=${_commit}")
+sha256sums=('SKIP')
+
+build() {
+  # cmake compiles with absolute paths so __FILE__ (glib's g_return_if_fail) bakes the
+  # builder's srcdir into the library, rewrite it so the .so doesn't carry it
+  CFLAGS+=" -ffile-prefix-map=${srcdir}=/usr/src/debug/${pkgname}"
+  # the geonames.org dumps are checked into data/ (fetch_data.sh is a manual refresh
+  # step, not part of the build), so mkdb runs entirely offline
+  # docs off, gtk-doc only produces the html debian ships in -dev
+  # tests off, they need a generated en_US.UTF-8 locale which a clean chroot has not got
+  cmake -B build -S geonames \
+    -DCMAKE_BUILD_TYPE=None \
+    -DCMAKE_INSTALL_PREFIX=/usr \
+    -DCMAKE_INSTALL_LIBDIR=lib \
+    -DWANT_DOC=OFF \
+    -DWANT_TESTS=OFF \
+    -DWANT_DEMO=OFF
+  cmake --build build
+}
+
+package() {
+  DESTDIR="${pkgdir}" cmake --install build
+}

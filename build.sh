@@ -15,7 +15,7 @@ order=(
   unity-gtk-module libcolumbus hud indicator-appmenu
   unity unity-greeter ubuntu-unity-settings
   unity-scope-home unity-lens-files unity-lens-applications
-  libtimezonemap libgeonames unity-control-center
+  libgeonames unity-control-center
   unity-desktop
 )
 

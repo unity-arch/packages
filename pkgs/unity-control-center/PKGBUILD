@@ -1,0 +1,83 @@
+# Maintainer: Charlie <dev.charlie@akao.au>
+
+pkgname=unity-control-center
+_ver=15.04.0
+_snap=23.04.20230220
+_commit=a92a472e28e1aeb59b30e7eae7736643feaee99f
+# the string stamped under the logo in the info panel, tracks the unity release and
+# not this package (debian/rules hardcodes it the same way)
+_unityver=7.7.1
+pkgver=${_ver}.${_snap}
+pkgrel=1
+pkgdesc='settings panels for the unity desktop'
+arch=('x86_64')
+url='https://gitlab.com/ubuntu-unity/unity/unity-control-center'
+license=('GPL-2.0-or-later')
+depends=('accountsservice' 'adwaita-icon-theme' 'at-spi2-core' 'cairo' 'fontconfig'
+         'gdk-pixbuf2' 'glib2' 'glibc' 'gnome-desktop' 'gnome-menus'
+         'gsettings-desktop-schemas' 'gsettings-ubuntu-schemas' 'gtk3' 'iso-codes'
+         'krb5' 'libcanberra' 'libcolord' 'libcups' 'libgeonames' 'libglvnd'
+         'libgnomekbd' 'libgtop' 'libibus' 'libmm-glib' 'libnm' 'libnma' 'libnotify'
+         'libpulse' 'libpwquality' 'libwacom' 'libx11' 'libxi' 'libxml2' 'pango'
+         'polkit' 'timezonemap' 'unity-settings-daemon' 'upower')
+makedepends=('desktop-file-utils' 'docbook-xsl' 'git' 'glib2-devel' 'gnome-common'
+             'intltool' 'libxslt' 'vala')
+optdepends=('cups-pk-helper: manage printers without running the panel as root'
+            'system-config-printer: driver lookup in the add printer dialog'
+            'gnome-control-center: online accounts, unity only ships a goa frontend')
+provides=('libunity-control-center.so')
+source=("git+${url}.git#commit=${_commit}"
+        'revert-alt-tap-shortcut.patch'
+        'region-panel-drop-language-tools.patch')
+sha256sums=('SKIP'
+            '4df25cb81a8977761f2782747fa17b379c05202ffb6d4ff397ef4307107efd5d'
+            '7850caf6b0c71aaeed1e3c1c0afa09faa01e007640159214209732c5138eb18e')
+
+prepare() {
+  cd "${pkgname}"
+  # upstream carries no quilt series right now, apply one if a later snapshot adds it
+  if [[ -s debian/patches/series ]]; then
+    local p
+    while read -r p; do
+      [[ -z ${p} || ${p} == \#* ]] && continue
+      patch -Np1 -i "debian/patches/${p}"
+    done < debian/patches/series
+  fi
+  patch -Np1 -i "${srcdir}/revert-alt-tap-shortcut.patch"
+  patch -Np1 -i "${srcdir}/region-panel-drop-language-tools.patch"
+  NOCONFIGURE=1 ./autogen.sh
+}
+
+build() {
+  cd "${pkgname}"
+  # the tree is from 2014 and hands subclass pointers straight to GtkWidget calls,
+  # gcc 14 made that a hard error (debian passes the same flag)
+  CFLAGS+=" -Wno-error=incompatible-pointer-types"
+  # goa off, the online accounts panel is commented out of debian/control too
+  # fcitx off because the code only knows the fcitx4 pkg-config names and fcitx4 is gone
+  # update-mimedb off, the pacman hook owns the mime database
+  ./configure \
+    --prefix=/usr \
+    --sysconfdir=/etc \
+    --localstatedir=/var \
+    --libexecdir=/usr/lib/${pkgname} \
+    --disable-static \
+    --disable-more-warnings \
+    --disable-fcitx \
+    --enable-ibus \
+    --disable-onlineaccounts \
+    --disable-update-mimedb
+  make
+
+  # the checked in logo still says 7.6, restamp it (the generator asks for the Ubuntu
+  # font, fontconfig substitutes since that font is aur only)
+  ./panels/info/logo-generator \
+    --logo panels/info/UnityLogoBlank.png \
+    --text "unity ${_unityver}" \
+    --output panels/info/UnityLogo.png
+}
+
+package() {
+  cd "${pkgname}"
+  make DESTDIR="${pkgdir}" install
+}
