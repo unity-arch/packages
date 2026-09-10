@@ -14,8 +14,6 @@ jobs:
     runs-on: ubuntu-latest
     container:
       image: archlinux:base-devel
-      # makepkg needs a real user, and the chain needs packages installed as it goes
-      options: --privileged
     steps:
       - name: prepare builder
         run: |
