@@ -21,7 +21,7 @@ optdepends=('unity-session: log into unity from a display manager'
             'unity-lens-applications: applications in the dash'
             'unity-lens-files: files in the dash'
             'unity-control-center: settings')
-source=("git+${url}.git#commit=${_commit}"
+source=("git+https://github.com/unity-arch/unity.git#commit=${_commit}"
         'unity.pam'
         'lock-on-suspend-key-optional.patch'
         'filemanager-fallback.patch'

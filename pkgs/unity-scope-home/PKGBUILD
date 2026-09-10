@@ -17,7 +17,7 @@ makedepends=('glib2-devel' 'git' 'gnome-common' 'intltool' 'util-linux-libs' 'va
 # the master scope definitions used to be split out as unity-scopes-master-default,
 # no point in a second package here since nothing else provides them
 provides=('unity-scopes-master-default' 'unity-scopes-master')
-source=("git+${url}.git#commit=${_commit}")
+source=("git+https://github.com/unity-arch/unity-scope-home.git#commit=${_commit}")
 sha256sums=('SKIP')
 
 prepare() {

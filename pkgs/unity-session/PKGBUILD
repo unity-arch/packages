@@ -13,7 +13,7 @@ license=('GPL-2.0-or-later')
 depends=('cinnamon-session' 'cinnamon-settings-daemon' 'cinnamon' 'unity-settings-daemon' 'systemd' 'dbus')
 optdepends=('nemo: desktop icons and the change background action'
             'lightdm: the shipped lightdm config selects unity as default session')
-source=("git+${url}.git#commit=${_commit}"
+source=("git+https://github.com/unity-arch/unity-session.git#commit=${_commit}"
         'unity-session.sh')
 sha256sums=('SKIP'
             '6c68a3760533244a416b2c390660c0daf775c8b9b14dcc8e4fd65f6831b5930d')

@@ -14,7 +14,7 @@ license=('GPL-3.0-only')
 depends=('db' 'dee' 'glib2' 'gnome-menus' 'libcolumbus' 'libgee' 'libunity'
          'xapian-core' 'zeitgeist')
 makedepends=('glib2-devel' 'git' 'gnome-common' 'intltool' 'vala')
-source=("git+${url}.git#commit=${_commit}"
+source=("git+https://github.com/unity-arch/unity-lens-applications.git#commit=${_commit}"
         'port-to-zeitgeist-2.0.patch'
         'xapian-2.x-api.patch'
         'drop-libdb-5.3-check.patch'

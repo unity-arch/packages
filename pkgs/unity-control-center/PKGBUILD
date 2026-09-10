@@ -26,7 +26,7 @@ optdepends=('cups-pk-helper: manage printers without running the panel as root'
             'system-config-printer: driver lookup in the add printer dialog'
             'gnome-control-center: online accounts, unity only ships a goa frontend')
 provides=('libunity-control-center.so')
-source=("git+${url}.git#commit=${_commit}"
+source=("git+https://github.com/unity-arch/unity-control-center.git#commit=${_commit}"
         'revert-alt-tap-shortcut.patch'
         'region-panel-drop-language-tools.patch')
 sha256sums=('SKIP'

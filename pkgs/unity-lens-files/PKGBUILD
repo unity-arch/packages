@@ -16,7 +16,7 @@ makedepends=('glib2-devel' 'git' 'gnome-common' 'intltool' 'vala')
 # the use-locate gsetting shells out to locate, absence just throws and the search
 # falls back to zeitgeist results
 optdepends=('plocate: filename search beyond the zeitgeist history')
-source=("git+${url}.git#commit=${_commit}")
+source=("git+https://github.com/unity-arch/unity-lens-files.git#commit=${_commit}")
 sha256sums=('SKIP')
 
 prepare() {

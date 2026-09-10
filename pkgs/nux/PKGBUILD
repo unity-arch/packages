@@ -14,7 +14,7 @@ depends=('glib2' 'libsigc++' 'gdk-pixbuf2' 'cairo' 'pango' 'libpng' 'pcre2' 'icu
          'libxxf86vm' 'libxinerama' 'libxcomposite' 'libxdamage' 'gcc-libs')
 makedepends=('git' 'gnome-common')
 # ubuntu/devel head, the 4.0.8+18.10.20180623-0ubuntu15 changelog entry
-source=("git+https://gitlab.com/ubuntu-unity/unity/nux.git#commit=2c1878a8dae9c63ccc1efb9fad0943d14fe782a6"
+source=("git+https://github.com/unity-arch/nux.git#commit=2c1878a8dae9c63ccc1efb9fad0943d14fe782a6"
         'fbo-attachment-arrays-resize.patch')
 sha256sums=('SKIP'
             '077beb8a09c5b399dc5227546b5025da495e5fc024cc30e0861f3bab65ae7397')

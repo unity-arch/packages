@@ -20,7 +20,7 @@ optdepends=('ttf-ubuntu-font-family: the font the greeter asks for by default (a
             'indicator-session: session menu in the greeter panel'
             'indicator-power: battery menu in the greeter panel')
 provides=('lightdm-greeter')
-source=("git+${url}.git#commit=${_commit}")
+source=("git+https://github.com/unity-arch/unity-greeter.git#commit=${_commit}")
 sha256sums=('SKIP')
 
 prepare() {
