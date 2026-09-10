@@ -1,0 +1,47 @@
+name: build
+
+on:
+  push:
+    branches: [main]
+    paths: ['pkgs/**', 'build.sh', 'makepkg.conf', '.github/workflows/build.yml']
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    container:
+      image: archlinux:base-devel
+      # makepkg needs a real user, and the chain needs packages installed as it goes
+      options: --privileged
+    steps:
+      - name: prepare builder
+        run: |
+          pacman -Syu --noconfirm git github-cli
+          useradd -m builder
+          echo 'builder ALL=(ALL) NOPASSWD: ALL' > /etc/sudoers.d/builder
+
+      - uses: actions/checkout@v4
+
+      - name: build the chain
+        run: |
+          chown -R builder .
+          sudo -u builder ./build.sh -i
+
+      - name: make the pacman database
+        run: |
+          cd repo
+          repo-add unity-arch.db.tar.gz *.pkg.tar.zst
+          # repo-add leaves symlinks, the release needs real files
+          for f in unity-arch.db unity-arch.files; do cp --remove-destination "$(readlink -f "$f")" "$f"; done
+          ls -la
+
+      - name: publish to the repo release
+        if: github.event_name != 'pull_request'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release view repo >/dev/null 2>&1 || gh release create repo --title 'pacman repo' --notes 'binary packages, see the readme for the pacman.conf entry'
+          gh release upload repo repo/*.pkg.tar.zst repo/unity-arch.db repo/unity-arch.db.tar.gz repo/unity-arch.files repo/unity-arch.files.tar.gz --clobber

@@ -18,3 +18,15 @@ sources come from the ubuntu unity project (https://gitlab.com/ubuntu-unity/unit
 ```
 
 packages land in `repo/`, install them with `pacman -U`.
+
+## using the binary repo
+
+packages built by ci are published on the `repo` release. add to `/etc/pacman.conf`:
+
+```
+[unity-arch]
+SigLevel = Optional TrustAll
+Server = https://github.com/unity-arch/packages/releases/download/repo
+```
+
+then `pacman -Sy unity unity-session unity-greeter`.
