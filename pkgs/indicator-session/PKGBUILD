@@ -17,7 +17,7 @@ depends=('glib2' 'gsettings-desktop-schemas' 'systemd-libs' 'unity-settings-daem
          'hicolor-icon-theme')
 optdepends=('accountsservice: user list and avatars'
             'unity-control-center: user accounts panel from the menu')
-makedepends=('git' 'cmake' 'cmake-extras' 'intltool' 'gsettings-ubuntu-schemas')
+makedepends=('glib2-devel' 'git' 'cmake' 'cmake-extras' 'intltool' 'gsettings-ubuntu-schemas')
 source=("git+https://git.launchpad.net/ubuntu/+source/${pkgname}#commit=${_commit}"
         'drop-whoopsie.patch'
         'no-icon-cache-update.patch')

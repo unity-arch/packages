@@ -12,7 +12,7 @@ url='https://launchpad.net/indicator-appmenu'
 license=('GPL-3.0-only')
 depends=('glib2' 'gtk3' 'libindicator-gtk3' 'libdbusmenu-glib' 'libdbusmenu-gtk3'
          'bamf' 'libx11' 'glibc')
-makedepends=('git' 'gnome-common' 'gtk-doc' 'intltool' 'vala' 'libxslt')
+makedepends=('glib2-devel' 'git' 'gnome-common' 'gtk-doc' 'intltool' 'vala' 'libxslt')
 optdepends=('hud: search the same menus by typing'
             'unity-gtk-module: exports gtk menus so there is something to render')
 source=("git+https://git.launchpad.net/ubuntu/+source/${pkgname}#commit=${_commit}")

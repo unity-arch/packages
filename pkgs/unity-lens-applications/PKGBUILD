@@ -13,7 +13,7 @@ license=('GPL-3.0-only')
 # zeitgeist is the daemon too, the recent apps category reads its log
 depends=('db' 'dee' 'glib2' 'gnome-menus' 'libcolumbus' 'libgee' 'libunity'
          'xapian-core' 'zeitgeist')
-makedepends=('git' 'gnome-common' 'intltool' 'vala')
+makedepends=('glib2-devel' 'git' 'gnome-common' 'intltool' 'vala')
 source=("git+${url}.git#commit=${_commit}"
         'port-to-zeitgeist-2.0.patch'
         'xapian-2.x-api.patch'

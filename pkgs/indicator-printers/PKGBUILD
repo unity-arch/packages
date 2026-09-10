@@ -12,7 +12,7 @@ url='https://launchpad.net/indicator-printers'
 license=('GPL-3.0-only')
 depends=('gtk3' 'glib2' 'libcups' 'libindicator-gtk3' 'libdbusmenu-gtk3' 'libdbusmenu-glib')
 optdepends=('system-config-printer: printer settings from the menu')
-makedepends=('git' 'gnome-common' 'intltool' 'libtool')
+makedepends=('glib2-devel' 'git' 'gnome-common' 'intltool' 'libtool')
 source=("git+https://git.launchpad.net/ubuntu/+source/${pkgname}#commit=${_commit}")
 sha256sums=('SKIP')
 

@@ -11,7 +11,7 @@ arch=('x86_64')
 url='https://launchpad.net/dee'
 license=('LGPL-3.0-only')
 depends=('glib2' 'icu' 'python-gobject')
-makedepends=('gobject-introspection' 'vala' 'gnome-common' 'gtk-doc' 'python' 'dbus-glib')
+makedepends=('glib2-devel' 'gobject-introspection' 'vala' 'gnome-common' 'gtk-doc' 'python' 'dbus-glib')
 source=("${pkgname}_${_ver}+${_snap}.orig.tar.gz::https://launchpad.net/ubuntu/+archive/primary/+files/${pkgname}_${_ver}+${_snap}.orig.tar.gz"
         "https://launchpad.net/ubuntu/+archive/primary/+files/${pkgname}_${_ver}+${_snap}-${_deb}.debian.tar.xz")
 sha256sums=('e63f979a7a5012a7786786f8081a9279256ab28ece6e557c6ce5bf87535ae899'

@@ -12,7 +12,7 @@ url='https://launchpad.net/indicator-sound'
 license=('GPL-3.0-only')
 depends=('glib2' 'libpulse' 'libgee' 'libnotify' 'accountsservice' 'libxml2'
          'libindicator-gtk3' 'gsettings-ubuntu-schemas' 'polkit' 'gcc-libs')
-makedepends=('git' 'cmake' 'cmake-extras' 'intltool' 'vala' 'gobject-introspection')
+makedepends=('glib2-devel' 'git' 'cmake' 'cmake-extras' 'intltool' 'vala' 'gobject-introspection')
 source=("git+https://git.launchpad.net/ubuntu/+source/${pkgname}#commit=${_commit}"
         'drop-test-only-deps.patch')
 sha256sums=('SKIP'

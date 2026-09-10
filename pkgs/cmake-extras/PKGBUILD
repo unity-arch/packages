@@ -9,6 +9,7 @@ arch=('any')
 url='https://launchpad.net/cmake-extras'
 license=('GPL-3.0-only')
 depends=('cmake' 'pkgconf' 'python')
+makedepends=('glib2-devel')
 source=("git+https://git.launchpad.net/ubuntu/+source/cmake-extras#commit=${_commit}")
 sha256sums=('SKIP')
 

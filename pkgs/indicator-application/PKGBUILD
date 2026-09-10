@@ -13,7 +13,7 @@ license=('GPL-3.0-only')
 depends=('gtk3' 'glib2' 'libindicator-gtk3' 'libappindicator' 'libdbusmenu-gtk3'
          'libdbusmenu-glib' 'json-glib' 'dbus-glib')
 # dbus-binding-tool comes from dbus-glib, it generates the notification watcher stubs
-makedepends=('git' 'gnome-common' 'intltool' 'libtool')
+makedepends=('glib2-devel' 'git' 'gnome-common' 'intltool' 'libtool')
 source=("git+https://git.launchpad.net/ubuntu/+source/${pkgname}#commit=${_commit}")
 sha256sums=('SKIP')
 

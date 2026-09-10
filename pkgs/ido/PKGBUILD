@@ -10,7 +10,7 @@ arch=('x86_64')
 url='https://launchpad.net/ido'
 license=('LGPL-3.0-only' 'LGPL-2.1-only')
 depends=('gtk3')
-makedepends=('gobject-introspection' 'vala' 'gtk-doc' 'gnome-common')
+makedepends=('glib2-devel' 'gobject-introspection' 'vala' 'gtk-doc' 'gnome-common')
 provides=('libido3')
 source=("${pkgname}_${_ver}+${_snap}.orig.tar.gz::https://launchpad.net/ubuntu/+archive/primary/+files/${pkgname}_${_ver}+${_snap}.orig.tar.gz"
         'ido-menu-item-factory.patch')

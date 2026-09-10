@@ -12,7 +12,7 @@ url='https://gitlab.com/ubuntu-unity/unity/unity-lens-files'
 license=('GPL-3.0-only')
 # zeitgeist is the daemon too, the scope has nothing to show without it running
 depends=('dee' 'glib2' 'libgee' 'libunity' 'zeitgeist')
-makedepends=('git' 'gnome-common' 'intltool' 'vala')
+makedepends=('glib2-devel' 'git' 'gnome-common' 'intltool' 'vala')
 # the use-locate gsetting shells out to locate, absence just throws and the search
 # falls back to zeitgeist results
 optdepends=('plocate: filename search beyond the zeitgeist history')

@@ -11,7 +11,7 @@ license=('GPL-3.0-only')
 depends=('at-spi2-core' 'cairo' 'dconf' 'freetype2' 'gdk-pixbuf2' 'glib2' 'glibc' 'gtk3'
          'ido' 'libcanberra' 'libindicator-gtk3' 'libx11' 'libxext' 'lightdm' 'pango'
          'pixman' 'unity-settings-daemon')
-makedepends=('git' 'gnome-common' 'intltool' 'vala')
+makedepends=('glib2-devel' 'git' 'gnome-common' 'intltool' 'vala')
 optdepends=('ttf-ubuntu-font-family: the font the greeter asks for by default (aur)'
             'humanity-icon-theme: the icon theme the greeter asks for by default (aur)'
             'network-manager-applet: network menu in the greeter panel'

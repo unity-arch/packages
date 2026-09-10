@@ -14,7 +14,7 @@ license=('GPL-3.0-only')
 depends=('glib2' 'bluez')
 optdepends=('gnome-bluetooth: send files and the device setup panel'
             'unity-control-center: bluetooth settings panel from the menu')
-makedepends=('git' 'gnome-common' 'intltool' 'vala')
+makedepends=('glib2-devel' 'git' 'gnome-common' 'intltool' 'vala')
 source=("git+https://git.launchpad.net/ubuntu/+source/${pkgname}#commit=${_commit}")
 sha256sums=('SKIP')
 

@@ -16,7 +16,7 @@ license=('GPL-3.0-only')
 depends=('glib2' 'evolution-data-server' 'libical' 'gstreamer' 'libnotify'
          'libaccounts-glib' 'indicator-messages' 'libindicator-gtk3'
          'gsettings-ubuntu-schemas' 'util-linux-libs' 'tzdata' 'gcc-libs')
-makedepends=('git' 'cmake' 'cmake-extras' 'intltool')
+makedepends=('glib2-devel' 'git' 'cmake' 'cmake-extras' 'intltool')
 source=("git+https://git.launchpad.net/ubuntu/+source/${pkgname}#commit=${_commit}"
         "properties-cpp::git+https://git.launchpad.net/ubuntu/+source/properties-cpp#commit=${_propcommit}"
         'cmake4-minimum-required.patch'

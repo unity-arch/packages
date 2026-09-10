@@ -11,7 +11,7 @@ arch=('x86_64')
 url='https://launchpad.net/libindicator'
 license=('GPL-3.0-only')
 depends=('gtk3' 'ido')
-makedepends=('gnome-common' 'intltool' 'gtk-doc')
+makedepends=('glib2-devel' 'gnome-common' 'intltool' 'gtk-doc')
 provides=('libindicator3' 'indicator-common')
 source=("${_name}_${_ver}+${_snap}.orig.tar.gz::https://launchpad.net/ubuntu/+archive/primary/+files/${_name}_${_ver}+${_snap}.orig.tar.gz"
         'libindicator-ido-menu-items.patch')

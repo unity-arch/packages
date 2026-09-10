@@ -11,7 +11,7 @@ arch=('x86_64')
 url='https://launchpad.net/indicator-messages'
 license=('GPL-3.0-only')
 depends=('glib2' 'accountsservice' 'libindicator-gtk3')
-makedepends=('git' 'gnome-common' 'intltool' 'vala' 'gobject-introspection')
+makedepends=('glib2-devel' 'git' 'gnome-common' 'intltool' 'vala' 'gobject-introspection')
 provides=('libmessaging-menu' 'messaging-menu')
 source=("git+https://git.launchpad.net/ubuntu/+source/${pkgname}#commit=${_commit}"
         'drop-dbustest-check.patch')

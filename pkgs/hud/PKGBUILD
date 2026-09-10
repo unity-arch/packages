@@ -15,7 +15,7 @@ license=('GPL-3.0-only' 'LGPL-3.0-only')
 # QSQLITE driver the usage tracker opens
 depends=('glib2' 'gtk3' 'dee' 'libcolumbus' 'libdbusmenu-qt5' 'gsettings-qt5'
          'qt5-base' 'bamf' 'pango' 'gcc-libs' 'glibc')
-makedepends=('git' 'cmake' 'cmake-extras' 'vala' 'gobject-introspection'
+makedepends=('glib2-devel' 'git' 'cmake' 'cmake-extras' 'vala' 'gobject-introspection'
              'python-setuptools' 'intltool' 'systemd')
 source=("git+https://git.launchpad.net/ubuntu/+source/${pkgname}#commit=${_commit}"
         'drop-missing-qt-deps.patch'

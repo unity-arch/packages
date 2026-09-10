@@ -10,7 +10,7 @@ arch=('x86_64')
 url='https://launchpad.net/libunity-misc'
 license=('LGPL-3.0-only')
 depends=('gtk3')
-makedepends=('gnome-common' 'gtk-doc')
+makedepends=('glib2-devel' 'gnome-common' 'gtk-doc')
 source=("https://launchpad.net/ubuntu/+archive/primary/+files/${pkgname}_${_ver}+${_snap}.orig.tar.gz")
 sha256sums=('197fd17077c3ceac219cbfbe3cfa511a17dd47a86c441c386c7bdec200d119b7')
 

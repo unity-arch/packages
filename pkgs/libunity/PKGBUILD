@@ -11,7 +11,7 @@ arch=('x86_64')
 url='https://launchpad.net/libunity'
 license=('LGPL-3.0-only')
 depends=('dee' 'gtk3' 'libdbusmenu-glib' 'python-gobject')
-makedepends=('gobject-introspection' 'vala' 'gnome-common' 'intltool')
+makedepends=('glib2-devel' 'gobject-introspection' 'vala' 'gnome-common' 'intltool')
 source=("${pkgname}_${_ver}+${_snap}.orig.tar.gz::https://launchpad.net/ubuntu/+archive/primary/+files/${pkgname}_${_ver}+${_snap}.orig.tar.gz"
         "https://launchpad.net/ubuntu/+archive/primary/+files/${pkgname}_${_ver}+${_snap}-${_deb}.debian.tar.xz")
 sha256sums=('56ecb380d74bf74caba193d9e8ad6b0c85ccf9eeb461bc9731c2b8636e1f1492'

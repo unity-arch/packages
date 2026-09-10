@@ -13,7 +13,7 @@ license=('GPL-3.0-only')
 depends=('dee' 'glib2' 'json-glib' 'libgee' 'libunity')
 # util-linux-libs is only for uuid.pc, configure asks for it even though the smart
 # scopes patch takes away the only caller so nothing links against libuuid
-makedepends=('git' 'gnome-common' 'intltool' 'util-linux-libs' 'vala')
+makedepends=('glib2-devel' 'git' 'gnome-common' 'intltool' 'util-linux-libs' 'vala')
 # the master scope definitions used to be split out as unity-scopes-master-default,
 # no point in a second package here since nothing else provides them
 provides=('unity-scopes-master-default' 'unity-scopes-master')

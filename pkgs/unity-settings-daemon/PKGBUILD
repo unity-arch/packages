@@ -16,7 +16,7 @@ depends=('accountsservice' 'alsa-lib' 'colord' 'dbus-glib' 'fontconfig' 'gnome-d
          'libpulse' 'libwacom' 'libxfixes' 'libxi' 'libxkbfile' 'libxklavier' 'libxrandr'
          'libxt' 'libxtst' 'polkit' 'upower' 'xkeyboard-config')
 # xf86-input-wacom is only here for xorg-wacom.pc, the wacom plugin needs it at configure time
-makedepends=('git' 'gnome-common' 'intltool' 'libxslt' 'docbook-xsl' 'mesa' 'xf86-input-wacom')
+makedepends=('glib2-devel' 'git' 'gnome-common' 'intltool' 'libxslt' 'docbook-xsl' 'mesa' 'xf86-input-wacom')
 provides=('libunity-settings-daemon')
 source=("git+${url}.git#commit=${_commit}"
         'drop-accountsservice-input-sources.patch')

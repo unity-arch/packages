@@ -15,7 +15,7 @@ depends=('compiz-ubuntu' 'nux' 'libunity' 'libunity-misc' 'bamf' 'dee' 'geis' 'x
          'libindicator-gtk3' 'ido' 'unity-settings-daemon' 'unity-asset-pool' 'gsettings-ubuntu-schemas' 'unity-greeter'
          'appstream-glib' 'gnome-desktop' 'zeitgeist' 'json-glib' 'libnotify' 'startup-notification'
          'libsigc++' 'libdbusmenu-glib' 'at-spi2-core' 'pam' 'python-gobject' 'python-pyxdg' 'dconf')
-makedepends=('cmake' 'boost' 'gtest' 'intltool' 'gettext' 'python-setuptools' 'libxslt')
+makedepends=('glib2-devel' 'cmake' 'boost' 'gtest' 'intltool' 'gettext' 'python-setuptools' 'libxslt')
 optdepends=('unity-session: log into unity from a display manager'
             'unity-scope-home: the dash home scope'
             'unity-lens-applications: applications in the dash'

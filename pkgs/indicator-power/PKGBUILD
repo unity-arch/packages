@@ -16,7 +16,7 @@ optdepends=('unity-control-center: power settings panel from the menu')
 # libgudev is only a configure check here, nothing in src actually includes it
 # gsettings-ubuntu-schemas ships com.ubuntu.touch.AccountsService.Sound.xml, the
 # gdbus-codegen call in src/CMakeLists.txt reads it straight out of /usr/share
-makedepends=('git' 'cmake' 'cmake-extras' 'intltool' 'libgudev' 'gsettings-ubuntu-schemas')
+makedepends=('glib2-devel' 'git' 'cmake' 'cmake-extras' 'intltool' 'libgudev' 'gsettings-ubuntu-schemas')
 source=("git+https://git.launchpad.net/ubuntu/+source/${pkgname}#commit=${_commit}")
 sha256sums=('SKIP')
 
