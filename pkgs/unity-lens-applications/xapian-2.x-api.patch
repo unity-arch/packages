@@ -1,0 +1,65 @@
+# xapian 2.1 dropped the InMemory backend class in favour of DB_BACKEND_INMEMORY and
+# renamed flush to commit, and its headers use std::string_view so c++11 won't parse
+# them (the dynamic exception spec is a c++17 error too)
+--- a/src/Makefile.am
++++ b/src/Makefile.am
+@@ -24,7 +24,7 @@
+   AM_CPPFLAGS += -w
+ endif
+ 
+-AM_CXXFLAGS = --std=c++11
++AM_CXXFLAGS = --std=c++17
+ 
+ # Note that we require glib 2.26 because libzeitgeist
+ # expects us to use g_ptr_array_unref instead of g_ptr_array_free.
+--- a/src/unity-package-search.cc
++++ b/src/unity-package-search.cc
+@@ -371,9 +371,8 @@
+   Xapian::WritableDatabase *db;
+ 
+   searcher = new UnityPackageSearcher;
+-  db = new Xapian::WritableDatabase ();
++  db = new Xapian::WritableDatabase ("", Xapian::DB_BACKEND_INMEMORY);
+   searcher->db = db;
+-  searcher->db->add_database (Xapian::InMemory::open ());
+ 
+   init_searcher (searcher);
+ 
+@@ -382,7 +381,7 @@
+   Xapian::TermGenerator *indexer = new Xapian::TermGenerator ();
+   index_menu_item (db, indexer, gmenu_tree_get_root_directory (menu));
+   delete indexer;
+-  db->flush ();
++  db->commit ();
+ 
+   searcher->matcher = new Columbus::Matcher();
+   buildMatcher(searcher);
+@@ -449,9 +448,8 @@
+   Xapian::WritableDatabase *db;
+ 
+   searcher = new UnityPackageSearcher;
+-  db = new Xapian::WritableDatabase ();
++  db = new Xapian::WritableDatabase ("", Xapian::DB_BACKEND_INMEMORY);
+   searcher->db = db;
+-  searcher->db->add_database (Xapian::InMemory::open ());
+ 
+   init_searcher (searcher);
+ 
+@@ -473,7 +471,7 @@
+     }
+   }
+   delete indexer;
+-  db->flush ();
++  db->commit ();
+ 
+   searcher->matcher = new Columbus::Matcher();
+   buildMatcher(searcher);
+@@ -539,7 +537,7 @@
+ }
+ 
+ static UnityPackageInfo*
+-_pkginfo_from_document (Xapian::Document     doc) throw (Xapian::Error)
++_pkginfo_from_document (Xapian::Document     doc)
+ 
+ {
+   UnityPackageInfo *pkginfo = g_slice_new0 (UnityPackageInfo);

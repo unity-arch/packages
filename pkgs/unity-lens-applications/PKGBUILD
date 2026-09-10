@@ -1,0 +1,68 @@
+# Maintainer: Charlie <dev.charlie@akao.au>
+
+pkgname=unity-lens-applications
+_ver=7.1.0
+_snap=16.10.20160927
+_commit=0fc6cb7754820c4389dd84f22d4ddbf5707ed5fc
+pkgver=${_ver}.${_snap}
+pkgrel=1
+pkgdesc='applications scope for the unity dash'
+arch=('x86_64')
+url='https://gitlab.com/ubuntu-unity/unity/unity-lens-applications'
+license=('GPL-3.0-only')
+# zeitgeist is the daemon too, the recent apps category reads its log
+depends=('db' 'dee' 'glib2' 'gnome-menus' 'libcolumbus' 'libgee' 'libunity'
+         'xapian-core' 'zeitgeist')
+makedepends=('git' 'gnome-common' 'intltool' 'vala')
+source=("git+${url}.git#commit=${_commit}"
+        'port-to-zeitgeist-2.0.patch'
+        'xapian-2.x-api.patch'
+        'drop-libdb-5.3-check.patch'
+        'skip-software-center-index.patch'
+        '50-unity-lens-applications-arch.gschema.override')
+sha256sums=('SKIP'
+            'b6f906d4e0bb682909309cae02605f8de06259226992d1b964b1ed02ff64e973'
+            '2f9b532e822f80449f5c2c62791d08ff2d29812f99984385bfbcdb2fd762ab07'
+            '2d8be0429ae9641641036ed2026a4c014534a2fc480eb7ded972afde8a02b589'
+            '2bc9535c3057932df4866ac0e14461db0c57c80153cc233a6ae7a2cdff0b39b4'
+            'a3ad044eafc82c9391947daadc5c11015f8eec20df5a145f334a27906b1a0f11')
+
+prepare() {
+  cd "${pkgname}"
+  # no quilt series upstream right now, apply one if a later snapshot grows it
+  if [[ -s debian/patches/series ]]; then
+    local p
+    while read -r p; do
+      [[ -z ${p} || ${p} == \#* ]] && continue
+      patch -Np1 -i "debian/patches/${p}"
+    done < debian/patches/series
+  fi
+  patch -Np1 -i "${srcdir}/port-to-zeitgeist-2.0.patch"
+  patch -Np1 -i "${srcdir}/xapian-2.x-api.patch"
+  patch -Np1 -i "${srcdir}/drop-libdb-5.3-check.patch"
+  patch -Np1 -i "${srcdir}/skip-software-center-index.patch"
+  NOCONFIGURE=1 ./autogen.sh
+}
+
+build() {
+  cd "${pkgname}"
+  # libapt-pkg is a stale build-dep, nothing in the tree includes it, so there's no
+  # switch to turn off and apt only shows up as a dbus client that fails to connect
+  ./configure \
+    --prefix=/usr \
+    --sysconfdir=/etc \
+    --localstatedir=/var \
+    --libexecdir=/usr/lib \
+    --disable-static
+  make
+}
+
+package() {
+  cd "${pkgname}"
+  # configure hands po/Makefile a literal ${DATADIRNAME} that make never expands, so the
+  # catalogs land in /usr/locale unless we feed it in here
+  make DESTDIR="${pkgdir}" DATADIRNAME=share install
+
+  install -Dm644 "${srcdir}/50-unity-lens-applications-arch.gschema.override" \
+    "${pkgdir}/usr/share/glib-2.0/schemas/50-unity-lens-applications-arch.gschema.override"
+}

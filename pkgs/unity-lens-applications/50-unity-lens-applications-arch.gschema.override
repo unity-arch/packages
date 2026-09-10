@@ -1,0 +1,4 @@
+# there's no software center data provider on arch, so the "available for download"
+# category can only ever come back empty and log a dbus failure per search
+[com.canonical.Unity.ApplicationsLens]
+display-available-apps=false

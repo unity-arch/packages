@@ -22,14 +22,17 @@ optdepends=('unity-session: log into unity from a display manager'
             'unity-control-center: settings')
 source=("git+${url}.git#commit=${_commit}"
         'unity.pam'
-        'lock-on-suspend-key-optional.patch')
+        'lock-on-suspend-key-optional.patch'
+        'filemanager-fallback.patch')
 sha256sums=('SKIP'
             'f8f58c56a2543a005b13271624bbeec43bd6fe4403a7a4b5e9d10e643cd46f37'
-            '0b9a72c56c849b0e1cfab7a6fa4c84ba1e7b50aea414740cb473b4bac7d32878')
+            '0b9a72c56c849b0e1cfab7a6fa4c84ba1e7b50aea414740cb473b4bac7d32878'
+            '80a5e4237cd013f17b70bb141636fec0abadd038137b0c95b613eb1feda74ed5')
 
 prepare() {
   cd "${pkgname}"
   patch -Np1 -i ../lock-on-suspend-key-optional.patch
+  patch -Np1 -i ../filemanager-fallback.patch
   # the data cmake runs glib-compile-schemas against the live prefix at install time,
   # pacman's hook does that on the real system instead
   sed -i '/install (CODE/d' data/CMakeLists.txt

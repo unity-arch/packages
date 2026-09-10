@@ -1,0 +1,24 @@
+# constructing the searcher stats /var/cache/software-center/xapian and cries on every
+# start, the display-available-apps default is off here so skip it (every call site
+# already null checks, and the c side has g_return_if_fail guards on top)
+--- a/src/daemon.vala
++++ b/src/daemon.vala
+@@ -138,10 +138,15 @@
+       this.gp_settings.bind(DISPLAY_RECENT_APPS_KEY, this, "display_recent_apps", SettingsBindFlags.GET);
+       this.gp_settings.bind(DISPLAY_AVAILABLE_APPS_KEY, this, "display_available_apps", SettingsBindFlags.GET);
+ 
+-      pkgsearcher = new Unity.Package.Searcher ();
+-      if (pkgsearcher == null)
++      /* the index is written by the software center, which no longer exists on any
++       * supported distro, so don't go looking unless the category is turned back on */
++      if (display_available_apps)
+       {
+-        critical ("Failed to load Software Center index. 'Apps Available for Download' will not be listed");
++        pkgsearcher = new Unity.Package.Searcher ();
++        if (pkgsearcher == null)
++        {
++          critical ("Failed to load Software Center index. 'Apps Available for Download' will not be listed");
++        }
+       }
+ 
+       /* Image file extensions in order of popularity */

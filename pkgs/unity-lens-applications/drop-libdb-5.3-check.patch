@@ -1,0 +1,18 @@
+# the guard exists so the ratings db matches what software-center writes, arch has
+# neither libdb 5.3 nor software-center so the open just fails and ratings stays null
+--- a/src/unity-ratings-db.c
++++ b/src/unity-ratings-db.c
+@@ -21,11 +21,8 @@
+ #include <string.h>
+ #include <db.h>
+ 
+-/* Hacky check, but we *really* need to have the same libdb version as the
+- * software-center is using to avoid a cascade of fail */
+-#if DB_VERSION_MAJOR != 5 || DB_VERSION_MINOR != 3
+-  #error "unity-lens-applications only compiles and works against libdb-5.3. Please install the package libdb5.3-dev"
+-#endif
++/* upstream pins libdb 5.3 to match the software-center writer, arch ships 6.2 and no
++ * software-center at all, so the env open just fails and the caller keeps ratings null */
+ 
+ struct _UnityRatingsDatabase {
+   DB_ENV  *env;

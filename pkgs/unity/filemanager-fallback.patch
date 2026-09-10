@@ -1,0 +1,15 @@
+diff --git a/unity-shared/FileManager.cpp b/unity-shared/FileManager.cpp
+index 6fc574e..f680b88 100644
+--- a/unity-shared/FileManager.cpp
++++ b/unity-shared/FileManager.cpp
+@@ -43,7 +43,9 @@ FileManager::Ptr FileManager::GetDefault()
+ 
+       if (app_id == "org.gnome.Nautilus.desktop")
+         fm = GnomeFileManager::Get();
+-      else if (app_id == "nemo.desktop")
++      else
++        // any other handler (dolphin, thunar, ...) gets the nemo manager, it only uses
++        // gio to open locations so it works without nemo, and a null here crashes the launcher
+         fm = NemoFileManager::Get();
+     }
+     else

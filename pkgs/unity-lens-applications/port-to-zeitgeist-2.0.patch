@@ -1,0 +1,89 @@
+# arch has libzeitgeist 2.0 only, the 1.0 vala api is gone so the templates become a
+# GenericArray, Timestamp.now is from_now, ZG_* moved into the ZG namespace and
+# Subject.get_uri is now a property (Event.full also grew an origin argument)
+--- a/configure.ac
++++ b/configure.ac
+@@ -76,7 +76,7 @@
+                   gio-unix-2.0 >= $GLIB_REQUIRED
+                   gee-0.8
+                   dee-1.0 >= 0.5.16
+-                  zeitgeist-1.0 >= 0.3.8
++                  zeitgeist-2.0 >= 0.9.12
+                   libcolumbus >= 1.0.0
+                   unity >= 7.1.1
+                   unity-protocol-private
+--- a/src/Makefile.am
++++ b/src/Makefile.am
+@@ -35,7 +35,7 @@
+   --pkg gio-2.0 \
+   --pkg gio-unix-2.0 \
+   --pkg dee-1.0 \
+-  --pkg zeitgeist-1.0 \
++  --pkg zeitgeist-2.0 \
+   --pkg unity \
+   --pkg unity-protocol \
+   --pkg gee-0.8 \
+--- a/src/daemon.vala
++++ b/src/daemon.vala
+@@ -93,7 +93,7 @@
+     public Unity.LauncherFavorites favorite_apps;
+     public AppWatcher app_watcher;
+ 
+-    public PtrArray zg_templates;
++    public GenericArray<Event> zg_templates;
+ 
+     /* Gnome menu structure - also used to check whether apps are installed */
+     private uint app_menu_changed_reindex_timeout = 0;
+@@ -631,13 +631,13 @@
+     private void populate_zg_templates ()
+     {
+       /* Create a template that activation of applications */
+-      zg_templates = new PtrArray.sized(1);
+-      var ev = new Zeitgeist.Event.full (ZG_ACCESS_EVENT, ZG_USER_ACTIVITY, "",
+-                             new Subject.full ("application*",
+-                                               "", //NFO_SOFTWARE,
+-                                               "",
+-                                               "", "", "", ""));
+-      zg_templates.add ((ev as GLib.Object).ref());
++      zg_templates = new GenericArray<Event> ();
++      var ev = new Zeitgeist.Event.full (ZG.ACCESS_EVENT, ZG.USER_ACTIVITY, "", null);
++      ev.add_subject (new Subject.full ("application*",
++                                        "", //NFO_SOFTWARE,
++                                        "",
++                                        "", "", "", ""));
++      zg_templates.add (ev);
+     }
+ 
+     private void mark_dirty ()
+@@ -651,7 +651,7 @@
+       try
+       {
+         // simulate a kind of frecency
+-        var end_ts = Timestamp.now ();
++        var end_ts = Timestamp.from_now ();
+         var start_ts = end_ts - Timestamp.WEEK * 3;
+         var rs = yield log.find_events (new TimeRange (start_ts, end_ts),
+                                         zg_templates,
+@@ -663,11 +663,11 @@
+         // most popular apps must have high value, so unknown apps (where
+         // popularity_map[app] == 0 aren't considered super popular
+         int relevancy = 256;
+-        foreach (unowned Event event in rs)
++        foreach (var event in rs)
+         {
+           for (int i = 0; i < event.num_subjects (); i++)
+           {
+-            unowned string uri = event.get_subject (i).get_uri ();
++            unowned string uri = event.get_subject (i).uri;
+             if (uri == null) continue;
+             popularity_map[uri] = relevancy;
+           }
+@@ -1386,7 +1386,7 @@
+       {
+         string? app_uri = null;
+         if (ev.num_subjects () > 0)
+-          app_uri = ev.get_subject (0).get_uri ();
++          app_uri = ev.get_subject (0).uri;
+ 
+         if (app_uri == null)
+         {
