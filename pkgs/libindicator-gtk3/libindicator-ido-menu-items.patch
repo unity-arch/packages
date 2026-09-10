@@ -1,0 +1,306 @@
+build ido menu items from the menu model ourselves
+
+ubuntu's patched gtk3 turned model items carrying x-canonical-type into ido
+widgets from inside the menu tracker. we don't ship that patch, so walk the
+model after gtk_menu_shell_bind_model and swap the plain items gtk built for
+the ones ido's factory makes, the way libayatana-indicator does.
+
+--- a/libindicator/indicator-ng.c	2018-03-22 04:09:50.000000000 +1030
++++ b/libindicator/indicator-ng.c	2026-09-11 00:03:51.108414693 +0930
+@@ -20,6 +20,7 @@
+ #include "indicator-ng.h"
+ #include "indicator-image-helper.h"
+ 
++#include <libido/idomenuitemfactory.h>
+ #include <string.h>
+ 
+ struct _IndicatorNg
+@@ -48,8 +49,17 @@
+   gchar *accessible_desc;
+ 
+   gint64 last_service_restart;
++
++  /* models we watch so ido items get rebuilt when a section changes */
++  GPtrArray *watched_models;
+ };
+ 
++/* gtk keeps the widget's action muxer here, it's the group that resolves the
++ * "indicator." prefix the menu model uses */
++static GQuark action_muxer_quark;
++
++static void indicator_ng_unwatch_models (IndicatorNg *self);
++
+ static void indicator_ng_initable_iface_init (GInitableIface *initable);
+ G_DEFINE_TYPE_WITH_CODE (IndicatorNg, indicator_ng, INDICATOR_OBJECT_TYPE,
+                          G_IMPLEMENT_INTERFACE (G_TYPE_INITABLE, indicator_ng_initable_iface_init))
+@@ -122,6 +132,7 @@
+ 
+   if (self->menu)
+     {
++      indicator_ng_unwatch_models (self);
+       g_signal_handlers_disconnect_by_data (self->menu, self);
+       g_clear_object (&self->menu);
+     }
+@@ -146,6 +157,8 @@
+   g_clear_object (&self->entry.image);
+   g_clear_object (&self->entry.menu);
+ 
++  g_clear_pointer (&self->watched_models, g_ptr_array_unref);
++
+   G_OBJECT_CLASS (indicator_ng_parent_class)->dispose (object);
+ }
+ 
+@@ -219,12 +232,234 @@
+     }
+ }
+ 
++/* one leaf item of the menu model, sections are flattened away like gtk does */
++typedef struct
++{
++  GMenuModel *model;
++  gint        index;
++  gchar      *action_namespace;
++} IndicatorNgModelItem;
++
++static void
++indicator_ng_model_item_free (gpointer data)
++{
++  IndicatorNgModelItem *item = data;
++
++  g_object_unref (item->model);
++  g_free (item->action_namespace);
++  g_free (item);
++}
++
++static void indicator_ng_update_ido_items (IndicatorNg *self);
++
++static void
++indicator_ng_model_changed (GMenuModel *model,
++                            gint        position,
++                            gint        removed,
++                            gint        added,
++                            gpointer    user_data)
++{
++  indicator_ng_update_ido_items (user_data);
++}
++
++static void
++indicator_ng_unwatch_models (IndicatorNg *self)
++{
++  guint i;
++
++  for (i = 0; i < self->watched_models->len; i++)
++    g_signal_handlers_disconnect_by_func (g_ptr_array_index (self->watched_models, i),
++                                          indicator_ng_model_changed, self);
++
++  g_ptr_array_set_size (self->watched_models, 0);
++}
++
++static void
++indicator_ng_watch_model (IndicatorNg *self,
++                          GMenuModel  *model)
++{
++  g_ptr_array_add (self->watched_models, g_object_ref (model));
++  g_signal_connect (model, "items-changed", G_CALLBACK (indicator_ng_model_changed), self);
++}
++
++/* walks the model the way gtk's menu tracker does, sections contribute their
++ * children in order and nothing of their own */
++static void
++indicator_ng_collect_items (IndicatorNg *self,
++                            GMenuModel  *model,
++                            const gchar *action_namespace,
++                            GPtrArray   *items)
++{
++  gint n_items;
++  gint i;
++
++  indicator_ng_watch_model (self, model);
++
++  n_items = g_menu_model_get_n_items (model);
++
++  for (i = 0; i < n_items; i++)
++    {
++      GMenuModel *section;
++
++      section = g_menu_model_get_item_link (model, i, G_MENU_LINK_SECTION);
++      if (section)
++        {
++          gchar *attribute;
++          gchar *namespace;
++
++          if (g_menu_model_get_item_attribute (model, i, G_MENU_ATTRIBUTE_ACTION_NAMESPACE, "s", &attribute))
++            {
++              namespace = action_namespace ? g_strjoin (".", action_namespace, attribute, NULL)
++                                           : g_strdup (attribute);
++              g_free (attribute);
++            }
++          else
++            namespace = g_strdup (action_namespace);
++
++          indicator_ng_collect_items (self, section, namespace, items);
++
++          g_free (namespace);
++          g_object_unref (section);
++        }
++      else
++        {
++          IndicatorNgModelItem *item;
++
++          item = g_new0 (IndicatorNgModelItem, 1);
++          item->model = g_object_ref (model);
++          item->index = i;
++          item->action_namespace = g_strdup (action_namespace);
++          g_ptr_array_add (items, item);
++        }
++    }
++}
++
++static gboolean
++indicator_ng_replace_ido_item (IndicatorNg          *self,
++                               IndicatorNgModelItem *pos,
++                               GtkWidget            *widget,
++                               gint                  position)
++{
++  GtkMenuItem *item = NULL;
++  GMenuItem *menuitem;
++  GActionGroup *actions;
++  gchar *type;
++  gchar *action;
++  GList *it;
++
++  if (!g_menu_model_get_item_attribute (pos->model, pos->index, "x-canonical-type", "s", &type))
++    return FALSE;
++
++  /* the widget name is how we tell an item we built before from a plain one */
++  if (g_strcmp0 (gtk_widget_get_name (widget), type) == 0)
++    {
++      g_free (type);
++      return FALSE;
++    }
++
++  actions = g_object_get_qdata (G_OBJECT (self->entry.menu), action_muxer_quark);
++  if (!G_IS_ACTION_GROUP (actions))
++    {
++      g_free (type);
++      return FALSE;
++    }
++
++  menuitem = g_menu_item_new_from_model (pos->model, pos->index);
++
++  /* ido widgets look the action up themselves, so it has to carry the
++   * namespace gtk would have applied for us */
++  if (pos->action_namespace &&
++      g_menu_item_get_attribute (menuitem, G_MENU_ATTRIBUTE_ACTION, "s", &action))
++    {
++      gchar *namespaced;
++
++      namespaced = g_strconcat (pos->action_namespace, ".", action, NULL);
++      g_menu_item_set_attribute (menuitem, G_MENU_ATTRIBUTE_ACTION, "s", namespaced);
++
++      g_free (namespaced);
++      g_free (action);
++    }
++
++  for (it = ido_menu_item_factory_get_all (); it != NULL && item == NULL; it = it->next)
++    item = ido_menu_item_factory_create_menu_item (it->data, type, menuitem, actions);
++
++  g_object_unref (menuitem);
++
++  if (item == NULL)
++    {
++      g_warning ("cannot create a menu item of type '%s'", type);
++      g_free (type);
++      return FALSE;
++    }
++
++  gtk_widget_set_name (GTK_WIDGET (item), type);
++  gtk_widget_show (GTK_WIDGET (item));
++  gtk_container_remove (GTK_CONTAINER (self->entry.menu), widget);
++  gtk_menu_shell_insert (GTK_MENU_SHELL (self->entry.menu), GTK_WIDGET (item), position);
++
++  g_free (type);
++  return TRUE;
++}
++
++/* ubuntu's patched gtk3 built ido widgets from inside the menu tracker, we
++ * don't have that, so swap the plain items gtk built for ido ones afterwards */
++static void
++indicator_ng_update_ido_items (IndicatorNg *self)
++{
++  GMenuModel *popup;
++  GPtrArray *items;
++  GList *children;
++  GList *child;
++  guint next = 0;
++  gint position = 0;
++  gboolean changed = FALSE;
++
++  if (self->menu == NULL || g_menu_model_get_n_items (self->menu) == 0)
++    return;
++
++  popup = g_menu_model_get_item_link (self->menu, 0, G_MENU_LINK_SUBMENU);
++  if (popup == NULL)
++    return;
++
++  /* the models this pass walks are the ones worth watching, drop the old set */
++  indicator_ng_unwatch_models (self);
++
++  items = g_ptr_array_new_with_free_func (indicator_ng_model_item_free);
++  indicator_ng_collect_items (self, popup, NULL, items);
++
++  children = gtk_container_get_children (GTK_CONTAINER (self->entry.menu));
++
++  for (child = children; child != NULL && next < items->len; child = child->next, position++)
++    {
++      if (GTK_IS_SEPARATOR_MENU_ITEM (child->data))
++        continue;
++
++      if (indicator_ng_replace_ido_item (self, g_ptr_array_index (items, next), child->data, position))
++        changed = TRUE;
++
++      next++;
++    }
++
++  /* the menu is already up when a section changes, so ask for its size again */
++  if (changed && gtk_widget_get_mapped (GTK_WIDGET (self->entry.menu)))
++    {
++      gtk_widget_queue_resize (GTK_WIDGET (self->entry.menu));
++      gtk_menu_reposition (self->entry.menu);
++    }
++
++  g_list_free (children);
++  g_ptr_array_unref (items);
++  g_object_unref (popup);
++}
++
+ static void
+ indicator_ng_menu_shown (GtkWidget *widget,
+                          gpointer   user_data)
+ {
+   IndicatorNg *self = user_data;
+ 
++  indicator_ng_update_ido_items (self);
++
+   if (self->submenu_action)
+     g_action_group_change_action_state (self->actions, self->submenu_action,
+                                         g_variant_new_boolean (TRUE));
+@@ -430,6 +665,8 @@
+             {
+               gtk_menu_shell_bind_model (GTK_MENU_SHELL (self->entry.menu), popup, NULL, TRUE);
+               g_object_unref (popup);
++
++              indicator_ng_update_ido_items (self);
+             }
+ 
+           indicator_ng_update_entry (self);
+@@ -687,6 +924,9 @@
+ static void
+ indicator_ng_init (IndicatorNg *self)
+ {
++  action_muxer_quark = g_quark_from_static_string ("gtk-widget-action-muxer");
++  self->watched_models = g_ptr_array_new_with_free_func (g_object_unref);
++
+   self->entry.label = g_object_ref_sink (GTK_LABEL (gtk_label_new (NULL)));
+   self->entry.image = g_object_ref_sink (GTK_IMAGE (gtk_image_new ()));
+ 

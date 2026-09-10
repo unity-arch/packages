@@ -1,0 +1,21 @@
+# Maintainer: Charlie <dev.charlie@akao.au>
+
+pkgname=cmake-extras
+pkgver=1.10
+pkgrel=1
+_commit=5cc653f2b5557bd143db6713c1e7dc3468b2d5b0
+pkgdesc='cmake modules shared by the ubuntu indicators (gdbus codegen, gsettings, intltool, vala)'
+arch=('any')
+url='https://launchpad.net/cmake-extras'
+license=('GPL-3.0-only')
+depends=('cmake' 'pkgconf' 'python')
+source=("git+https://git.launchpad.net/ubuntu/+source/cmake-extras#commit=${_commit}")
+sha256sums=('SKIP')
+
+build() {
+  cmake -S "${pkgname}" -B build -Wno-dev -DCMAKE_INSTALL_PREFIX=/usr
+}
+
+package() {
+  DESTDIR="${pkgdir}" cmake --install build
+}

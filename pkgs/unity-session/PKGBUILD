@@ -1,0 +1,31 @@
+# Maintainer: Charlie <dev.charlie@akao.au>
+
+pkgname=unity-session
+pkgver=49.4
+pkgrel=1
+_commit=32c2fd569b0d51e40bd3ec875e77f0261a744d03
+pkgdesc='session files and systemd targets for the unity desktop'
+arch=('any')
+url='https://gitlab.com/ubuntu-unity/unity/unity-session'
+license=('GPL-2.0-or-later')
+# upstream runs the session through cinnamon-session since gnome-session dropped x11
+depends=('cinnamon-session' 'cinnamon-settings-daemon' 'unity-settings-daemon' 'systemd' 'dbus')
+optdepends=('nemo: desktop icons and the change background action'
+            'lightdm: the shipped lightdm config selects unity as default session')
+source=("git+${url}.git#commit=${_commit}")
+sha256sums=('SKIP')
+
+package() {
+  cd "${pkgname}"
+  install -Dm755 unity-session "${pkgdir}/usr/bin/unity-session"
+  install -Dm755 run-systemd-session "${pkgdir}/usr/lib/unity-session/run-systemd-session"
+  # the launcher script hardcodes debian's libexec path
+  sed -i 's|/usr/libexec/run-systemd-session|/usr/lib/unity-session/run-systemd-session|' "${pkgdir}/usr/bin/unity-session"
+  install -Dm644 unity-session.target unity-session.service -t "${pkgdir}/usr/lib/systemd/user"
+  install -Dm644 unity.session -t "${pkgdir}/usr/share/cinnamon-session/sessions"
+  install -Dm644 unity.desktop -t "${pkgdir}/usr/share/xsessions"
+  install -Dm644 21_ubuntu-unity.gschema.override -t "${pkgdir}/usr/share/glib-2.0/schemas"
+  install -Dm644 50-unity.conf -t "${pkgdir}/usr/share/lightdm/lightdm.conf.d"
+  install -Dm644 nemo-unity-autostart.desktop -t "${pkgdir}/etc/xdg/autostart"
+  install -Dm644 ./*.nemo_action -t "${pkgdir}/usr/share/nemo/actions"
+}

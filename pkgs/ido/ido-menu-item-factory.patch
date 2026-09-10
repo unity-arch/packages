@@ -1,0 +1,246 @@
+ship the menu item factory interface in ido itself
+
+ubuntu carried this extension point in a patched gtk3 (gtk/ubuntu-private.h),
+we don't, so ido grows its own IdoMenuItemFactory interface and the existing
+factory implements that instead. consumers walk the menu model themselves and
+ask ido_menu_item_factory_get_all() for the widgets.
+
+diff -Nur ido.orig/src/idomenuitemfactory.c ido.new/src/idomenuitemfactory.c
+--- ido.orig/src/idomenuitemfactory.c	2022-10-08 07:57:37.000000000 +1030
++++ ido.new/src/idomenuitemfactory.c	2026-09-10 23:57:13.803599333 +0930
+@@ -18,7 +18,8 @@
+  */
+ 
+ #include <gtk/gtk.h>
+-#include <gtk/ubuntu-private.h>
++
++#include "idomenuitemfactory.h"
+ 
+ #include "idoalarmmenuitem.h"
+ #include "idoappointmentmenuitem.h"
+@@ -34,26 +35,77 @@
+ #include "idoswitchmenuitem.h"
+ #include "idoprogressmenuitem.h"
+ 
+-#define IDO_TYPE_MENU_ITEM_FACTORY         (ido_menu_item_factory_get_type ())
+-#define IDO_MENU_ITEM_FACTORY(o)           (G_TYPE_CHECK_INSTANCE_CAST ((o), IDO_TYPE_MENU_ITEM_FACTORY, IdoMenuItemFactory))
+-#define IDO_IS_MENU_ITEM_FACTORY(o)        (G_TYPE_CHECK_INSTANCE_TYPE ((o), IDO_TYPE_MENU_ITEM_FACTORY))
+-
+-typedef GObject      IdoMenuItemFactory;
+-typedef GObjectClass IdoMenuItemFactoryClass;
+-
+-GType       ido_menu_item_factory_get_type (void);
+-static void ido_menu_item_factory_interface_init (UbuntuMenuItemFactoryInterface *iface);
+-
+-G_DEFINE_TYPE_WITH_CODE (IdoMenuItemFactory, ido_menu_item_factory, G_TYPE_OBJECT,
+-  G_IMPLEMENT_INTERFACE (UBUNTU_TYPE_MENU_ITEM_FACTORY, ido_menu_item_factory_interface_init)
+-  g_io_extension_point_implement (UBUNTU_MENU_ITEM_FACTORY_EXTENSION_POINT_NAME,
++/* the factory interface used to live in ubuntu's patched gtk3, it lives here now */
++G_DEFINE_INTERFACE_WITH_CODE (IdoMenuItemFactory, ido_menu_item_factory, G_TYPE_OBJECT,
++  GIOExtensionPoint *ep = g_io_extension_point_register (IDO_MENU_ITEM_FACTORY_EXTENSION_POINT_NAME);
++  g_io_extension_point_set_required_type (ep, g_define_type_id);)
++
++static void
++ido_menu_item_factory_default_init (IdoMenuItemFactoryInterface *iface)
++{
++}
++
++GtkMenuItem *
++ido_menu_item_factory_create_menu_item (IdoMenuItemFactory *factory,
++                                        const gchar        *type,
++                                        GMenuItem          *menuitem,
++                                        GActionGroup       *actions)
++{
++  return IDO_MENU_ITEM_FACTORY_GET_IFACE (factory)->create_menu_item (factory, type, menuitem, actions);
++}
++
++#define IDO_TYPE_MENU_ITEM_FACTORY_IMPL (ido_menu_item_factory_impl_get_type ())
++
++typedef GObject      IdoMenuItemFactoryImpl;
++typedef GObjectClass IdoMenuItemFactoryImplClass;
++
++GType       ido_menu_item_factory_impl_get_type (void);
++static void ido_menu_item_factory_impl_interface_init (IdoMenuItemFactoryInterface *iface);
++
++G_DEFINE_TYPE_WITH_CODE (IdoMenuItemFactoryImpl, ido_menu_item_factory_impl, G_TYPE_OBJECT,
++  G_IMPLEMENT_INTERFACE (IDO_TYPE_MENU_ITEM_FACTORY, ido_menu_item_factory_impl_interface_init)
++  g_io_extension_point_implement (IDO_MENU_ITEM_FACTORY_EXTENSION_POINT_NAME,
+                                   g_define_type_id, "ido", 0);)
+ 
++/**
++ * ido_menu_item_factory_get_all:
++ *
++ * Returns: (element-type GObject) (transfer none): a static list of all
++ * registered factories
++ */
++GList *
++ido_menu_item_factory_get_all (void)
++{
++  static GList *factories = NULL;
++
++  if (factories == NULL)
++    {
++      GIOExtensionPoint *ep;
++      GList *it;
++
++      /* ensuring the implementation registers the extension point as well */
++      g_type_ensure (IDO_TYPE_MENU_ITEM_FACTORY_IMPL);
++
++      ep = g_io_extension_point_lookup (IDO_MENU_ITEM_FACTORY_EXTENSION_POINT_NAME);
++      for (it = g_io_extension_point_get_extensions (ep); it != NULL; it = it->next)
++        {
++          GIOExtension *ext = it->data;
++          IdoMenuItemFactory *factory;
++
++          factory = g_object_new (g_io_extension_get_type (ext), NULL);
++          factories = g_list_prepend (factories, factory);
++        }
++      factories = g_list_reverse (factories);
++    }
++
++  return factories;
++}
++
+ static GtkMenuItem *
+-ido_menu_item_factory_create_menu_item (UbuntuMenuItemFactory *factory,
+-                                        const gchar           *type,
+-                                        GMenuItem             *menuitem,
+-                                        GActionGroup          *actions)
++ido_menu_item_factory_impl_create_menu_item (IdoMenuItemFactory *factory,
++                                             const gchar        *type,
++                                             GMenuItem          *menuitem,
++                                             GActionGroup       *actions)
+ {
+   GtkMenuItem *item = NULL;
+ 
+@@ -103,17 +155,17 @@
+ }
+ 
+ static void
+-ido_menu_item_factory_class_init (IdoMenuItemFactoryClass *class)
++ido_menu_item_factory_impl_class_init (IdoMenuItemFactoryImplClass *class)
+ {
+ }
+ 
+ static void
+-ido_menu_item_factory_interface_init (UbuntuMenuItemFactoryInterface *iface)
++ido_menu_item_factory_impl_interface_init (IdoMenuItemFactoryInterface *iface)
+ {
+-  iface->create_menu_item = ido_menu_item_factory_create_menu_item;
++  iface->create_menu_item = ido_menu_item_factory_impl_create_menu_item;
+ }
+ 
+ static void
+-ido_menu_item_factory_init (IdoMenuItemFactory *factory)
++ido_menu_item_factory_impl_init (IdoMenuItemFactoryImpl *factory)
+ {
+ }
+diff -Nur ido.orig/src/idomenuitemfactory.h ido.new/src/idomenuitemfactory.h
+--- ido.orig/src/idomenuitemfactory.h	1970-01-01 09:30:00.000000000 +0930
++++ ido.new/src/idomenuitemfactory.h	2026-09-10 23:56:48.510925311 +0930
+@@ -0,0 +1,58 @@
++/*
++ * Copyright 2013 Canonical Ltd.
++ *
++ * This program is free software: you can redistribute it and/or modify it
++ * under the terms of the GNU General Public License version 3, as published
++ * by the Free Software Foundation.
++ *
++ * This program is distributed in the hope that it will be useful, but
++ * WITHOUT ANY WARRANTY; without even the implied warranties of
++ * MERCHANTABILITY, SATISFACTORY QUALITY, or FITNESS FOR A PARTICULAR
++ * PURPOSE.  See the GNU General Public License for more details.
++ *
++ * You should have received a copy of the GNU General Public License along
++ * with this program.  If not, see <http://www.gnu.org/licenses/>.
++ *
++ * Authors:
++ *     Lars Uebernickel <lars.uebernickel@canonical.com>
++ */
++
++#ifndef __IDO_MENU_ITEM_FACTORY_H__
++#define __IDO_MENU_ITEM_FACTORY_H__
++
++#include <gtk/gtk.h>
++
++G_BEGIN_DECLS
++
++#define IDO_TYPE_MENU_ITEM_FACTORY         (ido_menu_item_factory_get_type ())
++#define IDO_MENU_ITEM_FACTORY(o)           (G_TYPE_CHECK_INSTANCE_CAST ((o), IDO_TYPE_MENU_ITEM_FACTORY, IdoMenuItemFactory))
++#define IDO_IS_MENU_ITEM_FACTORY(o)        (G_TYPE_CHECK_INSTANCE_TYPE ((o), IDO_TYPE_MENU_ITEM_FACTORY))
++#define IDO_MENU_ITEM_FACTORY_GET_IFACE(o) (G_TYPE_INSTANCE_GET_INTERFACE ((o), IDO_TYPE_MENU_ITEM_FACTORY, IdoMenuItemFactoryInterface))
++
++#define IDO_MENU_ITEM_FACTORY_EXTENSION_POINT_NAME "ido-menu-item-factory"
++
++typedef struct _IdoMenuItemFactoryInterface IdoMenuItemFactoryInterface;
++typedef struct _IdoMenuItemFactory          IdoMenuItemFactory;
++
++struct _IdoMenuItemFactoryInterface
++{
++  GTypeInterface iface;
++
++  GtkMenuItem * (*create_menu_item)  (IdoMenuItemFactory *factory,
++                                      const gchar        *type,
++                                      GMenuItem          *menuitem,
++                                      GActionGroup       *actions);
++};
++
++GType                   ido_menu_item_factory_get_type               (void);
++
++GList *                 ido_menu_item_factory_get_all                (void);
++
++GtkMenuItem *           ido_menu_item_factory_create_menu_item       (IdoMenuItemFactory *factory,
++                                                                      const gchar        *type,
++                                                                      GMenuItem          *menuitem,
++                                                                      GActionGroup       *actions);
++
++G_END_DECLS
++
++#endif
+diff -Nur ido.orig/src/libido.c ido.new/src/libido.c
+--- ido.orig/src/libido.c	2022-10-08 07:57:37.000000000 +1030
++++ ido.new/src/libido.c	2026-09-10 23:57:34.256949010 +0930
+@@ -28,9 +28,9 @@
+ void
+ ido_init (void)
+ {
+-  GType ido_menu_item_factory_get_type (void);
++  GType ido_menu_item_factory_impl_get_type (void);
+ 
+-  /* make sure this extension point is registered so that gtk calls it
+-   * when finding custom menu items */
+-  g_type_ensure (ido_menu_item_factory_get_type ());
++  /* registers the extension point and ido's own factory on it, callers
++   * that go through ido_menu_item_factory_get_all() don't need this */
++  g_type_ensure (ido_menu_item_factory_impl_get_type ());
+ }
+diff -Nur ido.orig/src/libido.h ido.new/src/libido.h
+--- ido.orig/src/libido.h	2022-10-08 07:57:37.000000000 +1030
++++ ido.new/src/libido.h	2026-09-10 23:57:34.256905157 +0930
+@@ -30,6 +30,7 @@
+ #include <libido/idoscalemenuitem.h>
+ #include <libido/idoentrymenuitem.h>
+ #include <libido/idomessagedialog.h>
++#include <libido/idomenuitemfactory.h>
+ 
+ void ido_init (void);
+ 
+diff -Nur ido.orig/src/Makefile.am ido.new/src/Makefile.am
+--- ido.orig/src/Makefile.am	2022-10-08 07:57:37.000000000 +1030
++++ ido.new/src/Makefile.am	2026-09-10 23:57:34.256824686 +0930
+@@ -12,6 +12,7 @@
+ 
+ sources_h =				\
+ 	idoalarmmenuitem.h		\
++	idomenuitemfactory.h		\
+ 	idocalendarmenuitem.h		\
+ 	idoentrymenuitem.h		\
+ 	idomessagedialog.h		\
+@@ -102,6 +103,7 @@
+ 
+ libidoinclude_HEADERS =			\
+ 	idocalendarmenuitem.h		\
++	idomenuitemfactory.h		\
+ 	idoentrymenuitem.h		\
+ 	idomessagedialog.h		\
+ 	idorange.h			\

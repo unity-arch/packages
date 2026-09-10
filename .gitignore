@@ -17,3 +17,4 @@ pkgs/*/*/hooks/
 pkgs/*/*/info/
 pkgs/*/*/config
 pkgs/*/*/description
+pkgs/*/*/FETCH_HEAD

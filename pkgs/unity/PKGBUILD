@@ -1,0 +1,81 @@
+# Maintainer: Charlie <dev.charlie@akao.au>
+
+pkgname=unity
+_ver=7.7.1
+_snap=26.04.20260306
+pkgver=${_ver}.${_snap}
+pkgrel=1
+_commit=6f01ccb7395ca0fb3ee5f220263d9704a18ce194
+pkgdesc='the unity 7 desktop shell, a compiz plugin with its dash, launcher, panel and hud'
+arch=('x86_64')
+url='https://gitlab.com/ubuntu-unity/unity/unity'
+license=('GPL-3.0-only' 'LGPL-3.0-only')
+depends=('compiz-ubuntu' 'nux' 'libunity' 'libunity-misc' 'bamf' 'dee' 'geis' 'xpathselect'
+         'libindicator-gtk3' 'ido' 'unity-settings-daemon' 'unity-asset-pool' 'gsettings-ubuntu-schemas'
+         'appstream-glib' 'gnome-desktop' 'zeitgeist' 'json-glib' 'libnotify' 'startup-notification'
+         'libsigc++' 'libdbusmenu-glib' 'at-spi2-core' 'pam' 'python-gobject' 'python-pyxdg' 'dconf')
+makedepends=('cmake' 'ninja' 'boost' 'gtest' 'intltool' 'gettext' 'python-setuptools' 'libxslt')
+optdepends=('unity-session: log into unity from a display manager'
+            'unity-scope-home: the dash home scope'
+            'unity-lens-applications: applications in the dash'
+            'unity-lens-files: files in the dash'
+            'unity-control-center: settings')
+source=("git+${url}.git#commit=${_commit}"
+        'unity.pam')
+sha256sums=('SKIP'
+            'f8f58c56a2543a005b13271624bbeec43bd6fe4403a7a4b5e9d10e643cd46f37')
+
+prepare() {
+  cd "${pkgname}"
+  # the data cmake runs glib-compile-schemas against the live prefix at install time,
+  # pacman's hook does that on the real system instead
+  sed -i '/install (CODE/d' data/CMakeLists.txt
+}
+
+build() {
+  cmake -S "${pkgname}" -B build -G Ninja -Wno-dev \
+    -DCMAKE_BUILD_TYPE=None \
+    -DCMAKE_INSTALL_PREFIX=/usr \
+    -DCMAKE_INSTALL_LIBDIR=lib \
+    -DCMAKE_INSTALL_SYSCONFDIR=/etc \
+    -DCOMPIZ_BUILD_WITH_RPATH=FALSE \
+    -DCOMPIZ_PACKAGING_ENABLED=TRUE \
+    -DCOMPIZ_PLUGIN_INSTALL_TYPE=package \
+    -DENABLE_UNIT_TESTS=OFF
+  cmake --build build
+}
+
+package() {
+  DESTDIR="${pkgdir}" cmake --install build
+
+  cd "${pkgname}"
+  # uwidgets, the python desktop widget runner shipped with unity
+  (cd uwidgets && python setup.py install --root="${pkgdir}" --optimize=1 --skip-build 2>/dev/null || python setup.py install --root="${pkgdir}" --optimize=1)
+  install -Dm644 uwidgets/uwidgets-runner.desktop -t "${pkgdir}/etc/xdg/autostart"
+
+  # debian's pam file uses @include, arch has system-auth
+  install -Dm644 "${srcdir}/unity.pam" "${pkgdir}/etc/pam.d/unity"
+
+  # no upstart here
+  rm -rf "${pkgdir}/usr/share/upstart"
+  # autopilot and the gconf leftovers aren't packaged on arch
+  rm -rf "${pkgdir}/usr/share/gconf"
+
+  # systemd wiring, same links debian ships, the indicator units come from their own packages
+  local unitdir="${pkgdir}/usr/lib/systemd/user"
+  install -d "${unitdir}/unity-session.target.requires" \
+             "${unitdir}/unity-panel-service.service.wants" \
+             "${unitdir}/unity-panel-service-lockscreen.service.wants"
+  ln -s ../unity7.service "${unitdir}/unity-session.target.requires/unity7.service"
+  local i
+  for i in application bluetooth datetime keyboard messages power session sound printers; do
+    ln -s "../indicator-${i}.service" "${unitdir}/unity-panel-service.service.wants/indicator-${i}.service"
+  done
+  for i in datetime keyboard power session sound; do
+    ln -s "../indicator-${i}.service" "${unitdir}/unity-panel-service-lockscreen.service.wants/indicator-${i}.service"
+  done
+
+  install -d "${pkgdir}/usr/share/unity-control-center/keybindings"
+  ln -s ../../gnome-control-center/keybindings/50-unity-launchers.xml \
+    "${pkgdir}/usr/share/unity-control-center/keybindings/50-unity-launchers.xml"
+}

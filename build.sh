@@ -8,5 +8,5 @@ pkgs=("$@")
 [[ ${#pkgs[@]} -eq 0 ]] && pkgs=("${order[@]}")
 for p in "${pkgs[@]}"; do
   echo "==> building $p"
-  (cd "$here/pkgs/$p" && makepkg --config "$here/makepkg.conf" -sf ${ARGS:-})
+  (cd "$here/pkgs/$p" && makepkg --config "$here/makepkg.conf" -sf --noconfirm ${ARGS:-})
 done

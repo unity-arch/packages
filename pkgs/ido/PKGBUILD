@@ -12,8 +12,10 @@ license=('LGPL-3.0-only' 'LGPL-2.1-only')
 depends=('gtk3')
 makedepends=('gobject-introspection' 'vala' 'gtk-doc' 'gnome-common')
 provides=('libido3')
-source=("${pkgname}_${_ver}+${_snap}.orig.tar.gz::https://launchpad.net/ubuntu/+archive/primary/+files/${pkgname}_${_ver}+${_snap}.orig.tar.gz")
-sha256sums=('660b4feae9a6c8c7ba76251c3636c53c539cc2c287f9272fe2ec81d97a96c241')
+source=("${pkgname}_${_ver}+${_snap}.orig.tar.gz::https://launchpad.net/ubuntu/+archive/primary/+files/${pkgname}_${_ver}+${_snap}.orig.tar.gz"
+        'ido-menu-item-factory.patch')
+sha256sums=('660b4feae9a6c8c7ba76251c3636c53c539cc2c287f9272fe2ec81d97a96c241'
+            'becf4b00405d0284e8fa534e421d88b5708261ce861c222f8385fbdcd396dd1f')
 # the tarball has no top level directory
 noextract=("${pkgname}_${_ver}+${_snap}.orig.tar.gz")
 
@@ -21,6 +23,7 @@ prepare() {
   mkdir -p "${pkgname}"
   tar xzf "${pkgname}_${_ver}+${_snap}.orig.tar.gz" -C "${pkgname}"
   cd "${pkgname}"
+  patch -p1 -i "${srcdir}/ido-menu-item-factory.patch"
   NOCONFIGURE=1 ./autogen.sh
 }
 
