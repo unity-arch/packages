@@ -9,7 +9,7 @@ pkgdesc='gesture engine interface and support library'
 arch=('x86_64')
 url='https://launchpad.net/geis'
 license=('LGPL-3.0-only' 'GPL-3.0-only')
-depends=('grail' 'frame' 'dbus' 'libxi' 'libxcb' 'python')
+depends=('grail' 'frame' 'dbus' 'libx11' 'libxext' 'libxi' 'libxcb' 'python' 'gcc-libs')
 makedepends=('xorg-server-devel' 'libxslt' 'python-setuptools')
 provides=('libgeis')
 source=("https://launchpad.net/ubuntu/+archive/primary/+files/${pkgname}_${_ver}+${_snap}.orig.tar.gz")
@@ -22,7 +22,11 @@ prepare() {
 
 build() {
   cd "${pkgname}-${_ver}+${_snap}"
-  ./configure --prefix=/usr --disable-static --disable-integration-tests
+  # geis_v1.c compares a pointer against GEIS_ALL_GESTURES which is a cast 0, gcc 14
+  # calls that pointer-compare and configure.ac hardcodes -Werror. AM_CFLAGS comes
+  # before CFLAGS on the command line so this wins without touching the tree
+  ./configure --prefix=/usr --disable-static --disable-integration-tests \
+    CFLAGS="${CFLAGS} -Wno-error=pointer-compare"
   make
 }
 

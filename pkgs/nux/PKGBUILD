@@ -1,0 +1,45 @@
+# Maintainer: Charlie <dev.charlie@akao.au>
+
+pkgname=nux
+_ver=4.0.8
+_snap=18.10.20180623
+pkgver=${_ver}.${_snap}
+pkgrel=1
+pkgdesc='opengl toolkit unity is built on, widgets and a graphics abstraction layer'
+arch=('x86_64')
+url='https://gitlab.com/ubuntu-unity/unity/nux'
+license=('LGPL-2.1-only' 'LGPL-3.0-only')
+depends=('glib2' 'libsigc++' 'gdk-pixbuf2' 'cairo' 'pango' 'libpng' 'pcre2' 'icu'
+         'ibus' 'geis' 'glewmx' 'glu' 'libglvnd' 'pciutils' 'libx11' 'libxext'
+         'libxxf86vm' 'libxinerama' 'libxcomposite' 'libxdamage' 'gcc-libs')
+makedepends=('git' 'gnome-common')
+# ubuntu/devel head, the 4.0.8+18.10.20180623-0ubuntu15 changelog entry
+source=("git+https://gitlab.com/ubuntu-unity/unity/nux.git#commit=2c1878a8dae9c63ccc1efb9fad0943d14fe782a6")
+sha256sums=('SKIP')
+
+prepare() {
+  cd "${pkgname}"
+  # the quilt series ships in the tree, it carries the pcre2 and icu ports plus
+  # the -Werror and c++0x drops we'd otherwise have to do by hand
+  while read -r p; do
+    patch -Np1 -i "debian/patches/${p}"
+  done < debian/patches/series
+  NOCONFIGURE=1 ./autogen.sh
+}
+
+build() {
+  cd "${pkgname}"
+  # libexecdir so unity_support_test lands at /usr/lib/nux, that path is baked
+  # into unity and into the xsession fallback checks
+  ./configure --prefix=/usr --libexecdir=/usr/lib --disable-static \
+    --disable-tests --disable-gputests --disable-examples \
+    --disable-documentation --enable-gestures
+  make
+}
+
+package() {
+  cd "${pkgname}"
+  make DESTDIR="${pkgdir}" install
+  # debian's 50_check_unity_support is an Xsession.d snippet keyed on
+  # DESKTOP_SESSION=ubuntu, nothing on arch sources that so it's dropped
+}

@@ -7,3 +7,13 @@ pkgs/*/*.tar.*
 pkgs/*/*.deb
 pkgs/*/*.diff
 pkgs/*/*.diff.gz
+pkgs/*/build.log
+# makepkg's bare git clones for git sources
+pkgs/*/*/HEAD
+pkgs/*/*/packed-refs
+pkgs/*/*/objects/
+pkgs/*/*/refs/
+pkgs/*/*/hooks/
+pkgs/*/*/info/
+pkgs/*/*/config
+pkgs/*/*/description
